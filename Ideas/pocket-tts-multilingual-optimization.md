@@ -1,3 +1,16 @@
+---
+id: IDEA-0001
+title: Pocket TTS Multilingual: Baseline, Potential, Optimization
+status: DISCOVERY
+priority: P1
+created_at: PENDING
+updated_at: PENDING
+created_in: .stageset/sessions/ideation-pocket-tts-multilingual.md
+updated_in: .stageset/sessions/ideation-pocket-tts-multilingual.md
+related_ideas: []
+related_skeletons: []
+---
+
 # Pocket TTS Multilingual: Baseline, Potential, Optimization
 
 Location: `Ideas/pocket-tts-multilingual-optimization.md`
