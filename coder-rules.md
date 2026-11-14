@@ -218,3 +218,16 @@ Use ASD-STE100-style English in code comments, notes, run reports, and event sum
 - Explain a technical term when needed.
 
 Keep code syntax, identifiers, and required technical terms exact.
+
+## 15. ss-living-doc
+
+An **ss-living-doc** is a step list for a weak coding model.
+
+- If an ss-living-doc is assigned to you, do not read the whole file. Run its `next_command`. Do only the task it prints.
+- Follow the RULES block inside the ss-living-doc. If a rule here conflicts with it, stop and ask the user.
+- Never edit STATE by hand. Run `sync_command` instead.
+- Write only real command output in `result:`.
+- After the last task, run `python scripts/stageset-report.py`.
+
+An ss-living-doc is not a run report. Run reports are evidence in `.stageset/runs/`. ss-living-doc files are plans in `LivingDocs/`.
+

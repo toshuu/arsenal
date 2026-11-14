@@ -202,3 +202,19 @@ Use ASD-STE100-style English in all idea documents, skeleton comments, and sessi
 - Avoid idioms and vague words.
 
 Keep code syntax, identifiers, and required technical terms exact.
+
+## 15. ss-living-doc
+
+An **ss-living-doc** is a step list for a weak coding model. Use it when you must give work to a weaker model.
+
+- Read `.stageset/ss-living-doc-format.md` first.
+- Copy `.stageset/templates/ss-living-doc.md` to `LivingDocs/SSLD-NNN-name.md`.
+- Keep the RULES block unchanged.
+- Write exact paths, exact code, and exact commands.
+- Run `python scripts/ss-living-doc.py <file> --sync`, then run the same command without `--sync`.
+- Fix every ERROR and WARN before you finish.
+- An ss-living-doc implements a skeleton. It does not replace the skeleton. Write the skeleton first.
+- After the session, run `python scripts/stageset-report.py`.
+
+Do not confuse an ss-living-doc with a run report. A run report is evidence in `.stageset/runs/`. An ss-living-doc is a plan in `LivingDocs/`.
+

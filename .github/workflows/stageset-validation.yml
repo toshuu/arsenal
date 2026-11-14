@@ -24,7 +24,13 @@ jobs:
           python-version: "3.12"
 
       - name: Check Python syntax
-        run: python -m py_compile scripts/stageset-status.py
+        run: python -m py_compile scripts/stageset-status.py scripts/stageset-report.py scripts/ss-living-doc.py
+
+      - name: Check status report builds
+        run: python scripts/stageset-report.py --stdout > /dev/null
+
+      - name: Check ss-living-doc template
+        run: python scripts/ss-living-doc.py .stageset/templates/ss-living-doc.md
 
       - name: Generate tracker and digest
         run: python scripts/stageset-status.py --sync

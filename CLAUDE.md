@@ -9,6 +9,24 @@ This workspace uses StageSet. Read these files before you inspect or change proj
 5. `coder-rules.md`.
 6. `.stageset/sessions-tracker.md`.
 7. Open blockers and their run reports.
+8. `.stageset/ss-living-doc-format.md` when you write or run an ss-living-doc.
+
+## ss-living-doc
+
+An **ss-living-doc** is a step list for a weak coding model. It lives in `LivingDocs/`. It is not a run report.
+
+When you plan for a weak model:
+
+- Read `.stageset/ss-living-doc-format.md`.
+- Write the skeleton first.
+- Copy `.stageset/templates/ss-living-doc.md` to `LivingDocs/SSLD-NNN-name.md`.
+- Run `python scripts/ss-living-doc.py <file> --sync`, then the linter. Fix every ERROR and WARN.
+
+When you run an ss-living-doc:
+
+- Run its `next_command`. Do only the task it prints.
+- Run `sync_command` after you finish the task.
+- Never edit STATE by hand. Never change the RULES block. Never invent output.
 
 Run `python scripts/stageset-status.py` to find ready skeletons. Read the full skeleton, its idea files, and the matching source files before you implement anything.
 

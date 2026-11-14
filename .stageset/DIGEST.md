@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
-- 20261101-231947-MAINTENANCE · MAINTENANCE · Replace sequential run IDs with timestamp IDs and make skeleton deviations explicit blockers.
-- 20261101-230451-MAINTENANCE · MAINTENANCE · Add automated GitHub Actions validation for StageSet syntax, generated files, and workspace rules.
-- 20261101-225948-MAINTENANCE · MAINTENANCE · Complete and review the evidence workflow. Add ChatGPT app instructions and improve StageSet validation.
-- 20261101-225810-MAINTENANCE · MAINTENANCE · Add run evidence, probes, verified facts, digests, validation, and generated event tracking.
-- 20261101-210000-MAINTENANCE · MAINTENANCE · Initialize the StageSet starter workspace.
+- 20261114-142345-MAINTENANCE · MAINTENANCE · Update StageSet to the ss-living-doc system and add the Pocket TTS Phase 0 plan.
+- 20261113-201809-IDEATION · IDEATION · Add the Pocket TTS multilingual baseline and optimization plan.
+- 20261113-200910-MAINTENANCE-03 · MAINTENANCE · Add automated GitHub Actions validation for StageSet syntax, generated files, and workspace rules.
+- 20261113-200910-MAINTENANCE-02 · MAINTENANCE · Add run evidence, probes, verified facts, digests, validation, and generated event tracking.
+- 20261113-200910-MAINTENANCE · MAINTENANCE · Complete and review the evidence workflow. Add ChatGPT app instructions and improve StageSet validation.
 
 ## Verified environment facts
 

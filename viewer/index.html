@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#1b1a18">
+<title>StageSet</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#1b1a18; --panel:#242220; --raise:#2d2a27; --line:#3a3632;
+  --text:#ebe6dc; --muted:#a39d91; --faint:#7a746a;
+  --clay:#d97757; --done:#86b36f; --wait:#e2a84b; --draft:#6d675d; --block:#d4604e;
+  --serif:ui-serif,"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);-webkit-text-size-adjust:100%}
+a{color:inherit}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
+header{position:sticky;top:0;z-index:5;background:rgba(27,26,24,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{font:600 20px var(--serif);text-decoration:none;margin-right:auto;letter-spacing:.2px}
+.ctl{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;min-height:36px}
+.ctl:hover{background:var(--raise)}
+select.ctl{max-width:46vw;padding-right:6px}
+.primary{background:var(--clay);border-color:var(--clay);color:#1b1a18;font-weight:600}
+.primary:hover{background:#e48a6d}
+main{max-width:980px;margin:0 auto;padding:28px 20px 80px}
+h1{font:600 30px/1.2 var(--serif);margin:0 0 4px;overflow-wrap:anywhere}
+h2{font:600 20px/1.3 var(--serif);margin:40px 0 12px}
+.sub{color:var(--muted);margin:0 0 22px}
+.muted{color:var(--muted)} .faint{color:var(--faint)}
+.hero{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:6px 0 14px}
+.pct{font:600 56px/1 var(--serif)}
+.strip{display:flex;gap:3px;height:28px}
+.strip i{flex:1 1 0;min-width:4px;border-radius:3px;background:var(--draft)}
+.strip.sm{height:12px}
+.done{background:var(--done)!important} .waiting{background:var(--wait)!important} .draft{background:var(--draft)!important} .blocked{background:var(--block)!important}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 0;color:var(--muted);font-size:13px}
+.legend b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:26px 0 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat strong{display:block;font:600 24px/1.2 var(--serif)}
+.stat span{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card:hover{border-color:var(--faint)}
+.card h3{font:600 17px/1.3 var(--serif);margin:0 0 2px;overflow-wrap:anywhere}
+.card .row{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:13px;color:var(--muted)}
+.item{display:flex;gap:10px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item .grow{flex:1;min-width:0;overflow-wrap:anywhere}
+.item small{display:block;color:var(--faint)}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 9px;white-space:nowrap;color:var(--muted)}
+.chip.on{color:var(--text);border-color:var(--clay)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--draft);margin-right:2px}
+.dot.DONE{background:var(--done)} .dot.DOING{background:var(--clay)} .dot.BLOCKED{background:var(--block)} .dot.TODO{background:var(--draft)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 16px}
+details.run{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+details.run summary{cursor:pointer;list-style:none}
+details.run summary::-webkit-details-marker{display:none}
+details.run .bartrack{height:6px;background:var(--raise);border-radius:3px;margin-top:10px;overflow:hidden}
+details.run .bartrack i{display:block;height:100%;background:var(--done)}
+details.run .tasks{margin-top:10px}
+.day{color:var(--muted);font-size:13px;margin:18px 0 4px}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:22px}
+.empty h2{margin:0 0 8px}
+code,pre{font-family:var(--mono);font-size:13px}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:10px 0 0}
+.err{color:var(--block)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:20px;width:min(460px,92vw)}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:10px 0 6px}
+dialog .actions{justify-content:flex-end}
+@media (max-width:560px){h1{font-size:25px}.pct{font-size:44px}.bar{padding:10px 14px}main{padding:22px 14px 70px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a class="brand" href="#/">StageSet</a>
+    <select id="switch" class="ctl" aria-label="Switch project"></select>
+    <button id="add" class="ctl primary" type="button">Add repo</button>
+    <button id="refresh" class="ctl" type="button">Refresh</button>
+  </div>
+</header>
+<main id="app"></main>
+
+<dialog id="dlg">
+  <form method="dialog" id="addForm">
+    <strong style="font:600 18px var(--serif)">Add a repo</strong>
+    <p class="muted" style="margin:6px 0 0">Use <code>owner/repo</code>, <code>owner/repo@branch</code>, or a GitHub link. The repo must be public and have <code>.stageset/report.json</code>.</p>
+    <input id="repoInput" type="text" placeholder="toshuu/stageset" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div id="addMsg" class="err" role="alert"></div>
+    <div class="actions">
+      <button class="ctl" value="cancel" type="button" id="cancel">Cancel</button>
+      <button class="ctl primary" type="submit">Add repo</button>
+    </div>
+  </form>
+</dialog>
+<input type="file" id="file" accept="application/json,.json" hidden>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const arr = (v) => (Array.isArray(v) ? v : []);
+const app = $("#app");
+const cache = new Map();   // key -> {report, error, at, url}
+let localReport = null;
+
+/* ---------- saved repos ---------- */
+const KEY = "stageset.repos";
+function loadRepos(){ try { const v = JSON.parse(localStorage.getItem(KEY) || "[]"); return Array.isArray(v) ? v.filter((x) => typeof x === "string") : []; } catch (e) { return []; } }
+function saveRepos(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) { /* storage blocked */ } }
+let repos = loadRepos();
+
+function parseRepo(input){
+  let s = String(input || "").trim().replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/\.git(?=$|[@/])/, "").replace(/\/+$/, "");
+  const m = s.match(/^([A-Za-z0-9_.-]+)\/([A-Za-z0-9_.-]+)(?:\/tree\/([^/@]+))?(?:@(.+))?$/);
+  if (!m) return null;
+  const branch = m[4] || m[3] || null;
+  return { owner: m[1], repo: m[2], branch, key: m[1] + "/" + m[2] + (branch ? "@" + branch : "") };
+}
+
+/* ---------- loading ---------- */
+async function loadReport(key, force){
+  const hit = cache.get(key);
+  if (hit && !force) return hit;
+  const r = parseRepo(key);
+  const entry = { report: null, error: null, at: Date.now(), url: "" };
+  if (!r) { entry.error = "Not a valid repo name."; cache.set(key, entry); return entry; }
+  const branches = r.branch ? [r.branch] : ["main", "master"];
+  for (const b of branches) {
+    const url = "https://raw.githubusercontent.com/" + r.owner + "/" + r.repo + "/" + encodeURIComponent(b) + "/.stageset/report.json";
+    entry.url = url;
+    try {
+      const res = await fetch(url + (force ? "?t=" + Date.now() : ""), { cache: "no-cache" });
+      if (!res.ok) { entry.error = "No report found (HTTP " + res.status + ")."; continue; }
+      const json = await res.json();
+      if (!json || typeof json.schema !== "string" || json.schema.indexOf("stageset-report/") !== 0) { entry.error = "The file is not a StageSet report."; continue; }
+      entry.report = json; entry.error = null; entry.branch = b;
+      break;
+    } catch (e) { entry.error = "Could not load the report. Check the repo is public and the name is right."; }
+  }
+  cache.set(key, entry);
+  return entry;
+}
+
+/* ---------- helpers ---------- */
+function tot(rep){
+  const sk = arr(rep.skeletons), t = rep.totals || {}, docs = arr(rep.runs);
+  const c = (p) => sk.filter((s) => s.phase === p).length;
+  const total = sk.length;
+  const done = c("done");
+  return { total, done, waiting: c("waiting"), draft: c("draft"),
+           pct: total ? Math.round(done / total * 100) : 0,
+           docsTotal: docs.length,
+           runsActive: t.runs_active != null ? t.runs_active : docs.filter((r) => r.status === "NOT_STARTED" || r.status === "IN_PROGRESS" || r.status === "BLOCKED").length,
+           sessions: t.sessions != null ? t.sessions : arr(rep.sessions).length };
+}
+const rel = (iso) => {
+  const t = Date.parse(iso); if (isNaN(t)) return "";
+  const s = Math.round((t - Date.now()) / 1000), f = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const a = Math.abs(s);
+  if (a < 90) return f.format(s, "second");
+  if (a < 5400) return f.format(Math.round(s / 60), "minute");
+  if (a < 129600) return f.format(Math.round(s / 3600), "hour");
+  return f.format(Math.round(s / 86400), "day");
+};
+const dayOf = (iso) => { const t = Date.parse(iso); return isNaN(t) ? "Undated" : new Date(t).toLocaleDateString("en", { weekday: "short", year: "numeric", month: "short", day: "numeric" }); };
+const phaseClass = (p) => ["done", "waiting", "draft"].indexOf(p) >= 0 ? p : "draft";
+const strip = (rep, sm) => {
+  const sk = arr(rep.skeletons);
+  if (!sk.length) return '<div class="strip' + (sm ? " sm" : "") + '"><i></i></div>';
+  return '<div class="strip' + (sm ? " sm" : "") + '" role="img" aria-label="' + tot(rep).done + " of " + sk.length + ' skeletons built">' +
+    sk.map((s) => '<i class="' + phaseClass(s.phase) + '" title="' + esc((s.title || s.path) + " - " + (s.phase || "draft")) + '"></i>').join("") + "</div>";
+};
+const legend = '<div class="legend"><span><b class="done"></b>Built</span><span><b class="waiting"></b>Waiting for code</span><span><b class="draft"></b>Draft</span></div>';
+const HOWTO = '<pre>python scripts/stageset-report.py\ngit add .stageset/report.json\ngit commit -m "Update StageSet report"\ngit push</pre>';
+
+/* ---------- views ---------- */
+function setSwitch(current){
+  const sel = $("#switch");
+  sel.innerHTML = '<option value="">All projects</option>' + repos.map((k) => '<option value="' + esc(k) + '">' + esc(k) + "</option>").join("");
+  if (current && repos.indexOf(current) < 0) sel.insertAdjacentHTML("beforeend", '<option value="' + esc(current) + '">' + esc(current) + "</option>");
+  sel.value = current || "";
+}
+
+async function viewHome(){
+  setSwitch("");
+  document.title = "StageSet";
+  if (!repos.length) {
+    app.innerHTML = '<h1>Where every project stands</h1><p class="sub">Read the status report of any repo that uses StageSet.</p>' +
+      '<div class="empty"><h2>No repos yet</h2><p class="muted" style="margin:0">Add a public repo. In that repo, make the report and push it:</p>' + HOWTO +
+      '<div class="actions"><button class="ctl primary" type="button" id="emptyAdd">Add repo</button><button class="ctl" type="button" id="emptyFile">Open a report file</button></div></div>';
+    $("#emptyAdd").onclick = openAdd; $("#emptyFile").onclick = () => $("#file").click();
+    return;
+  }
+  app.innerHTML = '<h1>All projects</h1><p class="sub">' + repos.length + " repo" + (repos.length === 1 ? "" : "s") + ' saved in this browser.</p><div class="grid" id="grid">' +
+    repos.map((k) => '<a class="card" href="#/' + esc(k) + '" data-k="' + esc(k) + '"><h3>' + esc(k) + '</h3><div class="muted" style="font-size:13px">Loading...</div></a>').join("") + "</div>" +
+    '<div class="actions"><button class="ctl" type="button" id="homeFile">Open a report file</button></div>';
+  $("#homeFile").onclick = () => $("#file").click();
+  repos.forEach(async (k) => {
+    const e = await loadReport(k, false);
+    const el = document.querySelector('.card[data-k="' + CSS.escape(k) + '"]');
+    if (!el) return;
+    if (!e.report) { el.innerHTML = "<h3>" + esc(k) + '</h3><div class="err" style="font-size:13px">' + esc(e.error) + "</div>"; return; }
+    const t = tot(e.report), run = arr(e.report.runs).find((r) => r.status === "IN_PROGRESS" || r.status === "BLOCKED");
+    el.innerHTML = "<h3>" + esc((e.report.project && e.report.project.name) || k) + '</h3><div class="muted" style="font-size:13px">' + esc(k) + "</div>" +
+      '<div style="margin-top:12px">' + strip(e.report, true) + "</div>" +
+      '<div class="row"><span>' + t.done + " of " + t.total + " built" + (t.waiting ? " - " + t.waiting + " waiting" : "") + "</span><span>" + esc(rel(e.report.generated_at)) + "</span></div>" +
+      (run ? '<div class="row"><span>' + esc(run.id) + " " + esc(String(run.status).toLowerCase().replace("_", " ")) + "</span><span>" + run.tasks_done + "/" + run.tasks_total + " tasks</span></div>" : "");
+  });
+}
+
+function timeline(rep){
+  const items = [];
+  arr(rep.sessions).forEach((s) => items.push({ d: s.date, tag: s.type || "session", main: s.summary || s.id, sub: s.id }));
+  arr(rep.commits).forEach((c) => items.push({ d: c.date, tag: "commit", main: c.subject, sub: c.sha }));
+  items.sort((a, b) => (Date.parse(b.d) || 0) - (Date.parse(a.d) || 0));
+  return items;
+}
+
+function renderDetail(rep, key, entry){
+  const t = tot(rep), p = rep.project || {};
+  const name = p.name || key || "Report";
+  document.title = name + " - StageSet";
+  const waiting = arr(rep.skeletons).filter((s) => s.phase === "waiting");
+  const rest = arr(rep.skeletons).filter((s) => s.phase !== "waiting");
+  const sk = (s) => '<div class="item"><span class="grow">' + esc(s.title || s.path) + "<small>" + esc(s.path) + '</small></span><span class="chip ' + (s.phase === "waiting" ? "on" : "") + '">rev ' + esc(s.implemented_revision) + " of " + esc(s.spec_revision) + '</span><span class="chip">' + esc(s.phase) + "</span></div>";
+  const runs = arr(rep.runs).map((r) => {
+    const pct = r.tasks_total ? Math.round(r.tasks_done / r.tasks_total * 100) : 0;
+    const cur = arr(r.tasks).find((k) => k.id === r.current_task);
+    return '<details class="run"' + (r.status === "IN_PROGRESS" || r.status === "BLOCKED" ? " open" : "") + "><summary><div class=\"item\" style=\"border:0;padding:0\"><span class=\"grow\"><strong>" + esc(r.id) + "</strong> " + esc(r.title) + "<small>" + esc(r.path) + '</small></span><span class="chip">' + pct + '%</span><span class="chip ' + (r.status === "IN_PROGRESS" ? "on" : "") + '">' + esc(String(r.status).toLowerCase().replace("_", " ")) + '</span></div><div class="bartrack"><i style="width:' + pct + '%"></i></div><div class="muted" style="font-size:13px;margin-top:6px">' + r.tasks_done + " of " + r.tasks_total + " tasks done" + (cur && r.status !== "DONE" ? " - now on " + esc(cur.id) + " " + esc(cur.title) : "") + '</div></summary><div class="tasks">' +
+      arr(r.tasks).map((k) => '<div class="item" style="padding:6px 0"><span class="dot ' + esc(k.status) + '"></span><span class="grow">' + esc(k.id) + " " + esc(k.title) + '</span><span class="faint" style="font-size:12px">' + esc(String(k.status).toLowerCase()) + "</span></div>").join("") + "</div></details>";
+  }).join("");
+  const active = arr(rep.runs).filter((r) => r.status === "NOT_STARTED" || r.status === "IN_PROGRESS" || r.status === "BLOCKED");
+  const nextPanel = active.length ? '<div class="panel" style="margin-bottom:10px">' + active.map((r) => {
+    const cur = arr(r.tasks).find((k) => k.id === r.current_task);
+    return '<div class="item"><span class="chip on">' + esc(r.id) + '</span><span class="grow">' + esc(r.current_task || "no task") + " " + esc(cur ? cur.title : "") + "<small>" + esc(r.status === "BLOCKED" ? "BLOCKED - stop and tell the user" : "next task for the weak model") + "</small></span></div>";
+  }).join("") + "</div>" : "";
+  const tl = timeline(rep), shown = tl.slice(0, 30);
+  let lastDay = "", tlHtml = "";
+  shown.forEach((i) => { const d = dayOf(i.d); if (d !== lastDay) { tlHtml += '<div class="day">' + esc(d) + "</div>"; lastDay = d; } tlHtml += '<div class="item"><span class="chip">' + esc(i.tag) + '</span><span class="grow">' + esc(i.main) + "<small>" + esc(i.sub) + "</small></span></div>"; });
+  const ideas = arr(rep.ideas);
+  const saved = key && repos.indexOf(key) >= 0;
+  app.innerHTML =
+    "<h1>" + esc(name) + '</h1><p class="sub">' + esc(p.repo || key || "Local file") + (p.branch ? " on " + esc(p.branch) : "") + (rep.generated_at ? " - report made " + esc(rel(rep.generated_at)) : "") + "</p>" +
+    '<div class="hero"><span class="pct">' + t.pct + '%</span><span class="muted">' + t.done + " of " + t.total + " skeletons built" + (t.waiting ? ", " + t.waiting + " waiting for code" : "") + "</span></div>" + strip(rep, false) + legend +
+    '<div class="stats"><div class="stat"><strong>' + t.waiting + "</strong><span>Waiting for code</span></div><div class=\"stat\"><strong>" + t.docsTotal + "</strong><span>ss-living-docs</span></div><div class=\"stat\"><strong>" + t.runsActive + "</strong><span>Open docs</span></div><div class=\"stat\"><strong>" + t.sessions + "</strong><span>Sessions</span></div><div class=\"stat\"><strong>" + arr(rep.commits).length + "</strong><span>Recent commits</span></div></div>" +
+    "<h2>Waiting for code</h2>" + (waiting.length ? '<div class="panel">' + waiting.map(sk).join("") + "</div>" : '<p class="muted">Nothing waiting. Every ready skeleton is built.</p>') +
+    "<h2>ss-living-doc</h2><p class=\"muted\" style=\"margin:0 0 10px\">Step lists that a weak coding model follows. One task at a time.</p>" + nextPanel + (runs || '<p class="muted">No ss-living-doc yet. A strong model writes one in <code>LivingDocs/</code>.</p>') +
+    "<h2>Timeline</h2>" + (tlHtml ? '<div class="panel">' + tlHtml + "</div>" + (tl.length > shown.length ? '<p class="faint">Showing ' + shown.length + " of " + tl.length + ".</p>" : "") : '<p class="muted">No sessions or commits in the report.</p>') +
+    "<h2>All skeletons</h2>" + (rest.length ? '<div class="panel">' + rest.map(sk).join("") + "</div>" : '<p class="muted">No other skeletons.</p>') +
+    "<h2>Ideas</h2>" + (ideas.length ? '<div class="panel">' + ideas.map((i) => '<div class="item"><span class="grow">' + esc(i.title) + "<small>" + esc(i.path) + "</small></span>" + (i.status ? '<span class="chip">' + esc(i.status) + "</span>" : "") + "</div>").join("") + "</div>" : '<p class="muted">No idea files.</p>') +
+    '<div class="actions">' + (key && !saved ? '<button class="ctl primary" type="button" id="save">Save to list</button>' : "") + (key && saved ? '<button class="ctl" type="button" id="remove">Remove from list</button>' : "") + (entry && entry.url ? '<a class="ctl" style="text-decoration:none" href="' + esc(entry.url) + '" target="_blank" rel="noopener noreferrer">Open raw report</a>' : "") + "</div>";
+  const sv = $("#save"); if (sv) sv.onclick = () => { repos = repos.concat([key]); saveRepos(repos); renderDetail(rep, key, entry); setSwitch(key); };
+  const rm = $("#remove"); if (rm) rm.onclick = () => { repos = repos.filter((k) => k !== key); saveRepos(repos); location.hash = "#/"; };
+}
+
+async function viewRepo(key, force){
+  const r = parseRepo(key);
+  if (!r) { app.innerHTML = '<div class="empty"><h2>Not a repo</h2><p class="muted" style="margin:0">Use owner/repo.</p></div>'; return; }
+  setSwitch(r.key);
+  app.innerHTML = '<h1>' + esc(r.key) + '</h1><p class="sub">Loading report...</p>';
+  const e = await loadReport(r.key, force);
+  if (location.hash.slice(2) !== r.key && decodeURIComponent(location.hash.slice(2)) !== r.key) return;
+  if (!e.report) {
+    app.innerHTML = '<h1>' + esc(r.key) + '</h1><div class="empty" style="margin-top:18px"><h2>' + esc(e.error) + '</h2><p class="muted">The viewer looks for <code>.stageset/report.json</code> on the <code>' + esc(r.branch || "main or master") + "</code> branch. In that repo, make the report and push it:</p>" + HOWTO + '<p class="faint" style="margin:10px 0 0">GitHub can take a few minutes to serve a new file. Private repos cannot load here. Use Open a report file instead.</p><div class="actions"><button class="ctl" type="button" id="retry">Try again</button><button class="ctl" type="button" id="viewFile">Open a report file</button></div></div>';
+    $("#retry").onclick = () => viewRepo(key, true); $("#viewFile").onclick = () => $("#file").click();
+    return;
+  }
+  renderDetail(e.report, r.key, e);
+}
+
+function route(force){
+  const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
+  if (h === "local" && localReport) { setSwitch(""); renderDetail(localReport, "", null); return; }
+  if (!h) { viewHome(); return; }
+  viewRepo(h, force);
+}
+
+/* ---------- events ---------- */
+const dlg = $("#dlg");
+function openAdd(){ $("#addMsg").textContent = ""; $("#repoInput").value = ""; if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); $("#repoInput").focus(); }
+$("#add").onclick = openAdd;
+$("#cancel").onclick = () => dlg.close();
+$("#addForm").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const r = parseRepo($("#repoInput").value);
+  if (!r) { $("#addMsg").textContent = "Use owner/repo, for example toshuu/stageset."; return; }
+  $("#addMsg").textContent = "Checking...";
+  const e = await loadReport(r.key, true);
+  if (!e.report) { $("#addMsg").textContent = e.error + " Make and push .stageset/report.json first."; return; }
+  if (repos.indexOf(r.key) < 0) { repos = repos.concat([r.key]); saveRepos(repos); }
+  dlg.close();
+  if (location.hash === "#/" + r.key) route(false); else location.hash = "#/" + r.key;
+});
+$("#switch").onchange = (ev) => { location.hash = ev.target.value ? "#/" + ev.target.value : "#/"; };
+$("#refresh").onclick = () => { cache.clear(); route(true); };
+$("#file").onchange = async (ev) => {
+  const f = ev.target.files && ev.target.files[0]; ev.target.value = "";
+  if (!f) return;
+  try {
+    const json = JSON.parse(await f.text());
+    if (!json || typeof json.schema !== "string" || json.schema.indexOf("stageset-report/") !== 0) throw new Error("bad");
+    localReport = json; location.hash = "#/local"; route(false);
+  } catch (e) { app.innerHTML = '<div class="empty"><h2>Not a StageSet report</h2><p class="muted" style="margin:0">Pick the file .stageset/report.json from a StageSet repo.</p></div>'; }
+};
+window.addEventListener("hashchange", () => route(false));
+route(false);
+</script>
+</body>
+</html>

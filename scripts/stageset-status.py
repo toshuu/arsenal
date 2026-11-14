@@ -252,7 +252,7 @@ def digest_content(events: list[dict[str, Any]], skeletons: list[dict[str, Any]]
     out += ["", "## Failing checks", ""]
     out.extend([f"- `{r['id']}` — `{r['skeleton']}`, `{r['check_id']}`, attempt {r['attempt']}." for r in failing[-20:]] or ["- None."])
     out += ["", "## Last 5 sessions", ""]
-    out.extend([f"- {e['id']} · {e['type']} · {e['summary'] or e['path'].stem}." for e in events[-5:][::-1]] or ["- None."])
+    out.extend([f"- {e['id']} · {e['type']} · {(e['summary'] or e['path'].stem).rstrip('.')}." for e in events[-5:][::-1]] or ["- None."])
     out += ["", "## Verified environment facts", ""]
     out.extend(fact_rows[-20:] or ["- None."])
     out += ["", "## Read next", "", "1. Read the rules for your role.", "2. Read the listed skeleton and idea files.", "3. Read linked run reports before you handle a blocker.", "4. Check `.stageset/facts.md` before you make an environment assumption.", ""]

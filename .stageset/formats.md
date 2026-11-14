@@ -164,7 +164,19 @@ Run `python scripts/stageset-status.py --validate` before you finish a work sess
 
 Keep one target source file per implementation skeleton. Keep the plan focused. If one source file is too large to plan as a whole, limit the skeleton to one named function in that file. Split unrelated files into separate skeletons.
 
-## 13. Rollback
+## 13. ss-living-doc
+
+An **ss-living-doc** is a step list for a weak coding model. The name means **StageSet living document**.
+
+- Store ss-living-doc files in `LivingDocs/`.
+- Name each file `SSLD-NNN-short-name.md`.
+- Start the file with `<!-- ss-living-doc v1 -->`.
+- Use `.stageset/ss-living-doc-format.md` and `.stageset/templates/ss-living-doc.md`.
+- Use `scripts/ss-living-doc.py` to lint, show one task, and sync STATE.
+
+An ss-living-doc is not a run report. A run report is evidence in `.stageset/runs/`. An ss-living-doc is a plan in `LivingDocs/`. Do not mix them.
+
+## 14. Rollback
 
 StageSet changes are normal Git commits. The repository must keep its history.
 

@@ -374,3 +374,20 @@ Use ASD-STE100-style English in all project documents, comments, skeletons, run 
 - State facts, assumptions, decisions, and questions separately.
 
 Keep code syntax, identifiers, and required technical terms exact.
+
+## 18. ss-living-doc
+
+An **ss-living-doc** is a step list for a weak coding model. The name means **StageSet living document**.
+
+- A strong planner writes the file.
+- A weak model follows one task at a time.
+- The file lives in `LivingDocs/`. The name starts with `SSLD-`.
+- The format is `.stageset/ss-living-doc-format.md`.
+- The template is `.stageset/templates/ss-living-doc.md`.
+- The tool is `scripts/ss-living-doc.py`.
+
+An ss-living-doc is not a run report. A run report is evidence in `.stageset/runs/`. An ss-living-doc is a plan in `LivingDocs/`.
+
+The planner reads the skeleton first. Then the planner writes the ss-living-doc. The coder runs `--next`, does one task, and runs `--sync`. The coder never edits STATE and never changes the RULES block.
+
+Run `python scripts/stageset-report.py` after you add or update an ss-living-doc. The viewer shows its status, current task, task progress, and timeline.

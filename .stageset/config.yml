@@ -23,6 +23,12 @@ runs:
   digest_file: ".stageset/DIGEST.md"
   max_attempts_per_check: 3
 
+living_docs:
+  runs_dir: "LivingDocs"
+  template: ".stageset/templates/ss-living-doc.md"
+  format: ".stageset/ss-living-doc-format.md"
+  report_file: ".stageset/report.json"
+
 skeletons:
   ready_statuses:
     - READY

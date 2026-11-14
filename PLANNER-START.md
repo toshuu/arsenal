@@ -16,13 +16,16 @@ Read these files first:
 6. `.stageset/config.yml`.
 7. `.stageset/sessions-tracker.md`.
 8. Open blockers and their run reports.
-9. Related idea files, skeletons, and real source files.
+9. `.stageset/ss-living-doc-format.md` when the work must go to a weak coding model.
+10. Related idea files, skeletons, and real source files.
 
 Follow `ideations-rules.md` for every planning session. Use ASD-STE100-style English in all saved documents and code comments.
 
 Read all open blockers and failed checks before you suggest a new design. Verify each assumption against a run report or a read-only probe.
 
 Do not save files during brainstorming. Save the agreed result only when I ask you to save or update it.
+
+When the work must go to a weak coding model, read `.stageset/ss-living-doc-format.md` and write an ss-living-doc in `LivingDocs/`. It is a plan, not a run report. Write the skeleton first. Keep the RULES block unchanged. Run `python scripts/ss-living-doc.py <file> --sync`, then the linter. Fix every ERROR and WARN.
 
 Create a session event file in `.stageset/sessions/` at the end of a focused planning session. Use `time: PENDING` if you cannot get the clock. Do not edit the generated tracker or digest.
 

@@ -1,0 +1,161 @@
+{
+  "schema": "stageset-report/1",
+  "generated_at": "2026-11-14T08:54:16Z",
+  "project": {
+    "name": "Arsenal",
+    "repo": "toshuu/arsenal",
+    "branch": "main"
+  },
+  "totals": {
+    "skeletons": 0,
+    "done": 0,
+    "waiting": 0,
+    "draft": 0,
+    "sessions": 7,
+    "runs": 1,
+    "runs_active": 1
+  },
+  "skeletons": [],
+  "runs": [
+    {
+      "id": "SSLD-001",
+      "path": "LivingDocs/SSLD-001-pocket-tts-phase-0.md",
+      "title": "Pocket TTS Phase 0 setup",
+      "status": "NOT_STARTED",
+      "current_task": "T001",
+      "skeleton": "-",
+      "tasks_total": 7,
+      "tasks_done": 0,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create the benchmark workspace",
+          "status": "TODO"
+        },
+        {
+          "id": "T002",
+          "title": "Record the environment versions",
+          "status": "TODO"
+        },
+        {
+          "id": "T003",
+          "title": "Install pocket-tts",
+          "status": "TODO"
+        },
+        {
+          "id": "T004",
+          "title": "Download the model files",
+          "status": "TODO"
+        },
+        {
+          "id": "T005",
+          "title": "Load the model one time",
+          "status": "TODO"
+        },
+        {
+          "id": "T006",
+          "title": "Create the fixed test-set manifest",
+          "status": "TODO"
+        },
+        {
+          "id": "T007",
+          "title": "Create the results schema",
+          "status": "TODO"
+        }
+      ]
+    }
+  ],
+  "ideas": [
+    {
+      "path": "Ideas/_index.md",
+      "title": "Ideas index",
+      "status": null
+    },
+    {
+      "path": "Ideas/pocket-tts-multilingual-optimization.md",
+      "title": "Pocket TTS Multilingual: Baseline, Potential, Optimization",
+      "status": "DISCOVERY"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "20261101-210000-MAINTENANCE",
+      "date": "2026-11-01T21:00:00+05:30",
+      "type": "maintenance",
+      "summary": "Initialize the StageSet starter workspace."
+    },
+    {
+      "id": "20261101-231947-MAINTENANCE",
+      "date": "2026-11-01T23:19:47+05:30",
+      "type": "maintenance",
+      "summary": "Replace sequential run IDs with timestamp IDs and make skeleton deviations explicit blockers."
+    },
+    {
+      "id": "20261113-200910-MAINTENANCE",
+      "date": "2026-11-13T20:09:10+05:30",
+      "type": "maintenance",
+      "summary": "Complete and review the evidence workflow. Add ChatGPT app instructions and improve StageSet validation."
+    },
+    {
+      "id": "20261113-200910-MAINTENANCE-02",
+      "date": "2026-11-13T20:09:10+05:30",
+      "type": "maintenance",
+      "summary": "Add run evidence, probes, verified facts, digests, validation, and generated event tracking."
+    },
+    {
+      "id": "20261113-200910-MAINTENANCE-03",
+      "date": "2026-11-13T20:09:10+05:30",
+      "type": "maintenance",
+      "summary": "Add automated GitHub Actions validation for StageSet syntax, generated files, and workspace rules."
+    },
+    {
+      "id": "20261113-201809-IDEATION",
+      "date": "2026-11-13T20:18:09+05:30",
+      "type": "ideation",
+      "summary": "Add the Pocket TTS multilingual baseline and optimization plan."
+    },
+    {
+      "id": "20261114-142345-MAINTENANCE",
+      "date": "2026-11-14T14:23:45+05:30",
+      "type": "maintenance",
+      "summary": "Update StageSet to the ss-living-doc system and add the Pocket TTS Phase 0 plan."
+    }
+  ],
+  "commits": [
+    {
+      "sha": "52f2142",
+      "date": "2026-11-13T20:22:19+05:30",
+      "subject": "Restore StageSet metadata on Pocket TTS idea"
+    },
+    {
+      "sha": "5073322",
+      "date": "2026-11-13T20:19:46+05:30",
+      "subject": "Real file manually uploaded."
+    },
+    {
+      "sha": "f03d4f2",
+      "date": "2026-11-13T20:18:14+05:30",
+      "subject": "Index Pocket TTS multilingual optimization idea"
+    },
+    {
+      "sha": "98a0abe",
+      "date": "2026-11-13T20:18:09+05:30",
+      "subject": "Record Pocket TTS ideation session"
+    },
+    {
+      "sha": "5d30396",
+      "date": "2026-11-13T20:18:01+05:30",
+      "subject": "Add Pocket TTS multilingual optimization idea"
+    },
+    {
+      "sha": "3429969",
+      "date": "2026-11-13T20:09:10+05:30",
+      "subject": "Install StageSet workspace system"
+    },
+    {
+      "sha": "7fbbaea",
+      "date": "2026-11-13T20:06:39+05:30",
+      "subject": "Initial commit"
+    }
+  ]
+}
