@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T15:09:07Z",
+  "generated_at": "2026-11-15T15:14:13Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -8,8 +8,8 @@
   },
   "totals": {
     "skeletons": 8,
-    "done": 6,
-    "waiting": 2,
+    "done": 8,
+    "waiting": 0,
     "draft": 0,
     "sessions": 38,
     "runs": 9,
@@ -21,10 +21,10 @@
       "id": "batched_stream",
       "path": "Skeletons/Code/batch/batched_stream.py",
       "title": "Implementation: batched streaming core",
-      "status": "READY",
+      "status": "DONE",
       "spec_revision": 4,
-      "implemented_revision": 3,
-      "phase": "waiting"
+      "implemented_revision": 4,
+      "phase": "done"
     },
     {
       "id": "bench_batch_server",
@@ -48,10 +48,10 @@
       "id": "probe_levers_inproc",
       "path": "Skeletons/Probes/probe_levers_inproc.md",
       "title": "Probe: in-process lever comparison",
-      "status": "READY",
+      "status": "DONE",
       "spec_revision": 1,
-      "implemented_revision": 0,
-      "phase": "waiting"
+      "implemented_revision": 1,
+      "phase": "done"
     },
     {
       "id": "probe_model",
@@ -496,7 +496,7 @@
       "current_task": "T005",
       "skeleton": "Skeletons/Code/batch/batched_stream.py",
       "tasks_total": 8,
-      "tasks_done": 4,
+      "tasks_done": 6,
       "tasks": [
         {
           "id": "T001",
@@ -526,17 +526,17 @@
         {
           "id": "T006",
           "title": "Point the picker at the new probe",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T007",
           "title": "Pick the clean operating point",
-          "status": "TODO"
+          "status": "BLOCKED"
         },
         {
           "id": "T008",
           "title": "Close the skeletons",
-          "status": "TODO"
+          "status": "DONE"
         }
       ]
     }
@@ -794,6 +794,11 @@
     }
   ],
   "commits": [
+    {
+      "sha": "3770127",
+      "date": "2026-11-15T15:09:13+00:00",
+      "subject": "Verify encoded voice profiles; set B=128; revert unsafe KV reuse"
+    },
     {
       "sha": "6223ef9",
       "date": "2026-11-15T14:57:01+00:00",

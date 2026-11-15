@@ -3,13 +3,13 @@
 @stageset kind: PROBE
 @stageset target: -
 @stageset source_idea: IDEA-0003
-@stageset status: READY
+@stageset status: DONE
 @stageset priority: P1
 @stageset spec_revision: 1
-@stageset implemented_revision: 0
+@stageset implemented_revision: 1
 @stageset planned_in: .stageset/sessions/ideation-phase-c-cleanup.md
 @stageset last_updated_in: .stageset/sessions/ideation-phase-c-cleanup.md
-@stageset implemented_in: -
+@stageset implemented_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->

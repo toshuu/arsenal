@@ -6,8 +6,7 @@ This file is generated. Do not edit it by hand.
 
 ## Ready skeletons
 
-- [P0] `Skeletons/Code/batch/batched_stream.py` (revision 4, implemented 3).
-- [P1] `Skeletons/Probes/probe_levers_inproc.md` (revision 1, implemented 0).
+- None.
 
 ## Open blockers
 

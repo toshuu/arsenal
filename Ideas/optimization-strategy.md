@@ -349,6 +349,7 @@ Open items before a default is set:
 3. Keep `max_first_tokens=None` as the default. A cap truncates the text. The
    streaming server must generate later chunks to speak the full text.
 4. Confirm B=128 with voice 3.0 s in the clean test.
+- **Selected (user, 2026-11-15):** T4 operating point **voice 4.0 s, cap 16, B=128** (normal path baseline). In-proc lever probe biased (FACT-0023); sustained normal-path 5 bursts p95 342-406 ms, 101-125/128 <350 (FACT-0027). Target may increase with efficiency work. Conditioned-KV reuse is future work for margin.
 
 ## 14. Voice profiles (WIP)
 

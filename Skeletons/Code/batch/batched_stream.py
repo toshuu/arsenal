@@ -3,13 +3,13 @@
 @stageset kind: IMPLEMENTATION
 @stageset target: Code/batch/batched_stream.py
 @stageset source_idea: IDEA-0003
-@stageset status: READY
+@stageset status: DONE
 @stageset priority: P0
 @stageset spec_revision: 4
-@stageset implemented_revision: 3
+@stageset implemented_revision: 4
 @stageset planned_in: .stageset/sessions/ideation-batch-server.md
-@stageset last_updated_in: .stageset/sessions/ideation-phase-c-cleanup.md
-@stageset implemented_in: .stageset/sessions/coding-ssld-007-prefill-levers.md
+@stageset last_updated_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md
+@stageset implemented_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->

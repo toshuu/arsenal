@@ -4,6 +4,7 @@ Run: python Code/probes/pick_lever.py
 Prints: BEST voice=... cap=... or NO SAFE PAIR
 """
 
+import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -13,7 +14,10 @@ PATH = REPO / "Code" / "probes" / "out" / "probe_prefill_random.json"
 
 
 def main() -> int:
-    data = json.loads(PATH.read_text())
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--path", default=str(PATH))
+    args = parser.parse_args()
+    data = json.loads(Path(args.path).read_text())
     groups = defaultdict(dict)
     for row in data["results"]:
         groups[(row["voice_seconds"], row["first_tokens"])][row["batch"]] = row

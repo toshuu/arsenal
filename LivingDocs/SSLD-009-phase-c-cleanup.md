@@ -5,7 +5,7 @@
 doc_id: SSLD-009
 status: BLOCKED
 current_task: T005
-tasks_done: 4
+tasks_done: 6
 tasks_total: 8
 skeleton: Skeletons/Code/batch/batched_stream.py
 spec_revision: 4
@@ -265,19 +265,19 @@ if_fail: Read the last stdout line. Run `verify:` again. If a CUDA OOM happened,
 result: False
 
 ### T006: Point the picker at the new probe
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/probes/pick_lever.py
 context: Add a `--path` argument. Keep the same pick rule: p95 under 350 ms at B=96 and B=128, under-350 fraction at least 0.95.
 do:
-- [ ] 1. EDIT the import line `from collections import defaultdict` and add the argparse import above it.
+- [x] 1. EDIT the import line `from collections import defaultdict` and add the argparse import above it.
 
    ```python
    import argparse
    from collections import defaultdict
    ```
 
-- [ ] 2. EDIT the line `    data = json.loads(PATH.read_text())` and replace it with the block below.
+- [x] 2. EDIT the line `    data = json.loads(PATH.read_text())` and replace it with the block below.
 
    ```python
        parser = argparse.ArgumentParser()
@@ -286,46 +286,46 @@ do:
        data = json.loads(Path(args.path).read_text())
    ```
 
-- [ ] 3. RUN `python -m py_compile Code/probes/pick_lever.py`.
+- [x] 3. RUN `python -m py_compile Code/probes/pick_lever.py`.
 
 verify: `python -m py_compile Code/probes/pick_lever.py; echo COMPILED`
 expect: `COMPILED`
 if_fail: Read the traceback. Fix only the two edits. Run `verify:` again.
-result:
+result: COMPILED
 
 ### T007: Pick the clean operating point
-status: TODO
-blocked_reason:
+status: BLOCKED
+blocked_reason: 3.0/16 p95 B96=321.93 B128=408.45>350 in inproc probe (biased, FACT-0023). User selected B=128, voice 4.0s, cap 16 (FACT-0027).
 file: Code/probes/pick_lever.py
 context: Run the picker on the in-process JSON. Use voice 3.0 s if it passes both batch sizes. Record the choice.
 do:
-- [ ] 1. RUN `python Code/probes/pick_lever.py --path Code/probes/out/probe_levers_inproc.json`.
-- [ ] 2. CHECK that voice 3.0 s and cap 16 is under 350 ms at B=96 and B=128.
-- [ ] 3. APPEND one fact row to `.stageset/facts.md` for the selected operating point.
-- [ ] 4. APPEND a short note to `Ideas/optimization-strategy.md` section 13 with the chosen point.
+- [x] 1. RUN `python Code/probes/pick_lever.py --path Code/probes/out/probe_levers_inproc.json`.
+- [x] 2. CHECK that voice 3.0 s and cap 16 is under 350 ms at B=96 and B=128.
+- [x] 3. APPEND one fact row to `.stageset/facts.md` for the selected operating point.
+- [x] 4. APPEND a short note to `Ideas/optimization-strategy.md` section 13 with the chosen point.
 
 verify: `python -c "import json; d=json.load(open('Code/probes/out/probe_levers_inproc.json')); g={(r['voice_seconds'],r['first_tokens'],r['batch']):r['p95_ms'] for r in d['results']}; print(g[(3.0,16,96)] < 350 and g[(3.0,16,128)] < 350)"`
 expect: `True`
 if_fail: Read the p95 values. If 3.0 s fails, set `status: BLOCKED` and write both values in `blocked_reason:`.
-result:
+result: False
 also_edit: .stageset/facts.md; Ideas/optimization-strategy.md
 
 ### T008: Close the skeletons
-status: TODO
+status: DONE
 blocked_reason:
 file: Skeletons/Code/batch/batched_stream.py
 also_edit: Skeletons/Probes/probe_levers_inproc.md
 context: Set both skeletons to DONE. Advance `batched_stream` to implemented revision 4.
 do:
-- [ ] 1. EDIT `@stageset status: READY` to `@stageset status: DONE` in `Skeletons/Code/batch/batched_stream.py`.
-- [ ] 2. EDIT `@stageset implemented_revision: 3` to `@stageset implemented_revision: 4` in `Skeletons/Code/batch/batched_stream.py`.
-- [ ] 3. EDIT `@stageset implemented_in: .stageset/sessions/coding-ssld-007-prefill-levers.md` to `@stageset implemented_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md` in `Skeletons/Code/batch/batched_stream.py`.
-- [ ] 4. EDIT `@stageset last_updated_in: .stageset/sessions/ideation-phase-c-cleanup.md` to `@stageset last_updated_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md` in `Skeletons/Code/batch/batched_stream.py`.
-- [ ] 5. EDIT `@stageset status: READY` to `@stageset status: DONE` in `Skeletons/Probes/probe_levers_inproc.md`.
-- [ ] 6. EDIT `@stageset implemented_revision: 0` to `@stageset implemented_revision: 1` in `Skeletons/Probes/probe_levers_inproc.md`.
-- [ ] 7. EDIT `@stageset implemented_in: -` to `@stageset implemented_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md` in `Skeletons/Probes/probe_levers_inproc.md`.
+- [x] 1. EDIT `@stageset status: READY` to `@stageset status: DONE` in `Skeletons/Code/batch/batched_stream.py`.
+- [x] 2. EDIT `@stageset implemented_revision: 3` to `@stageset implemented_revision: 4` in `Skeletons/Code/batch/batched_stream.py`.
+- [x] 3. EDIT `@stageset implemented_in: .stageset/sessions/coding-ssld-007-prefill-levers.md` to `@stageset implemented_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md` in `Skeletons/Code/batch/batched_stream.py`.
+- [x] 4. EDIT `@stageset last_updated_in: .stageset/sessions/ideation-phase-c-cleanup.md` to `@stageset last_updated_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md` in `Skeletons/Code/batch/batched_stream.py`.
+- [x] 5. EDIT `@stageset status: READY` to `@stageset status: DONE` in `Skeletons/Probes/probe_levers_inproc.md`.
+- [x] 6. EDIT `@stageset implemented_revision: 0` to `@stageset implemented_revision: 1` in `Skeletons/Probes/probe_levers_inproc.md`.
+- [x] 7. EDIT `@stageset implemented_in: -` to `@stageset implemented_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md` in `Skeletons/Probes/probe_levers_inproc.md`.
 
 verify: `python scripts/stageset-status.py --validate`
 expect: `StageSet validation passed.`
 if_fail: Read the validation error. Fix only the metadata lines. Run `verify:` again.
-result:
+result: StageSet validation passed.
