@@ -352,11 +352,12 @@ Open items before a default is set:
 
 ## 14. Voice profiles (WIP)
 
-- Goal: compute voice conditioning once, save/load forever; reuse conditioned KV state per burst so the voice prompt is not recomputed each burst. Keep normal 4.0 s path when no profile is chosen.
-- Usage: see `Code/batch/VOICE_PROFILES.md`.
+- Goal: save voice data once and reuse forever. Keep normal 4.0 s path when no profile is chosen.
+- Usage: `Code/batch/VOICE_PROFILES.md`.
   - Normal: `BatchedStream(model, voice=wav, voice_seconds=4.0, ...)`
-  - Create profile once: `stream.save_voice_profile(path, conditioned=True)`
-  - Use profile: `BatchedStream(model, voice_profile=path, ...)` (opt-in)
-- Impl (WIP, `Code/batch/batched_stream.py`, commit `cb7cd55`): `save_voice_profile(..., conditioned=True)` stores encoded voice + flow-LM KV state; `BatchedStream(voice_profile=...)` clones/restores state per batch and conditions only text.
-- T4 FP16 probe (4.0 s, cap 16, `20261115-202240-RUN`): B=96 p95 213-256 ms (avg 232.8) vs normal 300.9 ms, 96/96 <350. Capacity: B=128 p95 277 ms (383/384 <350, 99.7%), B=144 p95 307 ms but 95.8% <350.
-- Open: temp=0 waveform parity vs normal not confirmed; needs formal check/SSLD, quality validation, and sustained/repeat confirmation.
+  - Create profile once: `stream.save_voice_profile(path)` (stores encoded voice prompt)
+  - Use profile: `BatchedStream(model, voice_profile=path, ...)` (opt-in, skips WAV read/cut/encode)
+- Selected operating point (user): T4, 4.0 s, cap 16, **B=128** now; may increase with more efficiency work.
+- Impl (WIP, `Code/batch/batched_stream.py`): encoded voice profile load/save + parity-correct normal stream path. Attempted per-burst conditioned-KV reuse gave TTFA gains but failed temp=0 parity/padding correctness; reverted to safe path (future work).
+- Measured (`20261115-203726-RUN`): encoded profile parity max abs diff 0.0 (temp 0, 4 texts). Sustained normal-path B=128 5 bursts: p95 342.0–405.8 ms, 101–125/128 <350.
+- Exploratory conditioned-KV probe (`20261115-202240-RUN`, FACT-0024/0025): B=96 p95 avg 232.8 ms vs 300.9; B=128 p95 277 ms 99.7% <350. Not parity-confirmed; needs correct impl.

@@ -213,37 +213,17 @@ class BatchedStream:
         device = self.device
         dim = flow_lm.dim
 
-        use_profile_state = self.voice_state is not None
-        if use_profile_state:
-            text_batch, text_pad, token_counts = self._build_text_batch(texts)
-            if max_frames is None:
-                max_frames = min(128, max(model._estimate_max_gen_len(c) for c in token_counts) + 8)
-            vlen = self._voice_state_len()
-            seq_len = vlen + text_batch.shape[1] + max_frames + 4
-            state = _clone_state_to_batch(self.voice_state, batch_size, seq_len, device)
-            set_state_padding(state, text_pad)
-            empty_tokens = torch.empty(batch_size, 0, dtype=torch.int64, device=device)
-            empty_latents = torch.empty(batch_size, 0, flow_lm.ldim, dtype=text_batch.dtype, device=device)
-            empty_audio = torch.empty(batch_size, 0, dim, dtype=text_batch.dtype, device=device)
-            model._run_flow_lm_and_increment_step(
-                model_state=state,
-                text_tokens=empty_tokens,
-                backbone_input_latents=empty_latents,
-                audio_conditioning=text_batch,
-            )
-            prefix = None
-        else:
-            prefix, pad, token_counts = self._build_prefixes(texts)
-            if max_frames is None:
-                max_frames = min(128, max(model._estimate_max_gen_len(c) for c in token_counts) + 8)
-            state = init_states(flow_lm, batch_size, prefix.shape[1] + max_frames + 2)
-            set_state_padding(state, pad)
-            empty_tokens = torch.empty(batch_size, 0, dtype=torch.int64, device=device)
-            empty_audio = torch.empty(batch_size, 0, dim, dtype=prefix.dtype, device=device)
+        prefix, pad, token_counts = self._build_prefixes(texts)
+        if max_frames is None:
+            max_frames = min(128, max(model._estimate_max_gen_len(c) for c in token_counts) + 8)
+        state = init_states(flow_lm, batch_size, prefix.shape[1] + max_frames + 2)
+        set_state_padding(state, pad)
 
         mimi_steps = int(model.mimi.encoder_frame_rate / model.mimi.frame_rate)
         mimi_state = init_states(model.mimi, batch_size, (max_frames + 4) * mimi_steps)
 
+        empty_tokens = torch.empty(batch_size, 0, dtype=torch.int64, device=device)
+        empty_audio = torch.empty(batch_size, 0, dim, dtype=prefix.dtype, device=device)
         latent = flow_lm.bos_emb.view(1, 1, -1).expand(batch_size, 1, -1)
         audio_chunks: list[list[torch.Tensor]] = [[] for _ in range(batch_size)]
         countdown = torch.full((batch_size,), -1, dtype=torch.long, device=device)
@@ -252,15 +232,11 @@ class BatchedStream:
         t0 = time.perf_counter()
 
         for step in range(max_frames):
-            if use_profile_state:
-                conditioning = empty_audio
-            else:
-                conditioning = prefix if step == 0 else empty_audio
             latent, is_eos = model._run_flow_lm_and_increment_step(
                 model_state=state,
                 text_tokens=empty_tokens,
                 backbone_input_latents=latent,
-                audio_conditioning=conditioning,
+                audio_conditioning=prefix if step == 0 else empty_audio,
             )
             eligible = torch.full_like(
                 countdown, step >= model._MIN_FRAMES_BEFORE_EOS, dtype=torch.bool

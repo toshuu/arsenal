@@ -4,7 +4,7 @@
 
 Use one voice in two ways:
 1. **Normal path (default):** give a voice WAV. The stream encodes the voice once at init and uses it for bursts. Use `voice_seconds=4.0` as the default operating point on T4.
-2. **Conditioned profile (opt-in):** compute the voice conditioning once, save it, and reuse it. Each burst restores the conditioned KV state and runs text only. This removes the per-burst voice-prompt step and lowers TTFA.
+2. **Voice profile (opt-in):** compute the encoded voice prompt once, save it, and load it later. This skips WAV read/cut/encode on startup. The normal batched conditioning path still runs per burst.
 
 Both modes stay available. No profile = normal path.
 
@@ -22,19 +22,16 @@ stream = BatchedStream(
 audio = stream.stream(texts, on_chunk=callback)
 ```
 
-## Create a conditioned profile (once)
+## Create a profile (once)
 
 ```python
 from batch.batched_stream import BatchedStream
 
-# Build from a voice WAV (same cut/order as normal path).
 stream = BatchedStream(model, voice="path/to/voice.wav", voice_seconds=4.0)
-stream.save_voice_profile("profiles/my_voice.pt", conditioned=True)
+stream.save_voice_profile("profiles/my_voice.pt")
 ```
 
-`conditioned=True` saves encoded voice data and the voice-conditioned flow-LM KV state.
-
-## Use a conditioned profile
+## Use a profile
 
 ```python
 from batch.batched_stream import BatchedStream
@@ -47,16 +44,20 @@ stream = BatchedStream(
 audio = stream.stream(texts, on_chunk=callback)
 ```
 
-`voice_seconds` comes from the profile. You can keep many pre-made profiles and select by request.
+`voice_seconds` comes from the profile. Keep many pre-made profiles and select by request.
 
-## Measured (T4, FP16, voice 4.0 s, cap 16, unique text, streaming)
+## Selected operating point (current)
 
-- TTFA B=96 (5 bursts): profile p95 avg 232.8 ms (96/96 <350) vs normal 300.9 ms. (FACT-0024, run `20261115-202240-RUN`)
-- Capacity with profile (3 rounds): B=128 p95 277 ms, 383/384 <350 (99.7%); B=144 p95 307 ms, 95.8% <350. (FACT-0025)
+- T4, FP16, streaming, unique text, voice 4.0 s, cap 16, **B=128 selected** (user). May increase with further efficiency work.
 
-## Status and caveats
+## Measured
 
-- WIP implementation in `Code/batch/batched_stream.py` (commit `cb7cd55`).
-- Temp=0 waveform parity vs normal path is not confirmed.
+- Encoded profile parity (temp 0, FP16, 4 texts, cap 16): max abs diff 0.0 vs normal, same lengths. (FACT-0026, run `20261115-203726-RUN`)
+- Sustained normal-path check, T4 FP16, 4.0 s/cap 16, B=128, 5 bursts: p95 342.0–405.8 ms, under-350 101–125/128. (FACT-0027, run `20261115-203726-RUN`)
+- Earlier conditioned-KV reuse probe showed TTFA/capacity gains but waveform parity was not confirmed and batched text-padding correctness failed; stream reverted to safe path. (FACT-0024/0025 marked exploratory)
+
+## Caveats
+
+- `Code/batch/batched_stream.py` is WIP.
 - `max_first_tokens` truncates the first text chunk; stream later chunks in production.
-- Opt-in: do not pass `voice_profile` to keep the normal 4.0 s path.
+- Profile now stores/reuses encoded voice prompt. Per-burst conditioned-KV reuse is future work.

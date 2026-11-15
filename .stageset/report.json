@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T14:56:56Z",
+  "generated_at": "2026-11-15T15:09:07Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -787,13 +787,18 @@
       "summary": "Plan the Phase C cleanup: cut before pause and in-process lever probe."
     },
     {
-      "id": "20261115-194500-CODING",
-      "date": "2026-11-15T19:45:00+05:30",
+      "id": "20261115-204000-CODING",
+      "date": "2026-11-15T20:40:00+05:30",
       "type": "coding",
-      "summary": "Start voice profiles (disk + conditioned-state reuse) in batched_stream."
+      "summary": "Formalize encoded voice profiles; revert unsafe conditioned-KV path; record B=128."
     }
   ],
   "commits": [
+    {
+      "sha": "6223ef9",
+      "date": "2026-11-15T14:57:01+00:00",
+      "subject": "Document voice profile usage and sync StageSet"
+    },
     {
       "sha": "10ff12e",
       "date": "2026-11-15T14:54:42+00:00",

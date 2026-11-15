@@ -19,7 +19,7 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
-- 20261115-194500-CODING · CODING · Start voice profiles (disk + conditioned-state reuse) in batched_stream.
+- 20261115-204000-CODING · CODING · Formalize encoded voice profiles; revert unsafe conditioned-KV path; record B=128.
 - 20261115-185500-IDEATION · IDEATION · Plan the Phase C cleanup: cut before pause and in-process lever probe.
 - 20261115-185100-PUSH · PUSH · Push the voice gap investigation and refreshed StageSet report.
 - 20261115-184910-CODING · CODING · Explain the voice length TTFA gap as a cross-process measurement bias.
@@ -27,8 +27,6 @@ This file is generated. Do not edit it by hand.
 
 ## Verified environment facts
 
-| FACT-0005 | 2026-11-15 | On CPU, `generate_audio_stream` gives the first 1920-sample chunk after 361.6 ms. A full 2.48 s generation takes 1.606 s (RTF 0.6476). Leading silence is 5.5 ms. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
-| FACT-0006 | 2026-11-15 | `generate_audio` has no batch argument and the model has no name that contains `batch`. The codec uses streaming modules. The loaded model reports `training: True`. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0007 | 2026-11-15 | On one Tesla T4 with 3 warmup runs and 20 measured streams: p50 first chunk 47.942 ms, p95 56.273 ms, p50 RTF 0.234, p95 RTF 0.258, peak allocated VRAM 496.0 MB, peak reserved 586.0 MB, load 0.991 s. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN.md` |
 | FACT-0008 | 2026-11-15 | One full `generate_audio` run on T4 gave 278.2 ms leading silence. The stream path gave p50 50.5 ms first non-silent time. The two values disagree. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN-02.md` |
 | FACT-0009 | 2026-11-15 | Phase B lockstep batched B=32 on one T4: p95 TTFA 327.0 ms, 156/160 rows under 350 ms, max 404.8 ms, RTF 0.013, peak VRAM 2247 MB. Parity vs B=1: max diff 1.07e-04, correlation 1.0. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
@@ -45,8 +43,10 @@ This file is generated. Do not edit it by hand.
 | FACT-0021 | 2026-11-15 | Tesla T4, FP16, sustained 6 bursts, B=128, voice 3.0 s, cap 16: after warmup p95 TTFA is ~392 ms and ~103/128 rows are under 350 ms. B=128 is not a safe sustained operating point on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0022 | 2026-11-15 | Tesla T4, FP16, sustained alternating 5 bursts, B=96: voice 4.0/cap 16 gives p95 276-341 ms and 96/96 rows under 350 ms in every burst. Voice 3.0/cap 16 gives p95 316-336 ms and 94-96/96 rows under 350 ms. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0023 | 2026-11-15 | A 24-config interleaved in-process probe (3 bursts, B=96/128) produced inflated p95 values and reversed the 2.0 vs 4.0 order at B=96 cap 16. Cross-process and long interleaved comparisons are biased; short sustained alternating checks are more reliable for ranking on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
-| FACT-0024 | 2026-11-15 | T4, FP16, B=96, voice 4.0 s, cap 16, 5 alternating bursts: conditioned voice profile (KV reused, text per burst) gives p50 121-126 ms, p95 213-256 ms (avg 232.8), 96/96 <350 ms; normal path gives p95 avg 300.9 ms. ~68 ms avg p95 gain. | Project | CURRENT | `.stageset/runs/20261115-202240-RUN.md` |
-| FACT-0025 | 2026-11-15 | T4, FP16, voice 4.0 s, cap 16, conditioned profile, 3 randomized rounds: B=96 p95 221 ms 100%<350, B=112 p95 294 ms 99.7%, B=128 p95 277 ms 99.7%, B=144 p95 307 ms 95.8%, B=160 p95 402 ms 85.8%. | Project | CURRENT | `.stageset/runs/20261115-202240-RUN.md` |
+| FACT-0024 | 2026-11-15 | Exploratory: conditioned-KV profile probe (KV reused, text per burst) showed T4 B=96 p95 avg 232.8 ms vs normal 300.9 ms. Waveform parity/padding correctness not confirmed; stream reverted. | Project | EXPLORATORY | `.stageset/runs/20261115-202240-RUN.md` |
+| FACT-0025 | 2026-11-15 | Exploratory conditioned-KV probe, T4 FP16 4.0s/cap16, 3 rounds: B=128 p95 277 ms 99.7% <350. Not parity-confirmed; stream reverted. | Project | EXPLORATORY | `.stageset/runs/20261115-202240-RUN.md` |
+| FACT-0026 | 2026-11-15 | Encoded voice profile load/save is waveform-identical to normal voice path at temp 0 on T4 FP16 (4 texts, 4.0 s, cap 16): max abs diff 0.0, same lengths. | Project | CURRENT | `.stageset/runs/20261115-203726-RUN.md` |
+| FACT-0027 | 2026-11-15 | T4 FP16, voice 4.0 s, cap 16, B=128, normal path, 5 sustained bursts: p95 342.0, 370.2, 392.9, 375.6, 342.0 ms; under-350 101,121,120,121,125 / 128. B=128 selected as current operating point by user. | Project | CURRENT | `.stageset/runs/20261115-203726-RUN.md` |
 
 ## Read next
 
