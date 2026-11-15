@@ -19,11 +19,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-194500-CODING · CODING · Start voice profiles (disk + conditioned-state reuse) in batched_stream.
 - 20261115-185500-IDEATION · IDEATION · Plan the Phase C cleanup: cut before pause and in-process lever probe.
 - 20261115-185100-PUSH · PUSH · Push the voice gap investigation and refreshed StageSet report.
 - 20261115-184910-CODING · CODING · Explain the voice length TTFA gap as a cross-process measurement bias.
 - 20261115-184600-PUSH · PUSH · Push the randomized lever probe and the B=128 safe pair to origin/main.
-- 20261115-184344-CODING · CODING · Run the randomized lever probe and pick voice 4.0 s with a 16-token cap.
 
 ## Verified environment facts
 
