@@ -1,0 +1,24 @@
+[
+  {
+    "B": 32,
+    "prep_text_ms": 17.77,
+    "state_ms": 2.84,
+    "cond_ms": 59.44,
+    "flow0_ms": 17.05,
+    "mimi0_ms": 56.15,
+    "ttfa_compute_ms": 153.33,
+    "flow_avg_ms": 17.11,
+    "mimi_avg_ms": 17.1
+  },
+  {
+    "B": 128,
+    "prep_text_ms": 65.94,
+    "state_ms": 8.96,
+    "cond_ms": 36.23,
+    "flow0_ms": 19.4,
+    "mimi0_ms": 55.01,
+    "ttfa_compute_ms": 185.63,
+    "flow_avg_ms": 18.55,
+    "mimi_avg_ms": 38.61
+  }
+]

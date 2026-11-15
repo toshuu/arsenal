@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T17:49:36Z",
+  "generated_at": "2026-11-15T18:02:57Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -12,8 +12,8 @@
     "waiting": 0,
     "draft": 0,
     "sessions": 47,
-    "runs": 10,
-    "runs_active": 1,
+    "runs": 11,
+    "runs_active": 2,
     "results": 3
   },
   "skeletons": [
@@ -581,6 +581,43 @@
           "status": "TODO"
         }
       ]
+    },
+    {
+      "id": "SSLD-011",
+      "path": "LivingDocs/SSLD-011-shrink-model-tests.md",
+      "title": "Shrink-model tests (multilingual-safe, sideline)",
+      "status": "IN_PROGRESS",
+      "current_task": "T003",
+      "skeleton": "none",
+      "tasks_total": 5,
+      "tasks_done": 5,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Inspect available pocket-tts models/variants",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Baseline multilingual component timing (current model)",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Try english small variants as reference (speed/B upper bound)",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Decoder/flow component size and timing detail",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Record facts and close sideline",
+          "status": "DONE"
+        }
+      ]
     }
   ],
   "ideas": [
@@ -891,6 +928,16 @@
   ],
   "commits": [
     {
+      "sha": "e23304f",
+      "date": "2026-11-15T17:49:53+00:00",
+      "subject": "StageSet: add FACT-0041 TTFA breakdown"
+    },
+    {
+      "sha": "293fe3d",
+      "date": "2026-11-15T17:49:37+00:00",
+      "subject": "StageSet: TTFA/steady breakdown and bottleneck analysis"
+    },
+    {
       "sha": "6c820be",
       "date": "2026-11-15T17:46:14+00:00",
       "subject": "StageSet: sideline wrap-up, return to main path"
@@ -1079,16 +1126,6 @@
       "sha": "11a47fa",
       "date": "2026-11-15T07:43:13+00:00",
       "subject": "Add T4 GPU baseline and results panel"
-    },
-    {
-      "sha": "d0bd753",
-      "date": "2026-11-15T07:35:20+00:00",
-      "subject": "Record the SSLD-003 push"
-    },
-    {
-      "sha": "9af771c",
-      "date": "2026-11-15T07:35:07+00:00",
-      "subject": "Complete SSLD-003 benchmark harness workspace"
     }
   ]
 }

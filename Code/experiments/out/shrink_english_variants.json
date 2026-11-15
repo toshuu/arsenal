@@ -1,0 +1,45 @@
+{
+  "variants": [
+    {
+      "variant": "english_18m_2026-10",
+      "measure": {
+        "B": 32,
+        "p50": 94.73,
+        "p95": 115.05,
+        "n": 64
+      },
+      "ok": true
+    },
+    {
+      "variant": "english_18m_refl_2026-10",
+      "measure": {
+        "B": 32,
+        "p50": 73.31,
+        "p95": 75.66,
+        "n": 64
+      },
+      "ok": true
+    },
+    {
+      "variant": "english_7m_2026-10",
+      "measure": {
+        "B": 32,
+        "p50": 80.07,
+        "p95": 84.39,
+        "n": 64
+      },
+      "ok": true
+    },
+    {
+      "variant": "english_2m_2026-10",
+      "measure": {
+        "B": 32,
+        "p50": 76.16,
+        "p95": 78.33,
+        "n": 64
+      },
+      "ok": true
+    }
+  ],
+  "note": "English-only reference; not multilingual-safe for main path."
+}

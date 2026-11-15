@@ -1,0 +1,14 @@
+{
+  "params": {
+    "flow_lm": 89447489,
+    "mimi": 20054337,
+    "total": 109501826,
+    "mimi_encoder": 2927136,
+    "mimi_decoder": 3974945
+  },
+  "timing_B128_ms": {
+    "flow_step": 19.59,
+    "mimi_decode": 83.29
+  },
+  "note": "Decoder shrink highest leverage for multilingual (decode-bound at B). English small models reference only."
+}
