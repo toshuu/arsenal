@@ -24,6 +24,32 @@ Make it after every ideation, coding, or push session. The script only reads. It
 | `ideas[]` | array | `path`, `title`, `status` (or null). |
 | `sessions[]` | array | `id` (`YYYYMMDD-HHMMSS-TYPE` or event file name), `date`, `type`, `summary`. |
 | `commits[]` | array | `sha`, `date`, `subject`. Last 40 by default. |
+| `results[]` | array | `id`, `date`, `title`, `status`, `summary`, `metrics[]` (`label`, `value`), `source`. |
+
+## Results
+
+Write big measured results in `.stageset/results.json`. The report copies them into the
+`results[]` array. The viewer shows them in a **Results** panel. Do not put guesses there.
+Set `source` to the run report or the result file that proves the value.
+
+```json
+{
+  "schema": "stageset-results/1",
+  "results": [
+    {
+      "id": "RES-001",
+      "date": "2026-11-15",
+      "title": "CPU single-stream baseline",
+      "status": "PASS",
+      "summary": "One short sentence.",
+      "metrics": [
+        {"label": "RTF", "value": "0.648"}
+      ],
+      "source": ".stageset/runs/YYYYMMDD-HHMMSS-RUN.md"
+    }
+  ]
+}
+```
 
 ## `phase` rule
 

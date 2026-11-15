@@ -1,0 +1,99 @@
+{
+  "schema": "stageset-results/1",
+  "results": [
+    {
+      "id": "RES-001",
+      "date": "2026-11-15",
+      "title": "Phase 0 setup",
+      "status": "PASS",
+      "summary": "pocket-tts 4.0.1 installed. Model repo downloaded to Code/model.",
+      "metrics": [
+        {
+          "label": "pocket-tts",
+          "value": "4.0.1"
+        },
+        {
+          "label": "Model size",
+          "value": "419 MB"
+        },
+        {
+          "label": "GPUs",
+          "value": "2x T4"
+        },
+        {
+          "label": "Python",
+          "value": "3.13.16"
+        }
+      ],
+      "source": ".stageset/runs/20261115-130213-RUN-02.md"
+    },
+    {
+      "id": "RES-002",
+      "date": "2026-11-15",
+      "title": "CPU single-stream probe",
+      "status": "PASS",
+      "summary": "Probe ran with 7 sections and 0 errors. The model runs faster than real time on CPU.",
+      "metrics": [
+        {
+          "label": "Params",
+          "value": "109.5M"
+        },
+        {
+          "label": "Frame",
+          "value": "80 ms"
+        },
+        {
+          "label": "First chunk",
+          "value": "361.6 ms"
+        },
+        {
+          "label": "RTF",
+          "value": "0.648"
+        },
+        {
+          "label": "Voice state",
+          "value": "3.84 MB"
+        },
+        {
+          "label": "Lead silence",
+          "value": "5.5 ms"
+        }
+      ],
+      "source": ".stageset/runs/20261115-130345-RUN-02.md"
+    },
+    {
+      "id": "RES-003",
+      "date": "2026-11-15",
+      "title": "T4 GPU single-stream baseline",
+      "status": "PASS",
+      "summary": "20 measured streams on one T4. No errors. About 48 ms to the first chunk.",
+      "metrics": [
+        {
+          "label": "TTFA p50",
+          "value": "47.9 ms"
+        },
+        {
+          "label": "TTFA p95",
+          "value": "56.3 ms"
+        },
+        {
+          "label": "RTF p50",
+          "value": "0.234"
+        },
+        {
+          "label": "Peak VRAM",
+          "value": "496 MB"
+        },
+        {
+          "label": "First sound p95",
+          "value": "121.6 ms"
+        },
+        {
+          "label": "Load",
+          "value": "0.99 s"
+        }
+      ],
+      "source": ".stageset/runs/20261115-131244-RUN.md"
+    }
+  ]
+}

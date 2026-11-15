@@ -47,6 +47,15 @@ h2{font:600 20px/1.3 var(--serif);margin:40px 0 12px}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .stat strong{display:block;font:600 24px/1.2 var(--serif)}
 .stat span{color:var(--muted);font-size:13px}
+.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.result{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.result h3{font:600 17px/1.3 var(--serif);margin:0 0 4px}
+.result .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--faint);font-size:12px}
+.result p{margin:8px 0 0;color:var(--muted);font-size:14px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:8px;margin-top:12px}
+.metric{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.metric b{display:block;font:600 18px/1.2 var(--serif);color:var(--text);overflow-wrap:anywhere}
+.metric span{color:var(--faint);font-size:12px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
 .card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
 .card:hover{border-color:var(--faint)}
@@ -251,11 +260,16 @@ function renderDetail(rep, key, entry){
   let lastDay = "", tlHtml = "";
   shown.forEach((i) => { const d = dayOf(i.d); if (d !== lastDay) { tlHtml += '<div class="day">' + esc(d) + "</div>"; lastDay = d; } tlHtml += '<div class="item"><span class="chip">' + esc(i.tag) + '</span><span class="grow">' + esc(i.main) + "<small>" + esc(i.sub) + "</small></span></div>"; });
   const ideas = arr(rep.ideas);
+  const results = arr(rep.results);
+  const resultsHtml = results.length ? '<h2>Results</h2><div class="results">' + results.map((r) => {
+    const metrics = arr(r.metrics).map((m) => '<div class="metric"><b>' + esc(m.value) + '</b><span>' + esc(m.label) + '</span></div>').join("");
+    return '<div class="result"><h3>' + esc(r.title) + '</h3><div class="meta">' + (r.id ? '<span class="chip">' + esc(r.id) + '</span>' : "") + (r.status ? '<span class="chip on">' + esc(r.status) + '</span>' : "") + (r.date ? '<span>' + esc(r.date) + '</span>' : "") + '</div>' + (r.summary ? '<p>' + esc(r.summary) + '</p>' : "") + (metrics ? '<div class="metrics">' + metrics + '</div>' : "") + (r.source ? '<p class="faint" style="font-size:12px">' + esc(r.source) + '</p>' : "") + '</div>';
+  }).join("") + "</div>" : "";
   const saved = key && repos.indexOf(key) >= 0;
   app.innerHTML =
     "<h1>" + esc(name) + '</h1><p class="sub">' + esc(p.repo || key || "Local file") + (p.branch ? " on " + esc(p.branch) : "") + (rep.generated_at ? " - report made " + esc(rel(rep.generated_at)) : "") + "</p>" +
     '<div class="hero"><span class="pct">' + t.pct + '%</span><span class="muted">' + t.done + " of " + t.total + " skeletons built" + (t.waiting ? ", " + t.waiting + " waiting for code" : "") + "</span></div>" + strip(rep, false) + legend +
-    '<div class="stats"><div class="stat"><strong>' + t.waiting + "</strong><span>Waiting for code</span></div><div class=\"stat\"><strong>" + t.docsTotal + "</strong><span>ss-living-docs</span></div><div class=\"stat\"><strong>" + t.runsActive + "</strong><span>Open docs</span></div><div class=\"stat\"><strong>" + t.sessions + "</strong><span>Sessions</span></div><div class=\"stat\"><strong>" + arr(rep.commits).length + "</strong><span>Recent commits</span></div></div>" +
+    '<div class="stats"><div class="stat"><strong>' + t.waiting + "</strong><span>Waiting for code</span></div><div class=\"stat\"><strong>" + t.docsTotal + "</strong><span>ss-living-docs</span></div><div class=\"stat\"><strong>" + t.runsActive + "</strong><span>Open docs</span></div><div class=\"stat\"><strong>" + t.sessions + "</strong><span>Sessions</span></div><div class=\"stat\"><strong>" + arr(rep.commits).length + "</strong><span>Recent commits</span></div></div>" + resultsHtml +
     "<h2>Waiting for code</h2>" + (waiting.length ? '<div class="panel">' + waiting.map(sk).join("") + "</div>" : '<p class="muted">Nothing waiting. Every ready skeleton is built.</p>') +
     "<h2>ss-living-doc</h2><p class=\"muted\" style=\"margin:0 0 10px\">Step lists that a weak coding model follows. One task at a time.</p>" + nextPanel + (runs || '<p class="muted">No ss-living-doc yet. A strong model writes one in <code>LivingDocs/</code>.</p>') +
     "<h2>Timeline</h2>" + (tlHtml ? '<div class="panel">' + tlHtml + "</div>" + (tl.length > shown.length ? '<p class="faint">Showing ' + shown.length + " of " + tl.length + ".</p>" : "") : '<p class="muted">No sessions or commits in the report.</p>') +

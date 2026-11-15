@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-131302-CODING · CODING · Complete SSLD-004 T4 GPU baseline and publish the results.
+- 20261115-131127-IDEATION · IDEATION · Plan the T4 GPU single-stream baseline probe and the results panel.
 - 20261115-130514-PUSH · PUSH · Push the completed SSLD-003 benchmark milestone to origin/main.
 - 20261115-130500-PUSH · PUSH · Push the completed SSLD-002 probe milestone to origin/main.
 - 20261115-130457-CODING · CODING · Complete SSLD-003 benchmark workspace, env log, test set, and schema.
-- 20261115-130400-PUSH · PUSH · Push the completed SSLD-001 setup milestone to origin/main.
-- 20261115-130358-CODING · CODING · Complete SSLD-002 probe and record the model facts.
 
 ## Verified environment facts
 
@@ -32,6 +32,8 @@ This file is generated. Do not edit it by hand.
 | FACT-0004 | 2026-11-15 | The voice state is a `dict` with 18 tensors and 3.844 MB in FP32. `copy.deepcopy` of the voice state takes 0.0051 s. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0005 | 2026-11-15 | On CPU, `generate_audio_stream` gives the first 1920-sample chunk after 361.6 ms. A full 2.48 s generation takes 1.606 s (RTF 0.6476). Leading silence is 5.5 ms. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0006 | 2026-11-15 | `generate_audio` has no batch argument and the model has no name that contains `batch`. The codec uses streaming modules. The loaded model reports `training: True`. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
+| FACT-0007 | 2026-11-15 | On one Tesla T4 with 3 warmup runs and 20 measured streams: p50 first chunk 47.942 ms, p95 56.273 ms, p50 RTF 0.234, p95 RTF 0.258, peak allocated VRAM 496.0 MB, peak reserved 586.0 MB, load 0.991 s. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN.md` |
+| FACT-0008 | 2026-11-15 | One full `generate_audio` run on T4 gave 278.2 ms leading silence. The stream path gave p50 50.5 ms first non-silent time. The two values disagree. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN-02.md` |
 
 ## Read next
 

@@ -132,6 +132,24 @@ def ideas(root, base, cfg):
     return out
 
 
+def results(root):
+    """Read .stageset/results.json. Keep only the fields that the viewer needs."""
+    try:
+        data = json.loads(read(root / ".stageset" / "results.json") or "{}")
+    except ValueError:
+        return []
+    items = data.get("results") if isinstance(data, dict) else data
+    out = []
+    for i, item in enumerate(items or []):
+        if not isinstance(item, dict):
+            continue
+        out.append({"id": item.get("id") or "RES-%03d" % (i + 1),
+                    "date": item.get("date"), "title": item.get("title") or "Result",
+                    "status": item.get("status"), "summary": item.get("summary"),
+                    "metrics": item.get("metrics") or [], "source": item.get("source")})
+    return out
+
+
 def runs(root, base, cfg):
     out = []
     folder = base / cfg["runs_dir"]
@@ -254,13 +272,15 @@ def build(root, limit):
               "draft": sum(1 for s in sk if s["phase"] == "draft")}
     ss = sessions(root, cfg)
     rn = runs(root, base, cfg)
+    rs = results(root)
     totals["sessions"] = len(ss)
     totals["runs"] = len(rn)
     totals["runs_active"] = sum(1 for r in rn if r["status"] in ("NOT_STARTED", "IN_PROGRESS", "BLOCKED"))
+    totals["results"] = len(rs)
     return {"schema": SCHEMA,
             "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "project": project(root), "totals": totals, "skeletons": sk,
-            "runs": rn, "ideas": ideas(root, base, cfg), "sessions": ss,
+            "results": rs, "runs": rn, "ideas": ideas(root, base, cfg), "sessions": ss,
             "commits": commits(root, limit)}
 
 
