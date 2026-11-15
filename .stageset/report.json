@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T17:20:37Z",
+  "generated_at": "2026-11-15T17:27:03Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 8,
     "waiting": 0,
     "draft": 0,
-    "sessions": 41,
+    "sessions": 42,
     "runs": 10,
     "runs_active": 1,
     "results": 3
@@ -851,9 +851,20 @@
       "date": "2026-11-15T22:20:00+05:30",
       "type": "ideation",
       "summary": "Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks)."
+    },
+    {
+      "id": "20261115-223500-CODING",
+      "date": "2026-11-15T22:35:00+05:30",
+      "type": "coding",
+      "summary": "Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged)."
     }
   ],
   "commits": [
+    {
+      "sha": "0196179",
+      "date": "2026-11-15T17:20:42+00:00",
+      "subject": "SSLD-010: V11/V12 helpers and partial B=128 soak (interrupted)"
+    },
     {
       "sha": "9bc4b90",
       "date": "2026-11-15T17:04:52+00:00",
@@ -1048,11 +1059,6 @@
       "sha": "c54eb61",
       "date": "2026-11-14T08:54:23+00:00",
       "subject": "Update StageSet to ss-living-doc and add Pocket TTS Phase 0 plan"
-    },
-    {
-      "sha": "52f2142",
-      "date": "2026-11-13T20:22:19+05:30",
-      "subject": "Restore StageSet metadata on Pocket TTS idea"
     }
   ]
 }

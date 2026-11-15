@@ -1,0 +1,11 @@
+{
+  "tensorrt": false,
+  "torch_tensorrt": false,
+  "compile_backend": null,
+  "notes": [
+    "tensorrt import failed: No module named 'tensorrt'",
+    "torch_tensorrt import failed: No module named 'torch_tensorrt'",
+    "TensorRT libs not present in env. Sideline install/engine build not attempted to avoid breaking main env; add onnx->trt or torch_tensorrt when wheels available for this CUDA/PyTorch."
+  ],
+  "dynamo_backends": []
+}

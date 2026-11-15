@@ -1,0 +1,14 @@
+{
+  "export": {
+    "dummy": "ok",
+    "path": "/kaggle/working/arsenal/Code/experiments/out/dummy.onnx",
+    "note": "full model export blocked by stateful dict API"
+  },
+  "runtime": {
+    "available": false
+  },
+  "notes": [
+    "Stateful ModelState/dict I/O makes direct torch.onnx.export of flow/mimi steps non-trivial in current API.",
+    "onnxruntime not installed; pip install attempted? skipped by default to keep sideline fast."
+  ]
+}

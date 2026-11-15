@@ -1,0 +1,2 @@
+{"msg": "baseline", "data": {"p50": 87.24, "p95": 110.88, "wall_med": 1.091, "under350": 96, "n": 96}}
+{"msg": "torchao_int8", "data": {"p50": 70.72, "p95": 100.63, "wall_med": 1.198, "under350": 96, "n": 96}}

@@ -18,17 +18,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-223500-CODING · CODING · Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged).
 - 20261115-222000-IDEATION · IDEATION · Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks).
 - 20261115-215000-CODING · CODING · Phase D status - V9 done, V8/V10 assessed, B=128 under 350ms with conditioned profile.
 - 20261115-214500-CODING · CODING · Phase D start: add decode grouping (V9) to BatchedStream.
 - 20261115-204000-CODING · CODING · Formalize encoded voice profiles; revert unsafe conditioned-KV path; record B=128.
-- 20261115-185500-IDEATION · IDEATION · Plan the Phase C cleanup: cut before pause and in-process lever probe.
 
 ## Verified environment facts
 
-| FACT-0015 | 2026-11-15 | `BatchedStream` did not advance the Mimi decoder state. The cache was overwritten at offset 0 each frame and the audio was dull. The fix adds `increment_steps` after each decode. Batched audio vs reference `generate_audio` corr went from 0.6154 to 0.99999. `check_batch_stream.py` passes. | Project | CURRENT | `.stageset/runs/20261115-180908-RUN-mimi-state-fix.md` |
-| FACT-0016 | 2026-11-15 | Manual listening gate passed on the nine WAVs in `Code/probes/out/fp16_quality/`. Language is correct in EN, HI, and MR. FP16 has no audible loss against FP32. Phase C is unblocked. | Project | CURRENT | `.stageset/runs/20261115-181309-RUN-listen-gate-pass.md` |
-| FACT-0017 | 2026-11-15 | T4, FP16, unique texts, 2 bursts: with the voice and first-chunk levers, B=96 p95 TTFA stays under 350 ms for every tested pair (217 to 321 ms). B=128 is not stable: p95 ranges 247 to 404 ms. The best point was voice 4.0 s, first-token cap 16, B=96, p95 217.5 ms. Results have run-order noise; do not treat the ranking as final. Defaults are unchanged. | Project | CURRENT | `.stageset/runs/20261115-182905-RUN.md` |
 | FACT-0018 | 2026-11-15 | Owner listened to the six lever quality WAVs in `Code/probes/out/lever_quality/` (voice 6.5, 3.0, 2.0 s; FP32 and FP16; 24-token cap). Owner reported that they worked. No single voice length was named as the default. A randomized 3-burst probe is still needed before a default is set. | Project | CURRENT | `.stageset/runs/20261115-183337-RUN.md` |
 | FACT-0020 | 2026-11-15 | Tesla T4, FP16, one process, alternating rounds, B=96: median first-chunk time is 163.8 ms at voice 4.0 s (51 frames), 145.2 ms at 3.0 s (39 frames), and 130.0 ms at 2.0 s (26 frames). Shorter voice is faster. The reverse order in FACT-0019 came from running each config in a separate process. Do not compare configs across subprocess runs. | Project | CURRENT | `.stageset/runs/20261115-184910-RUN.md` |
 | FACT-0021 | 2026-11-15 | Tesla T4, FP16, sustained 6 bursts, B=128, voice 3.0 s, cap 16: after warmup p95 TTFA is ~392 ms and ~103/128 rows are under 350 ms. B=128 is not a safe sustained operating point on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
@@ -46,6 +43,9 @@ This file is generated. Do not edit it by hand.
 | FACT-0033 | 2026-11-15 | Gate D soak, T4 FP16 cond profile 4.0s/cap16 compact dg=1, B=160, 475 sequential bursts (~23 min), 76,000 req (160 parallel/burst): 74,115/76,000 <350 ms (97.52%), 0 errors/OOM. Burst p95 median 275.8 ms, p95-of-p95 416.58 ms, max 562.3 ms, 64/475 bursts p95>350. RTF median 0.0015 p95 0.0025. TTFA stability not met; RTF pass. | Project | CURRENT | `.stageset/runs/20261115-215304-RUN.md` |
 | FACT-0034 | 2026-11-15 | GPU-agnostic pipelined burst probe (CPU prep overlap), T4 FP16 cond profile 4.0s/cap16 compact, B=128 10 rounds: p50 161.31 ms, p95 272.58 ms, 1280/1280 <350 ms (100%). | Project | CURRENT | `.stageset/runs/20261115-215304-RUN.md` |
 | FACT-0035 | 2026-11-15 | Partial B=128 soak (interrupted ~12-13 min, salvaged), T4 FP16 cond profile 4.0s/cap16 compact, 305 bursts, 39,040 req: 39,005 <350 ms (99.91%), burst p95 median 226.21 ms, p95-of-p95 302.22 ms, max 364.49 ms, 2 bursts p95>350, 0 errors/OOM. | Project | CURRENT | `Code/probes/out/soak_b128_summary.json` |
+| FACT-0036 | 2026-11-15 | Sideline INT8 (torchao `int8_weight_only` flow_lm), T4 FP16 cond profile 4.0s/cap16 compact, B=32 3 rounds: baseline p50 87.24 p95 110.88 ms wall 1.091 s; INT8 p50 70.72 p95 100.63 ms wall 1.198 s. Samples in `Code/experiments/out/`. | Project | CURRENT | `Code/experiments/int8/exp_int8.py` |
+| FACT-0037 | 2026-11-15 | Sideline ONNX: dummy export OK (`Code/experiments/out/dummy.onnx`); full flow/mimi export blocked by stateful ModelState dict API; onnxruntime not installed. | Project | CURRENT | `Code/experiments/onnx/exp_onnx.py` |
+| FACT-0038 | 2026-11-15 | Sideline TRT: `tensorrt`/`torch_tensorrt` not installed, no dynamo TRT backend in env. Engine build not attempted. | Project | CURRENT | `Code/experiments/trt/exp_trt.py` |
 
 ## Read next
 
