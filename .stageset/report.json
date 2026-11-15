@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T13:19:34Z",
+  "generated_at": "2026-11-15T13:19:43Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 7,
     "waiting": 0,
     "draft": 0,
-    "sessions": 35,
+    "sessions": 36,
     "runs": 8,
     "runs_active": 0,
     "results": 3
@@ -712,9 +712,20 @@
       "date": "2026-11-15T18:49:10+05:30",
       "type": "coding",
       "summary": "Explain the voice length TTFA gap as a cross-process measurement bias."
+    },
+    {
+      "id": "20261115-185100-PUSH",
+      "date": "2026-11-15T18:51:00+05:30",
+      "type": "push",
+      "summary": "Push the voice gap investigation and refreshed StageSet report."
     }
   ],
   "commits": [
+    {
+      "sha": "c073d1c",
+      "date": "2026-11-15T13:19:38+00:00",
+      "subject": "Explain voice TTFA gap and refresh StageSet report"
+    },
     {
       "sha": "1f922c3",
       "date": "2026-11-15T13:14:14+00:00",
