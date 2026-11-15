@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-235500-CODING · CODING · Profile TTFA/steady-frame breakdown (B=32,B=128 cond path) and document bottlenecks.
 - 20261115-234000-CODING · CODING · Wrap sideline experiments (all blocked/no main gain), return to main path.
 - 20261115-233000-CODING · CODING · Web-search and retry INT4 fixes (torchao 0.10, T4); no working path.
 - 20261115-231000-CODING · CODING · Try sideline INT4 (torchao) on flow_lm; all attempts fail.
 - 20261115-225000-CODING · CODING · Update ONNX sideline with ORT install and full-export failure detail.
-- 20261115-223500-CODING · CODING · Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged).
 
 ## Verified environment facts
 

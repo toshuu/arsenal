@@ -52,10 +52,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-231000-CODING | CODING | 2026-11-15T23:10:00+05:30 | Try sideline INT4 (torchao) on flow_lm; all attempts fail. | .stageset/sessions/coding-sideline-int4.md | IDEA-0003 | - |
 | 20261115-233000-CODING | CODING | 2026-11-15T23:30:00+05:30 | Web-search and retry INT4 fixes (torchao 0.10, T4); no working path. | .stageset/sessions/coding-sideline-int4-fix.md | IDEA-0003 | - |
 | 20261115-234000-CODING | CODING | 2026-11-15T23:40:00+05:30 | Wrap sideline experiments (all blocked/no main gain), return to main path. | .stageset/sessions/coding-sideline-wrapup.md | IDEA-0003, SSLD-010 | - |
+| 20261115-235500-CODING | CODING | 2026-11-15T23:55:00+05:30 | Profile TTFA/steady-frame breakdown (B=32,B=128 cond path) and document bottlenecks. | .stageset/sessions/coding-ttfa-breakdown.md | IDEA-0003, SSLD-010, FACT-0033, FACT-0034, FACT-0035 | - |
 
 ## Totals
 
-- CODING: 23.
+- CODING: 24.
 - IDEATION: 7.
 - MAINTENANCE: 7.
 - PROBE: 0.

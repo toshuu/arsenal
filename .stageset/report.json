@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T17:46:13Z",
+  "generated_at": "2026-11-15T17:49:36Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 8,
     "waiting": 0,
     "draft": 0,
-    "sessions": 46,
+    "sessions": 47,
     "runs": 10,
     "runs_active": 1,
     "results": 3
@@ -881,9 +881,20 @@
       "date": "2026-11-15T23:40:00+05:30",
       "type": "coding",
       "summary": "Wrap sideline experiments (all blocked/no main gain), return to main path."
+    },
+    {
+      "id": "20261115-235500-CODING",
+      "date": "2026-11-15T23:55:00+05:30",
+      "type": "coding",
+      "summary": "Profile TTFA/steady-frame breakdown (B=32,B=128 cond path) and document bottlenecks."
     }
   ],
   "commits": [
+    {
+      "sha": "6c820be",
+      "date": "2026-11-15T17:46:14+00:00",
+      "subject": "StageSet: sideline wrap-up, return to main path"
+    },
     {
       "sha": "15a84e0",
       "date": "2026-11-15T17:41:52+00:00",
@@ -1078,11 +1089,6 @@
       "sha": "9af771c",
       "date": "2026-11-15T07:35:07+00:00",
       "subject": "Complete SSLD-003 benchmark harness workspace"
-    },
-    {
-      "sha": "99ef3f2",
-      "date": "2026-11-15T07:34:12+00:00",
-      "subject": "Complete SSLD-002 probe and record model facts"
     }
   ]
 }
