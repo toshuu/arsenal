@@ -26,7 +26,6 @@ This file is generated. Do not edit it by hand.
 
 ## Verified environment facts
 
-| FACT-0008 | 2026-11-15 | One full `generate_audio` run on T4 gave 278.2 ms leading silence. The stream path gave p50 50.5 ms first non-silent time. The two values disagree. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN-02.md` |
 | FACT-0009 | 2026-11-15 | Phase B lockstep batched B=32 on one T4: p95 TTFA 327.0 ms, 156/160 rows under 350 ms, max 404.8 ms, RTF 0.013, peak VRAM 2247 MB. Parity vs B=1: max diff 1.07e-04, correlation 1.0. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0010 | 2026-11-15 | Phase B batched B=30 on one T4: p95 TTFA 278.8 ms, 149/150 rows under 350 ms, max 375.8 ms, RTF 0.013, peak VRAM 2137 MB. Recommended safe operating point. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0011 | 2026-11-15 | Phase B batched B=34-36 on one T4 fail the p95 target: B=34 p95 359.7 ms (earlier run 295.0 ms; unstable), B=35 p95 358.5 ms, B=36 p95 357.6 ms. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
@@ -41,11 +40,12 @@ This file is generated. Do not edit it by hand.
 | FACT-0021 | 2026-11-15 | Tesla T4, FP16, sustained 6 bursts, B=128, voice 3.0 s, cap 16: after warmup p95 TTFA is ~392 ms and ~103/128 rows are under 350 ms. B=128 is not a safe sustained operating point on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0022 | 2026-11-15 | Tesla T4, FP16, sustained alternating 5 bursts, B=96: voice 4.0/cap 16 gives p95 276-341 ms and 96/96 rows under 350 ms in every burst. Voice 3.0/cap 16 gives p95 316-336 ms and 94-96/96 rows under 350 ms. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0023 | 2026-11-15 | A 24-config interleaved in-process probe (3 bursts, B=96/128) produced inflated p95 values and reversed the 2.0 vs 4.0 order at B=96 cap 16. Cross-process and long interleaved comparisons are biased; short sustained alternating checks are more reliable for ranking on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
-| FACT-0024 | 2026-11-15 | Exploratory: conditioned-KV profile probe (KV reused, text per burst) showed T4 B=96 p95 avg 232.8 ms vs normal 300.9 ms. Waveform parity/padding correctness not confirmed; stream reverted. | Project | EXPLORATORY | `.stageset/runs/20261115-202240-RUN.md` |
-| FACT-0025 | 2026-11-15 | Exploratory conditioned-KV probe, T4 FP16 4.0s/cap16, 3 rounds: B=128 p95 277 ms 99.7% <350. Not parity-confirmed; stream reverted. | Project | EXPLORATORY | `.stageset/runs/20261115-202240-RUN.md` |
+| FACT-0024 | 2026-11-15 | Conditioned-KV profile probe (KV reused, text per burst) showed T4 B=96 p95 avg 232.8 ms vs normal 300.9 ms. Different conditioning path (not bit-identical to normal); use `conditioned=True` profile. | Project | CURRENT | `.stageset/runs/20261115-202240-RUN.md` |
+| FACT-0025 | 2026-11-15 | Conditioned-KV probe, T4 FP16 4.0s/cap16, 3 rounds: B=128 p95 277 ms 99.7% <350. Use `conditioned=True` profile (KV-reuse path). | Project | CURRENT | `.stageset/runs/20261115-202240-RUN.md` |
 | FACT-0026 | 2026-11-15 | Encoded voice profile load/save is waveform-identical to normal voice path at temp 0 on T4 FP16 (4 texts, 4.0 s, cap 16): max abs diff 0.0, same lengths. | Project | CURRENT | `.stageset/runs/20261115-203726-RUN.md` |
 | FACT-0027 | 2026-11-15 | T4 FP16, voice 4.0 s, cap 16, B=128, normal path, 5 sustained bursts: p95 342.0, 370.2, 392.9, 375.6, 342.0 ms; under-350 101,121,120,121,125 / 128. B=128 selected as current operating point by user. | Project | CURRENT | `.stageset/runs/20261115-203726-RUN.md` |
 | FACT-0028 | 2026-11-15 | T4 FP16 unbiased sustained probe (alt 5 bursts, cap 16): 4.0/16 B96 p95 264-307 ms 100%<350, B128 p95 372-400 ms 94.4%; 3.0/16 B96 p95 300-359 ms 95.8%, B128 p95 376-380 ms 79.5%. 4.0 s chosen and faster than 3.0 s in this test. | Project | CURRENT | `.stageset/runs/20261115-205122-RUN.md` |
+| FACT-0029 | 2026-11-15 | T4 FP16 4.0s/cap16, conditioned voice profile (`conditioned=True`, KV reuse) 5 bursts: B=96 p95 218-309 ms (94-96/96 <350), B=128 p95 281-331 ms (128/128 <350). | Project | CURRENT | `.stageset/runs/20261115-210858-RUN.md` |
 
 ## Read next
 

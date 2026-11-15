@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T15:23:13Z",
+  "generated_at": "2026-11-15T15:39:56Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -794,6 +794,11 @@
     }
   ],
   "commits": [
+    {
+      "sha": "0aadabd",
+      "date": "2026-11-15T15:23:19+00:00",
+      "subject": "SSLD-009: unbiased 4v3 probe, settle T005/T007, mark DONE"
+    },
     {
       "sha": "aae71ea",
       "date": "2026-11-15T15:14:29+00:00",

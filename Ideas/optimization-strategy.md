@@ -351,14 +351,12 @@ Open items before a default is set:
 4. Confirm B=128 with voice 3.0 s in the clean test.
 - **Selected (user, 2026-11-15, settled):** T4 **voice 4.0 s, cap 16, B=128** (target, may increase). Unbiased 4v3 probe (FACT-0028, `20261115-205122-RUN`): 4.0/16 B96 p95 264-307 ms 100%<350, B128 p95 372-400 ms 94.4%; 3.0/16 worse. B=128 needs Phase D/correct conditioned-KV reuse for consistent <350; B=96 is safe now.
 
-## 14. Voice profiles (WIP)
+## 14. Voice profiles
 
-- Goal: save voice data once and reuse forever. Keep normal 4.0 s path when no profile is chosen.
+- Goal: save voice conditioning once and reuse forever. Keep normal 4.0 s path when no profile is chosen.
 - Usage: `Code/batch/VOICE_PROFILES.md`.
   - Normal: `BatchedStream(model, voice=wav, voice_seconds=4.0, ...)`
-  - Create profile once: `stream.save_voice_profile(path)` (stores encoded voice prompt)
-  - Use profile: `BatchedStream(model, voice_profile=path, ...)` (opt-in, skips WAV read/cut/encode)
-- Selected operating point (user): T4, 4.0 s, cap 16, **B=128** now; may increase with more efficiency work.
-- Impl (WIP, `Code/batch/batched_stream.py`): encoded voice profile load/save + parity-correct normal stream path. Attempted per-burst conditioned-KV reuse gave TTFA gains but failed temp=0 parity/padding correctness; reverted to safe path (future work).
-- Measured (`20261115-203726-RUN`): encoded profile parity max abs diff 0.0 (temp 0, 4 texts). Sustained normal-path B=128 5 bursts: p95 342.0–405.8 ms, 101–125/128 <350.
-- Exploratory conditioned-KV probe (`20261115-202240-RUN`, FACT-0024/0025): B=96 p95 avg 232.8 ms vs 300.9; B=128 p95 277 ms 99.7% <350. Not parity-confirmed; needs correct impl.
+  - Create conditioned profile once: `stream.save_voice_profile(path, conditioned=True)` (encoded voice + conditioned KV state)
+  - Use profile: `BatchedStream(model, voice_profile=path, ...)` (opt-in, KV-reuse fast path when text lengths uniform)
+- Selected operating point (user): T4, 4.0 s, cap 16, **B=128** target. With conditioned profile: B=128 p95 281–331 ms, 128/128 <350 (FACT-0029). Normal path B=128: 372–400 ms 94.4% (FACT-0028).
+- Impl: `Code/batch/batched_stream.py` (cb7cb55 KV-reuse path). Different conditioning path than normal (not bit-identical); quality checked by ear. Uniform first-chunk token lengths required for fast path.
