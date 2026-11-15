@@ -367,3 +367,8 @@ Open items before a default is set:
   - Use profile: `BatchedStream(model, voice_profile=path, ...)` (opt-in, KV-reuse fast path when text lengths uniform)
 - Selected operating point (user): T4, 4.0 s, cap 16, **B=128** target. With conditioned profile: B=128 p95 281–331 ms, 128/128 <350 (FACT-0029). Normal path B=128: 372–400 ms 94.4% (FACT-0028).
 - Impl: `Code/batch/batched_stream.py` (cb7cb55 KV-reuse path). Different conditioning path than normal (not bit-identical); quality checked by ear. Uniform first-chunk token lengths required for fast path.
+
+### GPU-agnostic optimizations (SSLD-010, partial)
+
+- V11 helper: `Code/batch/scheduler.py` (bucketing/admission). V12 probe: `Code/probes/probe_pipelined_bursts.py` (CPU prep overlap) B=128 10 rounds p95 272.58 ms, 1280/1280 <350 (FACT-0034).
+- Stable soak B=128 (partial, interrupted, salvaged): 305 bursts, 39,040 req, 99.91% <350, burst p95 median 226.21 ms, p95-of-p95 302.22 ms, max 364.49 ms, 2 bursts >350, RTF median 0.0018 (FACT-0035). B=144 not run (time). Data in `Code/probes/out/soak_b128.jsonl`/summary.

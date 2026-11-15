@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T17:04:52Z",
+  "generated_at": "2026-11-15T17:20:37Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -544,36 +544,36 @@
       "id": "SSLD-010",
       "path": "LivingDocs/SSLD-010-gpu-agnostic-optim.md",
       "title": "GPU-agnostic scheduling optimizations",
-      "status": "NOT_STARTED",
-      "current_task": "T001",
+      "status": "BLOCKED",
+      "current_task": "T005",
       "skeleton": "Skeletons/Code/batch/batched_stream.py",
       "tasks_total": 6,
-      "tasks_done": 0,
+      "tasks_done": 3,
       "tasks": [
         {
           "id": "T001",
           "title": "Add length-bucket admission helper",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T002",
           "title": "Add pipelined burst probe (CPU prep overlap)",
-          "status": "TODO"
+          "status": "DOING"
         },
         {
           "id": "T003",
           "title": "Run pipelined probe",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T004",
           "title": "Stable soak B=128",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T005",
           "title": "Stable soak B=144",
-          "status": "TODO"
+          "status": "BLOCKED"
         },
         {
           "id": "T006",
@@ -855,6 +855,11 @@
   ],
   "commits": [
     {
+      "sha": "9bc4b90",
+      "date": "2026-11-15T17:04:52+00:00",
+      "subject": "Add SSLD-010 for GPU-agnostic optimizations"
+    },
+    {
       "sha": "766c2a8",
       "date": "2026-11-15T16:59:44+00:00",
       "subject": "StageSet: defer V8 manual graph and Gate D stability (documented)"
@@ -1048,11 +1053,6 @@
       "sha": "52f2142",
       "date": "2026-11-13T20:22:19+05:30",
       "subject": "Restore StageSet metadata on Pocket TTS idea"
-    },
-    {
-      "sha": "5073322",
-      "date": "2026-11-13T20:19:46+05:30",
-      "subject": "Real file manually uploaded."
     }
   ]
 }

@@ -3,9 +3,9 @@
 
 ## STATE
 doc_id: SSLD-010
-status: NOT_STARTED
-current_task: T001
-tasks_done: 0
+status: BLOCKED
+current_task: T005
+tasks_done: 4
 tasks_total: 6
 skeleton: Skeletons/Code/batch/batched_stream.py
 spec_revision: 4
@@ -29,12 +29,12 @@ sync_command: python scripts/ss-living-doc.py LivingDocs/SSLD-010-gpu-agnostic-o
 ## TASKS
 
 ### T001: Add length-bucket admission helper
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/batch/scheduler.py
 context: Add portable batching helper (V11): estimate token length, bucket texts, admit up to max batch per bucket.
 do:
-- [ ] 1. CREATE `Code/batch/scheduler.py` with the code block below.
+- [x] 1. CREATE `Code/batch/scheduler.py` with the code block below.
 
    ```python
    """Portable batching helpers: bucketing and admission control."""
@@ -75,20 +75,20 @@ do:
        return out
    ```
 
-- [ ] 2. RUN `python -m py_compile Code/batch/scheduler.py`.
+- [x] 2. RUN `python -m py_compile Code/batch/scheduler.py`.
 
 verify: `python -m py_compile Code/batch/scheduler.py; echo COMPILED`
 expect: `COMPILED`
 if_fail: Read traceback. Fix copied code only. Run `verify:` again.
-result:
+result: COMPILED COMPILED
 
 ### T002: Add pipelined burst probe (CPU prep overlap)
-status: TODO
+status: DOING
 blocked_reason:
 file: Code/probes/probe_pipelined_bursts.py
 context: V12 portable probe. Prepare next burst texts on CPU thread while GPU runs current burst (sequential GPU, overlapped host prep).
 do:
-- [ ] 1. CREATE `Code/probes/probe_pipelined_bursts.py` with the code block below.
+- [x] 1. CREATE `Code/probes/probe_pipelined_bursts.py` with the code block below.
 
    ```python
    """Pipelined burst probe (CPU prep overlap)."""
@@ -156,44 +156,44 @@ do:
        main()
    ```
 
-- [ ] 2. RUN `python -m py_compile Code/probes/probe_pipelined_bursts.py`.
+- [x] 2. RUN `python -m py_compile Code/probes/probe_pipelined_bursts.py`.
 
 verify: `python -m py_compile Code/probes/probe_pipelined_bursts.py; echo COMPILED`
 expect: `COMPILED`
 if_fail: Read traceback. Fix copied code only. Run `verify:` again.
-result:
+result: COMPILED COMPILED
 
 ### T003: Run pipelined probe
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/probes/probe_pipelined_bursts.py
 context: Measure pipelined burst behavior at B=128 (portable overlap). Record output.
 do:
-- [ ] 1. RUN `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python Code/probes/probe_pipelined_bursts.py --b 128 --rounds 10 --out Code/probes/out/probe_pipelined_b128.json`.
+- [x] 1. RUN `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python Code/probes/probe_pipelined_bursts.py --b 128 --rounds 10 --out Code/probes/out/probe_pipelined_b128.json`.
 
 verify: `python -c "import json; d=json.load(open('Code/probes/out/probe_pipelined_b128.json')); print(d['B']==128 and d['rounds']==10 and d['p95'] is not None)"`
 expect: `True`
 if_fail: Read last stdout/stderr. Run `verify:` again. If GPU OOM, set `status: BLOCKED`.
-result:
+result: PIPELINED_DONE
 
 ### T004: Stable soak B=128
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/probes/soak_batch_b160.py
 context: Gate D stability follow-up (portable config). Run sustained soak at B=128.
 do:
-- [ ] 1. CREATE `Code/probes/soak_batch_b128.py` by copying logic with B=128 and 15 min duration (or reuse/adapt). If adaptation needed, create minimal script.
-- [ ] 2. RUN soak for 15 min and produce summary JSON.
+- [x] 1. CREATE `Code/probes/soak_batch.py` (reusable) and ran B=128 soak.
+- [x] 2. RUN soak; interrupted by user, partial data salvaged to summary JSON.
 
 verify: `python -c "import json,os; p='Code/probes/out/soak_b128_summary.json'; print(os.path.exists(p))"`
 expect: `True`
 if_fail: Check script/logs. Run `verify:` again. If runtime exceeds limits, set `status: BLOCKED` with partial data path.
-result:
+result: PARTIAL 305 bursts 39040 req 99.91% <350 p95_med 226.21 p95_p95 302.22 max 364.49
 
 ### T005: Stable soak B=144
-status: TODO
-blocked_reason:
-file: Code/probes/soak_batch_b128.py
+status: BLOCKED
+blocked_reason: User stopped for time. B=144 soak not run. B=128 partial stable (99.91% <350).
+file: Code/probes/soak_batch.py
 context: Compare stability at B=144.
 do:
 - [ ] 1. RUN B=144 soak (15 min) and produce `Code/probes/out/soak_b144_summary.json`.
