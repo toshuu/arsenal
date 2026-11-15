@@ -1,19 +1,19 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T13:19:43Z",
+  "generated_at": "2026-11-15T13:48:41Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
     "branch": "main"
   },
   "totals": {
-    "skeletons": 7,
-    "done": 7,
-    "waiting": 0,
+    "skeletons": 8,
+    "done": 6,
+    "waiting": 2,
     "draft": 0,
-    "sessions": 36,
-    "runs": 8,
-    "runs_active": 0,
+    "sessions": 37,
+    "runs": 9,
+    "runs_active": 1,
     "results": 3
   },
   "skeletons": [
@@ -21,10 +21,10 @@
       "id": "batched_stream",
       "path": "Skeletons/Code/batch/batched_stream.py",
       "title": "Implementation: batched streaming core",
-      "status": "DONE",
-      "spec_revision": 3,
+      "status": "READY",
+      "spec_revision": 4,
       "implemented_revision": 3,
-      "phase": "done"
+      "phase": "waiting"
     },
     {
       "id": "bench_batch_server",
@@ -43,6 +43,15 @@
       "spec_revision": 1,
       "implemented_revision": 1,
       "phase": "done"
+    },
+    {
+      "id": "probe_levers_inproc",
+      "path": "Skeletons/Probes/probe_levers_inproc.md",
+      "title": "Probe: in-process lever comparison",
+      "status": "READY",
+      "spec_revision": 1,
+      "implemented_revision": 0,
+      "phase": "waiting"
     },
     {
       "id": "probe_model",
@@ -478,6 +487,58 @@
           "status": "DONE"
         }
       ]
+    },
+    {
+      "id": "SSLD-009",
+      "path": "LivingDocs/SSLD-009-phase-c-cleanup.md",
+      "title": "Phase C cleanup and clean lever probe",
+      "status": "BLOCKED",
+      "current_task": "T005",
+      "skeleton": "Skeletons/Code/batch/batched_stream.py",
+      "tasks_total": 8,
+      "tasks_done": 4,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Cut the voice before the pause",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Create the cut-order check",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Run the cut-order check",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the in-process lever probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Run the in-process probe",
+          "status": "BLOCKED"
+        },
+        {
+          "id": "T006",
+          "title": "Point the picker at the new probe",
+          "status": "TODO"
+        },
+        {
+          "id": "T007",
+          "title": "Pick the clean operating point",
+          "status": "TODO"
+        },
+        {
+          "id": "T008",
+          "title": "Close the skeletons",
+          "status": "TODO"
+        }
+      ]
     }
   ],
   "ideas": [
@@ -718,9 +779,25 @@
       "date": "2026-11-15T18:51:00+05:30",
       "type": "push",
       "summary": "Push the voice gap investigation and refreshed StageSet report."
+    },
+    {
+      "id": "20261115-185500-IDEATION",
+      "date": "2026-11-15T18:55:00+05:30",
+      "type": "ideation",
+      "summary": "Plan the Phase C cleanup: cut before pause and in-process lever probe."
     }
   ],
   "commits": [
+    {
+      "sha": "0e38c66",
+      "date": "2026-11-15T13:48:38+00:00",
+      "subject": "SSLD-009: fix voice cut order and document sustained lever checks"
+    },
+    {
+      "sha": "783fab2",
+      "date": "2026-11-15T13:19:43+00:00",
+      "subject": "Record push of voice gap investigation"
+    },
     {
       "sha": "c073d1c",
       "date": "2026-11-15T13:19:38+00:00",
