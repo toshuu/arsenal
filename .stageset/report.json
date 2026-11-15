@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T13:14:14Z",
+  "generated_at": "2026-11-15T13:19:34Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 7,
     "waiting": 0,
     "draft": 0,
-    "sessions": 34,
+    "sessions": 35,
     "runs": 8,
     "runs_active": 0,
     "results": 3
@@ -706,9 +706,20 @@
       "date": "2026-11-15T18:46:00+05:30",
       "type": "push",
       "summary": "Push the randomized lever probe and the B=128 safe pair to origin/main."
+    },
+    {
+      "id": "20261115-184910-CODING",
+      "date": "2026-11-15T18:49:10+05:30",
+      "type": "coding",
+      "summary": "Explain the voice length TTFA gap as a cross-process measurement bias."
     }
   ],
   "commits": [
+    {
+      "sha": "1f922c3",
+      "date": "2026-11-15T13:14:14+00:00",
+      "subject": "Record push of randomized lever probe"
+    },
     {
       "sha": "d15b7a5",
       "date": "2026-11-15T13:14:09+00:00",

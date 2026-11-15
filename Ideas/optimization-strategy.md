@@ -333,3 +333,19 @@ The probe JSON has `gpu_name` and `config`. Copy the merged JSON to
 - A p95 under 350 ms on T4 is not proof for L4. Measure again.
 - Record each GPU result as a new fact. Keep the T4 fact as CURRENT.
 - Mark a fact SUPERSEDED only when the same GPU and setup changes.
+
+### Measurement note (T4, 2026-11-15)
+
+The lever probe ran each config in a separate process. That biased the ranking.
+A clean in-process test at B=96 gave median first-chunk time 163.8 ms at 4.0 s,
+145.2 ms at 3.0 s, and 130.0 ms at 2.0 s. Shorter voice is faster, as expected.
+FACT-0019 numbers are valid. Its ranking is not. FACT-0020 holds the cause.
+
+Open items before a default is set:
+
+1. Run all lever configs in one process. One model load, alternating rounds.
+2. Cut the voice to `voice_seconds` first, then call `end_on_pause`. A cut after
+   `end_on_pause` can end the prompt on speech. The codec notes say this is bad.
+3. Keep `max_first_tokens=None` as the default. A cap truncates the text. The
+   streaming server must generate later chunks to speak the full text.
+4. Confirm B=128 with voice 3.0 s in the clean test.
