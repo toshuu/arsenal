@@ -3,13 +3,13 @@
 @stageset kind: PROBE
 @stageset target: -
 @stageset source_idea: IDEA-0001
-@stageset status: READY
+@stageset status: DONE
 @stageset priority: P1
 @stageset spec_revision: 1
-@stageset implemented_revision: 0
+@stageset implemented_revision: 1
 @stageset planned_in: .stageset/sessions/ideation-pocket-tts-multilingual.md
-@stageset last_updated_in: .stageset/sessions/event-arsenal-batch-1-ready.md
-@stageset implemented_in: -
+@stageset last_updated_in: .stageset/sessions/coding-ssld-002-probe-model.md
+@stageset implemented_in: .stageset/sessions/coding-ssld-002-probe-model.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->

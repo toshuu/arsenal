@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T07:32:35Z",
+  "generated_at": "2026-11-15T07:34:09Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -8,22 +8,22 @@
   },
   "totals": {
     "skeletons": 2,
-    "done": 1,
-    "waiting": 1,
+    "done": 2,
+    "waiting": 0,
     "draft": 0,
-    "sessions": 10,
+    "sessions": 12,
     "runs": 3,
-    "runs_active": 2
+    "runs_active": 1
   },
   "skeletons": [
     {
       "id": "probe_model",
       "path": "Skeletons/Probes/probe_model.md",
       "title": "Probe: Pocket TTS multilingual model facts",
-      "status": "READY",
+      "status": "DONE",
       "spec_revision": 1,
-      "implemented_revision": 0,
-      "phase": "waiting"
+      "implemented_revision": 1,
+      "phase": "done"
     },
     {
       "id": "requirements.txt.skeleton",
@@ -72,31 +72,31 @@
       "id": "SSLD-002",
       "path": "LivingDocs/SSLD-002-probe-model.md",
       "title": "Probe the Pocket TTS multilingual model",
-      "status": "NOT_STARTED",
-      "current_task": "T001",
+      "status": "DONE",
+      "current_task": "T004",
       "skeleton": "Skeletons/Probes/probe_model.md",
       "tasks_total": 4,
-      "tasks_done": 0,
+      "tasks_done": 4,
       "tasks": [
         {
           "id": "T001",
           "title": "Create probe_model.py",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T002",
           "title": "Run the probe",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T003",
           "title": "Check the probe sections",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T004",
           "title": "Update skeleton metadata",
-          "status": "TODO"
+          "status": "DONE"
         }
       ]
     },
@@ -205,9 +205,26 @@
       "date": "2026-11-15T13:02:25+05:30",
       "type": "coding",
       "summary": "Complete SSLD-001 setup, install pocket-tts, and download the model."
+    },
+    {
+      "id": "20261115-130358-CODING",
+      "date": "2026-11-15T13:03:58+05:30",
+      "type": "coding",
+      "summary": "Complete SSLD-002 probe and record the model facts."
+    },
+    {
+      "id": "20261115-130400-PUSH",
+      "date": "2026-11-15T13:04:00+05:30",
+      "type": "push",
+      "summary": "Push the completed SSLD-001 setup milestone to origin/main."
     }
   ],
   "commits": [
+    {
+      "sha": "144d6d4",
+      "date": "2026-11-15T07:32:38+00:00",
+      "subject": "Complete SSLD-001 setup and download the model"
+    },
     {
       "sha": "b73c1af",
       "date": "2026-11-15T07:21:50+00:00",

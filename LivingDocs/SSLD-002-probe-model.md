@@ -3,9 +3,9 @@
 
 ## STATE
 doc_id: SSLD-002
-status: NOT_STARTED
-current_task: T001
-tasks_done: 0
+status: DONE
+current_task: T004
+tasks_done: 4
 tasks_total: 4
 skeleton: Skeletons/Probes/probe_model.md
 spec_revision: 1
@@ -29,12 +29,12 @@ sync_command: python scripts/ss-living-doc.py LivingDocs/SSLD-002-probe-model.md
 ## TASKS
 
 ### T001: Create probe_model.py
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/probes/probe_model.py
 context: Setup is done: SSLD-001 is DONE and Code/model has the model files. This task creates the read-only probe script. Do not run it yet.
 do:
-- [ ] 1. CREATE `Code/probes/probe_model.py` with the code block below. Create the folder `Code/probes` if it does not exist.
+- [x] 1. CREATE `Code/probes/probe_model.py` with the code block below. Create the folder `Code/probes` if it does not exist.
 
    ```python
    """Read-only probe for pocket-tts-multilingual.
@@ -392,46 +392,46 @@ do:
    if __name__ == "__main__":
        sys.exit(main())
    ```
-- [ ] 2. CHECK that the file has valid Python syntax.
+- [x] 2. CHECK that the file has valid Python syntax.
 verify: `python -c "import ast; ast.parse(open('Code/probes/probe_model.py').read()); print('syntax ok')"`
 expect: syntax ok
 if_fail: Open `Code/probes/probe_model.py`. Make it match the code block in step 1 exactly. Run `verify:` again.
-result:
+result: syntax ok
 
 ### T002: Run the probe
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/probes/out/probe_model.json
 context: Code/probes/probe_model.py exists. If Code/probes/ref/voice.wav exists, the probe uses it. If not, it uses a synthetic tone. This task runs the probe once.
 do:
-- [ ] 1. RUN `python Code/probes/probe_model.py` from the repository root. It prints one line that starts with `PROBE_MODEL_DONE`.
-- [ ] 2. CHECK that the file `Code/probes/out/probe_model.json` exists.
+- [x] 1. RUN `python Code/probes/probe_model.py` from the repository root. It prints one line that starts with `PROBE_MODEL_DONE`.
+- [x] 2. CHECK that the file `Code/probes/out/probe_model.json` exists.
 verify: `python -c "import json; d=json.load(open('Code/probes/out/probe_model.json')); print(len(d['sections']))"`
 expect: 7
 if_fail: Run the command in step 1 again. Then run `verify:` again.
-result:
+result: 7
 
 ### T003: Check the probe sections
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/probes/out/probe_model.json
 context: The probe wrote the JSON file. Each of the 7 sections must have no `error` key. A section error means the probe found a real problem.
 do:
-- [ ] 1. CHECK that no section in `Code/probes/out/probe_model.json` has an `error` key.
+- [x] 1. CHECK that no section in `Code/probes/out/probe_model.json` has an `error` key.
 verify: `python -c "import json; d=json.load(open('Code/probes/out/probe_model.json')); print(sum(1 for s in d['sections'].values() if 'error' in s))"`
 expect: 0
 if_fail: Run `python Code/probes/probe_model.py` once more. Run `verify:` again. If the count is still not 0, copy the first `error` text from the JSON file into `blocked_reason:`.
-result:
+result: 0
 
 ### T004: Update skeleton metadata
-status: TODO
+status: DONE
 blocked_reason:
 file: Skeletons/Probes/probe_model.md
 context: The probe ran with no section errors. This task records that the code implements spec_revision 1.
 do:
-- [ ] 1. EDIT `Skeletons/Probes/probe_model.md`: find the text `implemented_revision: 0` and replace it with `implemented_revision: 1`.
-- [ ] 2. EDIT `Skeletons/Probes/probe_model.md`: find the text `status: READY` and replace it with `status: DONE`.
+- [x] 1. EDIT `Skeletons/Probes/probe_model.md`: find the text `implemented_revision: 0` and replace it with `implemented_revision: 1`.
+- [x] 2. EDIT `Skeletons/Probes/probe_model.md`: find the text `status: READY` and replace it with `status: DONE`.
 verify: `python -c "t=open('Skeletons/Probes/probe_model.md').read(); print(t.count('implemented_revision: 1'), t.count('status: DONE'))"`
 expect: 1 1
 if_fail: Open `Skeletons/Probes/probe_model.md`. Make the line with `implemented_revision:` end in 1. Make the line with `status:` end in DONE. Run `verify:` again.
-result:
+result: 1 1

@@ -6,7 +6,7 @@ This file is generated. Do not edit it by hand.
 
 ## Ready skeletons
 
-- [P1] `Skeletons/Probes/probe_model.md` (revision 1, implemented 0).
+- None.
 
 ## Open blockers
 
@@ -18,16 +18,20 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-130400-PUSH · PUSH · Push the completed SSLD-001 setup milestone to origin/main.
+- 20261115-130358-CODING · CODING · Complete SSLD-002 probe and record the model facts.
 - 20261115-130225-CODING · CODING · Complete SSLD-001 setup, install pocket-tts, and download the model.
 - 20261115-125144-PUSH · PUSH · Push the Phase 0 setup and probe plans to origin/main.
 - 20261115-124713-MAINTENANCE · MAINTENANCE · Integrate batch 1 plans and fix skeleton metadata for the Phase 0 setup and probe.
-- 20261114-142345-MAINTENANCE · MAINTENANCE · Update StageSet to the ss-living-doc system and add the Pocket TTS Phase 0 plan.
-- 20261113-201809-IDEATION · IDEATION · Add the Pocket TTS multilingual baseline and optimization plan.
 
 ## Verified environment facts
 
 | FACT-0001 | 2026-11-15 | The PyPI package `pocket-tts` 4.0.1 installs the module `pocket_tts` and exposes `TTSModel.load_model`, `generate_audio`, `generate_audio_stream`, and `get_state_for_audio_prompt`. | Environment | CURRENT | `.stageset/runs/20261115-130213-RUN.md` |
 | FACT-0002 | 2026-11-15 | The model repo `Thanushttk/pocket-tts-multilingual` holds `config.yaml`, `model.safetensors`, and `tokenizer.model` in 419 MB. The config has 6 flow layers, `d_model` 1024, 16 heads, 24 kHz, and frame rate 12.5 Hz. | Project | CURRENT | `.stageset/runs/20261115-130213-RUN-02.md` |
+| FACT-0003 | 2026-11-15 | The loaded model has 109,501,826 parameters, all FP32. `sample_rate` is 24000. The codec frame rate is 12.5 Hz, so one frame is 80 ms and 1920 samples. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
+| FACT-0004 | 2026-11-15 | The voice state is a `dict` with 18 tensors and 3.844 MB in FP32. `copy.deepcopy` of the voice state takes 0.0051 s. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
+| FACT-0005 | 2026-11-15 | On CPU, `generate_audio_stream` gives the first 1920-sample chunk after 361.6 ms. A full 2.48 s generation takes 1.606 s (RTF 0.6476). Leading silence is 5.5 ms. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
+| FACT-0006 | 2026-11-15 | `generate_audio` has no batch argument and the model has no name that contains `batch`. The codec uses streaming modules. The loaded model reports `training: True`. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 
 ## Read next
 
