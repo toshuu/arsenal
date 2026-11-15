@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T14:54:37Z",
+  "generated_at": "2026-11-15T14:56:56Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -794,6 +794,11 @@
     }
   ],
   "commits": [
+    {
+      "sha": "10ff12e",
+      "date": "2026-11-15T14:54:42+00:00",
+      "subject": "Document conditioned voice profile TTFA and capacity probe"
+    },
     {
       "sha": "94276c4",
       "date": "2026-11-15T14:41:25+00:00",

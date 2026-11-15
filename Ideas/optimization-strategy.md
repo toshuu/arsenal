@@ -353,6 +353,10 @@ Open items before a default is set:
 ## 14. Voice profiles (WIP)
 
 - Goal: compute voice conditioning once, save/load forever; reuse conditioned KV state per burst so the voice prompt is not recomputed each burst. Keep normal 4.0 s path when no profile is chosen.
-- Impl (WIP, `Code/batch/batched_stream.py`, commit `cb7cd55`): `save_voice_profile(..., conditioned=True)` stores encoded voice + flow-LM KV state; `BatchedStream(voice_profile=...)` clones/restores state per batch and conditions only text. Opt-in.
+- Usage: see `Code/batch/VOICE_PROFILES.md`.
+  - Normal: `BatchedStream(model, voice=wav, voice_seconds=4.0, ...)`
+  - Create profile once: `stream.save_voice_profile(path, conditioned=True)`
+  - Use profile: `BatchedStream(model, voice_profile=path, ...)` (opt-in)
+- Impl (WIP, `Code/batch/batched_stream.py`, commit `cb7cd55`): `save_voice_profile(..., conditioned=True)` stores encoded voice + flow-LM KV state; `BatchedStream(voice_profile=...)` clones/restores state per batch and conditions only text.
 - T4 FP16 probe (4.0 s, cap 16, `20261115-202240-RUN`): B=96 p95 213-256 ms (avg 232.8) vs normal 300.9 ms, 96/96 <350. Capacity: B=128 p95 277 ms (383/384 <350, 99.7%), B=144 p95 307 ms but 95.8% <350.
 - Open: temp=0 waveform parity vs normal not confirmed; needs formal check/SSLD, quality validation, and sustained/repeat confirmation.
