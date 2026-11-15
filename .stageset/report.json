@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T16:07:31Z",
+  "generated_at": "2026-11-15T16:20:15Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -807,6 +807,11 @@
   ],
   "commits": [
     {
+      "sha": "a5653f1",
+      "date": "2026-11-15T16:07:33+00:00",
+      "subject": "StageSet: document Phase D status and current B"
+    },
+    {
       "sha": "34ee00e",
       "date": "2026-11-15T16:02:40+00:00",
       "subject": "Phase D V9: add decode_group to BatchedStream (default 1)"
@@ -1000,11 +1005,6 @@
       "sha": "5d30396",
       "date": "2026-11-13T20:18:01+05:30",
       "subject": "Add Pocket TTS multilingual optimization idea"
-    },
-    {
-      "sha": "3429969",
-      "date": "2026-11-13T20:09:10+05:30",
-      "subject": "Install StageSet workspace system"
     }
   ]
 }

@@ -54,6 +54,23 @@ def _clone_state_to_batch(
     return out
 
 
+def _slice_model_state(state: ModelState, keep: torch.Tensor, cur_batch: int) -> ModelState:
+    out: ModelState = {}
+    for name, module_state in state.items():
+        new_state: dict[str, torch.Tensor] = {}
+        for key, value in module_state.items():
+            if key == "cache":
+                new_state[key] = value.index_select(1, keep).contiguous()
+            elif key in ("offset", "pad"):
+                new_state[key] = value.index_select(0, keep).contiguous()
+            elif torch.is_tensor(value) and value.dim() > 0 and value.shape[0] == cur_batch:
+                new_state[key] = value.index_select(0, keep).contiguous()
+            else:
+                new_state[key] = value
+        out[name] = new_state
+    return out
+
+
 class BatchedStream:
     def __init__(
         self,
@@ -64,6 +81,7 @@ class BatchedStream:
         max_first_tokens: int | None = None,
         voice_profile: str | Path | None = None,
         decode_group: int = 1,
+        compact: bool = True,
     ):
         self.model = model
         self.device = next(model.flow_lm.parameters()).device
@@ -71,6 +89,7 @@ class BatchedStream:
         self.voice_seconds = voice_seconds
         self.max_first_tokens = max_first_tokens
         self.decode_group = max(1, int(decode_group))
+        self.compact = compact
         self.voice: torch.Tensor | None = None
         self.voice_state: ModelState | None = None
         if voice_profile is not None:
@@ -289,10 +308,10 @@ class BatchedStream:
             return bool(done.all())
 
         for step in range(max_frames):
-            if use_profile_state:
-                conditioning = empty_audio
+            if step == 0:
+                conditioning = step0_cond if "step0_cond" in locals() else (empty_audio if use_profile_state else prefix)
             else:
-                conditioning = prefix if step == 0 else empty_audio
+                conditioning = empty_audio
             latent, is_eos = model._run_flow_lm_and_increment_step(
                 model_state=state,
                 text_tokens=empty_tokens,
@@ -310,12 +329,27 @@ class BatchedStream:
             now_done = countdown == 0
 
             pending.append((latent, now_done.clone(), step))
-            if step == 0 or bool(now_done.any()):
-                if flush_pending(force=True):
-                    break
-            else:
-                if flush_pending(force=False):
-                    break
+            force = step == 0 or bool(now_done.any())
+            if flush_pending(force=force):
+                break
+
+            if self.compact and bool(now_done.any()) and not bool(done.all()):
+                keep = (~done).nonzero(as_tuple=False).squeeze(-1)
+                if keep.numel() > 0 and keep.numel() < batch_size:
+                    keep_cpu = keep.detach().cpu()
+                    for local, orig in enumerate(keep_cpu.tolist()):
+                        if local != orig:
+                            audio_chunks[orig] = audio_chunks[local]
+                    # truncate moved-from slots (optional)
+                    state = _slice_model_state(state, keep, batch_size)
+                    mimi_state = _slice_model_state(mimi_state, keep, batch_size)
+                    latent = latent.index_select(0, keep).contiguous()
+                    countdown = countdown.index_select(0, keep).contiguous()
+                    done = done.index_select(0, keep).contiguous()
+                    empty_tokens = empty_tokens.index_select(0, keep).contiguous() if empty_tokens.dim() > 0 else torch.empty(keep.numel(), 0, dtype=torch.int64, device=device)
+                    empty_audio = empty_audio.index_select(0, keep).contiguous()
+                    batch_size = keep.numel()
+
         flush_pending(force=True)
 
         return [torch.cat(chunks) if chunks else torch.zeros(0, device=device) for chunks in audio_chunks]

@@ -26,8 +26,6 @@ This file is generated. Do not edit it by hand.
 
 ## Verified environment facts
 
-| FACT-0010 | 2026-11-15 | Phase B batched B=30 on one T4: p95 TTFA 278.8 ms, 149/150 rows under 350 ms, max 375.8 ms, RTF 0.013, peak VRAM 2137 MB. Recommended safe operating point. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
-| FACT-0011 | 2026-11-15 | Phase B batched B=34-36 on one T4 fail the p95 target: B=34 p95 359.7 ms (earlier run 295.0 ms; unstable), B=35 p95 358.5 ms, B=36 p95 357.6 ms. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0012 | 2026-11-15 | S1 FP16 spike on one T4 (FP16 backbone, FP32 head/sampler): B=64 p95 TTFA 233.2 ms, 192/192 under 350 ms, RTF 0.008, VRAM 3313 MB. Parity vs FP32 B=1 at temp 0 (32 frames): max diff 0.036789, correlation 0.998183. | Project | CURRENT | `.stageset/runs/20261115-143500-RUN-fp16-spike.md` |
 | FACT-0013 | 2026-11-15 | FP16 path formalized in `Code/batch/fp16.py` and checked by `Code/probes/check_batch_fp16.py`. FP32-vs-FP16 B=1 parity corr 0.9975; FP16 B=1-vs-B=32 corr 0.9469 (numeric drift). TTFA: B64 p95 280.3 ms, B80 p95 261.1 ms under 360 ms on one T4. Quality gate pending. | Project | CURRENT | `.stageset/runs/20261115-144500-RUN-fp16-formalize.md` |
 | FACT-0014 | 2026-11-15 | FP16 quality WAVs generated for manual listening: `Code/probes/out/fp16_quality/` (EN t0/t1 FP32/FP16 B=1 + FP16 B=32 row0; HI/MR FP32/FP16 B=1). Manual listening gate pending. Debug scripts copied to `Code/probes/debug/`. | Project | CURRENT | `.stageset/sessions/coding-fp16-quality-wavs.md` |
@@ -46,6 +44,8 @@ This file is generated. Do not edit it by hand.
 | FACT-0028 | 2026-11-15 | T4 FP16 unbiased sustained probe (alt 5 bursts, cap 16): 4.0/16 B96 p95 264-307 ms 100%<350, B128 p95 372-400 ms 94.4%; 3.0/16 B96 p95 300-359 ms 95.8%, B128 p95 376-380 ms 79.5%. 4.0 s chosen and faster than 3.0 s in this test. | Project | CURRENT | `.stageset/runs/20261115-205122-RUN.md` |
 | FACT-0029 | 2026-11-15 | T4 FP16 4.0s/cap16, conditioned voice profile (`conditioned=True`, KV reuse) 5 bursts: B=96 p95 218-309 ms (94-96/96 <350), B=128 p95 281-331 ms (128/128 <350). | Project | CURRENT | `.stageset/runs/20261115-210858-RUN.md` |
 | FACT-0030 | 2026-11-15 | Phase D V9: `decode_group` added to BatchedStream (default 1). T4 FP16 cond profile B=128 5 bursts: dg=1 p95 343.1 ms 633/640 <350 wall 2.33s; dg=2 p95 365.4 ms 606/640 wall 2.23s, temp0 diff ~8e-7. Grouping hurts TTFA, small wall gain. | Project | CURRENT | `.stageset/runs/20261115-213140-RUN.md` |
+| FACT-0031 | 2026-11-15 | Phase D V10: `compact=True` (active-set compaction) in BatchedStream. T4 FP16 cond profile 4.0s/cap16 5 bursts: B=128 p95 272.7 ms 636/640 <350, B=144 p95 300.5 ms 700/720, B=160 p95 337.7 ms 800/800. Default set True. | Project | CURRENT | `.stageset/runs/20261115-214659-RUN.md` |
+| FACT-0032 | 2026-11-15 | Phase D V8/S5 spike: flow step B=128 baseline ~14.05 ms/step. torch.compile default 15.73, max-autotune-no-cudagraphs 14.68 ms/step (no gain). Manual CUDA graph not implemented (dynamic state/compaction). | Project | CURRENT | `.stageset/runs/20261115-214659-RUN.md` |
 
 ## Read next
 
