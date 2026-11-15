@@ -15,7 +15,7 @@ import torch
 from pocket_tts.data.audio import audio_read
 from pocket_tts.data.audio_utils import convert_audio, end_on_pause
 from pocket_tts.models.text_chunking import prepare_text_prompt, split_into_best_sentences
-from pocket_tts.modules.stateful_module import ModelState, init_states
+from pocket_tts.modules.stateful_module import ModelState, increment_steps, init_states
 
 
 ChunkCallback = Callable[[int, torch.Tensor, float], None]
@@ -28,16 +28,21 @@ def set_state_padding(model_state: ModelState, pad: torch.Tensor) -> None:
 
 
 class BatchedStream:
-    def __init__(self, model, voice_path: str | Path, max_tokens: int = 50):
+    def __init__(self, model, voice_path: str | Path, max_tokens: int = 50, voice_seconds: float | None = None, max_first_tokens: int | None = None):
         self.model = model
         self.device = next(model.flow_lm.parameters()).device
         self.max_tokens = max_tokens
+        self.voice_seconds = voice_seconds
+        self.max_first_tokens = max_first_tokens
         self.voice = self._load_voice(voice_path)
 
     def _load_voice(self, voice_path: str | Path) -> torch.Tensor:
         audio, sample_rate = audio_read(voice_path)
         audio = convert_audio(audio, sample_rate, self.model.config.mimi.sample_rate, 1)
         audio = end_on_pause(audio, self.model.config.mimi.sample_rate)
+        if self.voice_seconds is not None:
+            limit = int(self.voice_seconds * self.model.config.mimi.sample_rate)
+            audio = audio[..., :limit]
         with torch.no_grad():
             prompt = self.model._encode_audio(audio.unsqueeze(0).to(self.device))
         if self.model.flow_lm.insert_bos_before_voice:
@@ -48,14 +53,21 @@ class BatchedStream:
         chunks = split_into_best_sentences(
             self.model.flow_lm.conditioner.tokenizer,
             text,
-            self.max_tokens,
+            self.max_first_tokens or self.max_tokens,
             self.model.pad_with_spaces_for_short_inputs,
             self.model.remove_semicolons,
             self.model.append_terminal_punctuation,
             self.model.capitalize_first_letter,
             self.model.replace_characters,
         )
-        return chunks[0] if chunks else text
+        first = chunks[0] if chunks else text
+        if self.max_first_tokens is None:
+            return first
+        tokenizer = self.model.flow_lm.conditioner.tokenizer
+        ids = tokenizer(first)[0].tolist()
+        if len(ids) <= self.max_first_tokens:
+            return first
+        return tokenizer.decode(ids[: self.max_first_tokens])
 
     def _text_embedding(self, text: str) -> tuple[torch.Tensor, int]:
         prepared, _ = prepare_text_prompt(
@@ -140,6 +152,7 @@ class BatchedStream:
 
             decode_input = latent * flow_lm.emb_std + flow_lm.emb_mean
             audio = model.mimi.decode_from_latent(decode_input, mimi_state)
+            increment_steps(model.mimi, mimi_state, increment=mimi_steps)
             frame = audio[:, 0]
 
             if step == 0:

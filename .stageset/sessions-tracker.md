@@ -31,11 +31,17 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-144200-PUSH | PUSH | 2026-11-15T14:42:00+05:00 | Push Phase B batched streaming core and burst harness to origin/main. | .stageset/sessions/event-push-ssld-005-006.md | SSLD-005; SSLD-006; IDEA-0003 | 5f3b8e3 |
 | 20261115-144500-CODING | CODING | 2026-11-15T14:45:00+05:00 | Formalize FP16 backbone path and run parity/TTFA check. | .stageset/sessions/coding-fp16-formalize.md | IDEA-0003 | - |
 | 20261115-150000-CODING | CODING | 2026-11-15T15:00:00+05:00 | Generate FP16 quality WAVs for manual listening check. | .stageset/sessions/coding-fp16-quality-wavs.md | IDEA-0003 | - |
+| 20261115-180908-CODING | CODING | 2026-11-15T18:09:08+05:30 | Fix the missing Mimi decoder state increment that degraded batched audio. | .stageset/sessions/coding-mimi-state-fix.md | IDEA-0003; 20261115-180908-RUN-mimi-state-fix; 20261115-181519-RUN | - |
+| 20261115-181309-CODING | CODING | 2026-11-15T18:13:09+05:30 | Record FP16 manual listening gate as PASS. | .stageset/sessions/event-listen-gate-pass.md | IDEA-0003; 20261115-180908-RUN-mimi-state-fix | - |
+| 20261115-182000-IDEATION | IDEATION | 2026-11-15T18:20:00+05:30 | Plan Phase C prefill levers and per-GPU reproduction on T4 and L4. | .stageset/sessions/ideation-phase-c-levers.md | IDEA-0003; FACT-0016 | - |
+| 20261115-182905-CODING | CODING | 2026-11-15T18:29:05+05:30 | Add voice and first-chunk levers and measure them at B=96 and B=128 on T4. | .stageset/sessions/coding-ssld-007-prefill-levers.md | IDEA-0003; SSLD-007; 20261115-182905-RUN | - |
+| 20261115-183337-CODING | CODING | 2026-11-15T18:33:37+05:30 | Record the lever quality listening gate as PASS. | .stageset/sessions/coding-lever-listen-gate.md | IDEA-0003; SSLD-007; 20261115-183337-RUN | - |
+| 20261115-183500-IDEATION | IDEATION | 2026-11-15T18:35:00+05:30 | Add a per-GPU reproduction runbook for T4 and L4. | .stageset/sessions/ideation-l4-reproduction.md | IDEA-0003; 20261115-182905-RUN | - |
 
 ## Totals
 
-- CODING: 9.
-- IDEATION: 3.
+- CODING: 13.
+- IDEATION: 5.
 - MAINTENANCE: 7.
 - PROBE: 0.
 - PUSH: 6.

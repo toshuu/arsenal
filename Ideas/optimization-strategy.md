@@ -6,7 +6,7 @@ priority: P0
 created_in: .stageset/sessions/ideation-pocket-tts-multilingual.md
 updated_in: .stageset/sessions/coding-ssld-006-fp16-spike.md
 created_at: 2026-11-15T14:30:00+05:30
-updated_at: 2026-11-15T14:35:00+05:30
+updated_at: 2026-11-15T18:33:37+05:30
 related_ideas: [IDEA-0001, IDEA-0002]
 related_reports: [Reports/burst-concurrency-2026-11-15.md]
 ---
@@ -179,7 +179,7 @@ a PASS report.
   - No error and no OOM.
 Phase B measured (see `.stageset/runs/20261115-142500-RUN-batch-harness.md`): B=32 p95 TTFA 327.0 ms with parity diff 1.07e-04; B=30 p95 278.8 ms; B=34-36 fail p95. Safe operating point: B=30.
 S1 FP16 spike measured (see `.stageset/runs/20261115-143500-RUN-fp16-spike.md`): FP16 backbone viable; B=64 p95 233.2 ms, 192/192 under 350 ms, RTF 0.008, VRAM 3313 MB. Parity corr 0.998, diff 0.036789. Quality gate pending.
-FP16 formalized (see `.stageset/runs/20261115-144500-RUN-fp16-formalize.md`, `.stageset/sessions/coding-fp16-quality-wavs.md`): `Code/batch/fp16.py`, `Code/probes/check_batch_fp16.py` PASS with warning (FP16 B1-vs-B32 corr 0.9469). Manual listening WAVs generated in `Code/probes/out/fp16_quality/` (EN/HI/MR), gate pending. Next: record listening result; if pass, shorter voice + capped first chunk. For L4, rerun FP16/BF16 checks and record facts.
+FP16 formalized (see `.stageset/runs/20261115-144500-RUN-fp16-formalize.md`, `.stageset/sessions/coding-fp16-quality-wavs.md`): `Code/batch/fp16.py`, `Code/probes/check_batch_fp16.py` PASS with warning (FP16 B1-vs-B32 corr 0.9469). Manual listening gate PASSED on the regenerated WAVs (`Code/probes/out/fp16_quality/`, FACT-0016). A Mimi decoder state bug caused the first bad gate (FACT-0015). Phase C is unblocked. V4/V5 levers implemented and probed on T4: B=96 p95 under 350 ms for every pair, B=128 unstable. Lever WAVs passed the owner listening gate (FACT-0018). Next: randomized 3-burst probe, choose the default, then B=128 and Phase D RTF work. For L4, rerun FP16/BF16 checks and record facts.
 
 ### Phase C: prefill reduction
 
@@ -302,3 +302,34 @@ Ask the owner before:
 
 Decision needed from the owner: accept the commit targets (32, 96, 128) and the
 quality limits in section 9.
+
+---
+
+## 13. Per-GPU reproduction (T4 now, L4 later)
+
+Every TTFA result is GPU-specific. Do not mix results from different GPUs.
+Keep one result file per GPU.
+
+### Environment
+
+1. Run `SSLD-001` to install `pocket-tts` and download the model.
+2. Check `nvidia-smi --query-gpu=name --format=csv,noheader`.
+3. If the package is not installed, run `pip install -e /kaggle/working/pocket-tts --no-deps`.
+
+### Probe commands
+
+```bash
+python Code/probes/bench_batch_server.py --bs 96,128 --max-b 128 --bursts 3 --fp16 --out Code/probes/out/bench_<gpu>.json
+python Code/probes/probe_prefill_levers.py
+```
+
+The probe JSON has `gpu_name` and `config`. Copy the merged JSON to
+`Code/probes/out/probe_prefill_levers_<gpu>.json` before the next GPU run.
+
+### Rules
+
+- Use the same voice file, texts, bursts, and temperature on T4 and L4.
+- Use 3 bursts and random order when the run is short.
+- A p95 under 350 ms on T4 is not proof for L4. Measure again.
+- Record each GPU result as a new fact. Keep the T4 fact as CURRENT.
+- Mark a fact SUPERSEDED only when the same GPU and setup changes.

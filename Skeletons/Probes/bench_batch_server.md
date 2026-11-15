@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0003
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 1
-@stageset implemented_revision: 1
+@stageset spec_revision: 2
+@stageset implemented_revision: 2
 @stageset planned_in: .stageset/sessions/ideation-batch-server.md
-@stageset last_updated_in: .stageset/sessions/coding-ssld-006-batch-harness.md
-@stageset implemented_in: .stageset/sessions/coding-ssld-006-batch-harness.md
+@stageset last_updated_in: .stageset/sessions/ideation-phase-c-levers.md
+@stageset implemented_in: .stageset/sessions/ideation-phase-c-levers.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -24,7 +24,8 @@ B=1 versus B=32 parity.
 
 ## Probe instructions
 
-- Run `python Code/probes/bench_batch_server.py --bs 30,32,34,35,36 --bursts 5 --parity-b 32 --out Code/probes/out/bench_batch_server_knee.json` from the repository root.
+- Run `python Code/probes/bench_batch_server.py --bs 30,32,34,35,36 --bursts 5 --parity-b 32 --out Code/probes/out/bench_batch_server_knee.json
+python Code/probes/bench_batch_server.py --bs 96,128 --bursts 2 --max-b 128 --fp16 --out Code/probes/out/bench_batch_server_fp16.json` from the repository root.
 - The script writes only the JSON file under `Code/probes/out/`.
 - Do not change model weights, project files, services, or external state.
 - Do not expose secrets or credentials.
@@ -33,10 +34,15 @@ B=1 versus B=32 parity.
 
 ```bash
 python Code/probes/bench_batch_server.py --bs 30,32,34,35,36 --bursts 5 --parity-b 32 --out Code/probes/out/bench_batch_server_knee.json
+python Code/probes/bench_batch_server.py --bs 96,128 --bursts 2 --max-b 128 --fp16 --out Code/probes/out/bench_batch_server_fp16.json
 ```
 
 ## Expected observations
 
+- New flags: `--fp16` enables the FP16 backbone, `--voice-seconds N` truncates
+  the voice prompt, and `--first-tokens N` caps the first text chunk.
+- The JSON has a `config` block with `fp16`, `voice_seconds`, `first_tokens`,
+  and `gpu_name`.
 - The command prints a table and ends with `BENCH_BATCH_SERVER_DONE`.
 - The JSON has `results`, `parity`, `device`, `torch`, and `cuda`.
 - B=30 has p95 TTFA below 350 ms.

@@ -28,6 +28,7 @@ logging.disable(logging.CRITICAL)
 from pocket_tts import TTSModel  # noqa: E402
 
 from batch.batched_stream import BatchedStream  # noqa: E402
+from batch.fp16 import enable_fp16_backbone  # noqa: E402
 
 SILENCE_THRESHOLD = 0.01
 
@@ -122,6 +123,9 @@ def main() -> int:
     parser.add_argument("--parity-frames", type=int, default=32)
     parser.add_argument("--voice", default=str(HERE / "ref" / "voice.wav"))
     parser.add_argument("--out", default=str(HERE / "out" / "bench_batch_server.json"))
+    parser.add_argument("--fp16", action="store_true")
+    parser.add_argument("--voice-seconds", type=float, default=None)
+    parser.add_argument("--first-tokens", type=int, default=None)
     args = parser.parse_args()
 
     batches = [int(x) for x in args.bs.split(",") if x.strip()]
@@ -135,8 +139,10 @@ def main() -> int:
         out_path = REPO / out_path
 
     model = TTSModel.load_model(config="config.yaml").to("cuda").eval()
+    if args.fp16:
+        enable_fp16_backbone(model)
     model.temp = args.temp
-    stream = BatchedStream(model, args.voice)
+    stream = BatchedStream(model, args.voice, voice_seconds=args.voice_seconds, max_first_tokens=args.first_tokens)
     samples_per_frame = int(round(model.config.mimi.sample_rate / model.mimi.frame_rate))
     texts = make_texts(max(batches))
 
@@ -249,6 +255,8 @@ def main() -> int:
     output = {
         "probe": "bench_batch_server",
         "device": torch.cuda.get_device_name(0),
+        "gpu_name": torch.cuda.get_device_name(0),
+        "config": {"fp16": args.fp16, "voice_seconds": args.voice_seconds, "first_tokens": args.first_tokens},
         "torch": torch.__version__,
         "cuda": torch.version.cuda,
         "voice": str(args.voice),

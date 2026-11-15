@@ -1,18 +1,18 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T09:52:36Z",
+  "generated_at": "2026-11-15T13:03:54Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
     "branch": "main"
   },
   "totals": {
-    "skeletons": 5,
-    "done": 5,
+    "skeletons": 6,
+    "done": 6,
     "waiting": 0,
     "draft": 0,
-    "sessions": 25,
-    "runs": 6,
+    "sessions": 31,
+    "runs": 7,
     "runs_active": 0,
     "results": 3
   },
@@ -22,8 +22,8 @@
       "path": "Skeletons/Code/batch/batched_stream.py",
       "title": "Implementation: batched streaming core",
       "status": "DONE",
-      "spec_revision": 1,
-      "implemented_revision": 1,
+      "spec_revision": 3,
+      "implemented_revision": 3,
       "phase": "done"
     },
     {
@@ -31,8 +31,8 @@
       "path": "Skeletons/Probes/bench_batch_server.md",
       "title": "Probe: batched streaming burst ceiling",
       "status": "DONE",
-      "spec_revision": 1,
-      "implemented_revision": 1,
+      "spec_revision": 2,
+      "implemented_revision": 2,
       "phase": "done"
     },
     {
@@ -48,6 +48,15 @@
       "id": "probe_model",
       "path": "Skeletons/Probes/probe_model.md",
       "title": "Probe: Pocket TTS multilingual model facts",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "probe_prefill_levers",
+      "path": "Skeletons/Probes/probe_prefill_levers.md",
+      "title": "Probe: Phase C prefill levers",
       "status": "DONE",
       "spec_revision": 1,
       "implemented_revision": 1,
@@ -366,6 +375,63 @@
           "status": "DONE"
         }
       ]
+    },
+    {
+      "id": "SSLD-007",
+      "path": "LivingDocs/SSLD-007-prefill-levers.md",
+      "title": "Phase C prefill levers",
+      "status": "DONE",
+      "current_task": "T009",
+      "skeleton": "Skeletons/Code/batch/batched_stream.py",
+      "tasks_total": 9,
+      "tasks_done": 9,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Add voice and chunk levers",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Create the lever check",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Run the lever check",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Add harness flags",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Create the prefill lever probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Run the prefill lever probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T007",
+          "title": "Create the lever quality WAV script",
+          "status": "DONE"
+        },
+        {
+          "id": "T008",
+          "title": "Run the lever quality WAV script",
+          "status": "DONE"
+        },
+        {
+          "id": "T009",
+          "title": "Close the skeleton and record facts",
+          "status": "DONE"
+        }
+      ]
     }
   ],
   "ideas": [
@@ -540,9 +606,50 @@
       "date": "2026-11-15T15:00:00+05:00",
       "type": "coding",
       "summary": "Generate FP16 quality WAVs for manual listening check."
+    },
+    {
+      "id": "20261115-180908-CODING",
+      "date": "2026-11-15T18:09:08+05:30",
+      "type": "coding",
+      "summary": "Fix the missing Mimi decoder state increment that degraded batched audio."
+    },
+    {
+      "id": "20261115-181309-CODING",
+      "date": "2026-11-15T18:13:09+05:30",
+      "type": "coding",
+      "summary": "Record FP16 manual listening gate as PASS."
+    },
+    {
+      "id": "20261115-182000-IDEATION",
+      "date": "2026-11-15T18:20:00+05:30",
+      "type": "ideation",
+      "summary": "Plan Phase C prefill levers and per-GPU reproduction on T4 and L4."
+    },
+    {
+      "id": "20261115-182905-CODING",
+      "date": "2026-11-15T18:29:05+05:30",
+      "type": "coding",
+      "summary": "Add voice and first-chunk levers and measure them at B=96 and B=128 on T4."
+    },
+    {
+      "id": "20261115-183337-CODING",
+      "date": "2026-11-15T18:33:37+05:30",
+      "type": "coding",
+      "summary": "Record the lever quality listening gate as PASS."
+    },
+    {
+      "id": "20261115-183500-IDEATION",
+      "date": "2026-11-15T18:35:00+05:30",
+      "type": "ideation",
+      "summary": "Add a per-GPU reproduction runbook for T4 and L4."
     }
   ],
   "commits": [
+    {
+      "sha": "16b7fbe",
+      "date": "2026-11-15T09:52:39+00:00",
+      "subject": "Document FP16 quality WAVs and save debug scripts"
+    },
     {
       "sha": "dbf58c4",
       "date": "2026-11-15T09:45:17+00:00",
