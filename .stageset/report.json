@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T15:14:13Z",
+  "generated_at": "2026-11-15T15:23:13Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -13,7 +13,7 @@
     "draft": 0,
     "sessions": 38,
     "runs": 9,
-    "runs_active": 1,
+    "runs_active": 0,
     "results": 3
   },
   "skeletons": [
@@ -492,11 +492,11 @@
       "id": "SSLD-009",
       "path": "LivingDocs/SSLD-009-phase-c-cleanup.md",
       "title": "Phase C cleanup and clean lever probe",
-      "status": "BLOCKED",
-      "current_task": "T005",
+      "status": "DONE",
+      "current_task": "T008",
       "skeleton": "Skeletons/Code/batch/batched_stream.py",
       "tasks_total": 8,
-      "tasks_done": 6,
+      "tasks_done": 8,
       "tasks": [
         {
           "id": "T001",
@@ -521,7 +521,7 @@
         {
           "id": "T005",
           "title": "Run the in-process probe",
-          "status": "BLOCKED"
+          "status": "DONE"
         },
         {
           "id": "T006",
@@ -531,7 +531,7 @@
         {
           "id": "T007",
           "title": "Pick the clean operating point",
-          "status": "BLOCKED"
+          "status": "DONE"
         },
         {
           "id": "T008",
@@ -794,6 +794,11 @@
     }
   ],
   "commits": [
+    {
+      "sha": "aae71ea",
+      "date": "2026-11-15T15:14:29+00:00",
+      "subject": "SSLD-009: close Phase C tasks T006-T008, record B=128 operating point"
+    },
     {
       "sha": "3770127",
       "date": "2026-11-15T15:09:13+00:00",

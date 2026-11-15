@@ -26,7 +26,6 @@ This file is generated. Do not edit it by hand.
 
 ## Verified environment facts
 
-| FACT-0007 | 2026-11-15 | On one Tesla T4 with 3 warmup runs and 20 measured streams: p50 first chunk 47.942 ms, p95 56.273 ms, p50 RTF 0.234, p95 RTF 0.258, peak allocated VRAM 496.0 MB, peak reserved 586.0 MB, load 0.991 s. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN.md` |
 | FACT-0008 | 2026-11-15 | One full `generate_audio` run on T4 gave 278.2 ms leading silence. The stream path gave p50 50.5 ms first non-silent time. The two values disagree. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN-02.md` |
 | FACT-0009 | 2026-11-15 | Phase B lockstep batched B=32 on one T4: p95 TTFA 327.0 ms, 156/160 rows under 350 ms, max 404.8 ms, RTF 0.013, peak VRAM 2247 MB. Parity vs B=1: max diff 1.07e-04, correlation 1.0. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0010 | 2026-11-15 | Phase B batched B=30 on one T4: p95 TTFA 278.8 ms, 149/150 rows under 350 ms, max 375.8 ms, RTF 0.013, peak VRAM 2137 MB. Recommended safe operating point. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
@@ -46,6 +45,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0025 | 2026-11-15 | Exploratory conditioned-KV probe, T4 FP16 4.0s/cap16, 3 rounds: B=128 p95 277 ms 99.7% <350. Not parity-confirmed; stream reverted. | Project | EXPLORATORY | `.stageset/runs/20261115-202240-RUN.md` |
 | FACT-0026 | 2026-11-15 | Encoded voice profile load/save is waveform-identical to normal voice path at temp 0 on T4 FP16 (4 texts, 4.0 s, cap 16): max abs diff 0.0, same lengths. | Project | CURRENT | `.stageset/runs/20261115-203726-RUN.md` |
 | FACT-0027 | 2026-11-15 | T4 FP16, voice 4.0 s, cap 16, B=128, normal path, 5 sustained bursts: p95 342.0, 370.2, 392.9, 375.6, 342.0 ms; under-350 101,121,120,121,125 / 128. B=128 selected as current operating point by user. | Project | CURRENT | `.stageset/runs/20261115-203726-RUN.md` |
+| FACT-0028 | 2026-11-15 | T4 FP16 unbiased sustained probe (alt 5 bursts, cap 16): 4.0/16 B96 p95 264-307 ms 100%<350, B128 p95 372-400 ms 94.4%; 3.0/16 B96 p95 300-359 ms 95.8%, B128 p95 376-380 ms 79.5%. 4.0 s chosen and faster than 3.0 s in this test. | Project | CURRENT | `.stageset/runs/20261115-205122-RUN.md` |
 
 ## Read next
 

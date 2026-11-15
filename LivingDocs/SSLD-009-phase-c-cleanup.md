@@ -3,9 +3,9 @@
 
 ## STATE
 doc_id: SSLD-009
-status: BLOCKED
-current_task: T005
-tasks_done: 6
+status: DONE
+current_task: T008
+tasks_done: 8
 tasks_total: 8
 skeleton: Skeletons/Code/batch/batched_stream.py
 spec_revision: 4
@@ -251,8 +251,8 @@ if_fail: Read the traceback. Fix the copied code only. Run `verify:` again.
 result: COMPILED
 
 ### T005: Run the in-process probe
-status: BLOCKED
-blocked_reason: CHECK-LEVERS-INPROC-02 failed (2.0/16 B96 p95 349.23 not < 4.0/16 311.65). Probe biased by sustained drift; see 20261115-190154-RUN.
+status: DONE
+blocked_reason: Superseded. In-proc ranking probe biased (FACT-0023). Unbiased 4v3 probe (20261115-205122-RUN, FACT-0028) shows 4.0/16 beats 3.0/16; user accepts 4.0 s.
 file: Code/probes/probe_levers_inproc.py
 context: This run is long. It uses one model load. Do not change any file during the run.
 do:
@@ -294,8 +294,8 @@ if_fail: Read the traceback. Fix only the two edits. Run `verify:` again.
 result: COMPILED
 
 ### T007: Pick the clean operating point
-status: BLOCKED
-blocked_reason: 3.0/16 p95 B96=321.93 B128=408.45>350 in inproc probe (biased, FACT-0023). User selected B=128, voice 4.0s, cap 16 (FACT-0027).
+status: DONE
+blocked_reason: Resolved by user choice and unbiased probe. Selected: voice 4.0 s, cap 16, B=128 (T4). B=128 p95 372-400 ms 94.4%<350; B=96 p95 264-307 ms 100%<350 (FACT-0028). Phase D/correct KV reuse needed for B=128 margin.
 file: Code/probes/pick_lever.py
 context: Run the picker on the in-process JSON. Use voice 3.0 s if it passes both batch sizes. Record the choice.
 do:
