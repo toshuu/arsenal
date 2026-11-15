@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T17:39:20Z",
+  "generated_at": "2026-11-15T17:41:37Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 8,
     "waiting": 0,
     "draft": 0,
-    "sessions": 44,
+    "sessions": 45,
     "runs": 10,
     "runs_active": 1,
     "results": 3
@@ -869,9 +869,20 @@
       "date": "2026-11-15T23:10:00+05:30",
       "type": "coding",
       "summary": "Try sideline INT4 (torchao) on flow_lm; all attempts fail."
+    },
+    {
+      "id": "20261115-233000-CODING",
+      "date": "2026-11-15T23:30:00+05:30",
+      "type": "coding",
+      "summary": "Web-search and retry INT4 fixes (torchao 0.10, T4); no working path."
     }
   ],
   "commits": [
+    {
+      "sha": "8c76ee8",
+      "date": "2026-11-15T17:39:22+00:00",
+      "subject": "StageSet: sideline INT4 attempt (torchao, failed on T4)"
+    },
     {
       "sha": "0c6cba2",
       "date": "2026-11-15T17:34:57+00:00",
@@ -1066,11 +1077,6 @@
       "sha": "144d6d4",
       "date": "2026-11-15T07:32:38+00:00",
       "subject": "Complete SSLD-001 setup and download the model"
-    },
-    {
-      "sha": "b73c1af",
-      "date": "2026-11-15T07:21:50+00:00",
-      "subject": "Record the Phase 0 plan push"
     }
   ]
 }

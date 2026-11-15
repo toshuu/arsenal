@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-233000-CODING · CODING · Web-search and retry INT4 fixes (torchao 0.10, T4); no working path.
 - 20261115-231000-CODING · CODING · Try sideline INT4 (torchao) on flow_lm; all attempts fail.
 - 20261115-225000-CODING · CODING · Update ONNX sideline with ORT install and full-export failure detail.
 - 20261115-223500-CODING · CODING · Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged).
 - 20261115-222000-IDEATION · IDEATION · Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks).
-- 20261115-215000-CODING · CODING · Phase D status - V9 done, V8/V10 assessed, B=128 under 350ms with conditioned profile.
 
 ## Verified environment facts
 
@@ -45,7 +45,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0036 | 2026-11-15 | Sideline INT8 (torchao `int8_weight_only` flow_lm), T4 FP16 cond profile 4.0s/cap16 compact, B=32 3 rounds: baseline p50 87.24 p95 110.88 ms wall 1.091 s; INT8 p50 70.72 p95 100.63 ms wall 1.198 s. Samples in `Code/experiments/out/`. | Project | CURRENT | `Code/experiments/int8/exp_int8.py` |
 | FACT-0037 | 2026-11-15 | Sideline ONNX: ORT CUDA available (1.32.0). Dummy export+run OK (`Code/experiments/out/dummy.onnx`, ~0.05 ms). Full flow_lm export failed: stateful ModelState dict + data-dependent guard `Eq(u0,1)` in attention/cache. No end-to-end gain/sample; needs tensorized state/static refactor. | Project | CURRENT | `Code/experiments/onnx/exp_onnx.py` |
 | FACT-0038 | 2026-11-15 | Sideline TRT: `tensorrt`/`torch_tensorrt` not installed, no dynamo TRT backend in env. Engine build not attempted. | Project | CURRENT | `Code/experiments/trt/exp_trt.py` |
-| FACT-0039 | 2026-11-15 | Sideline INT4 (torchao 0.10.0, `Int4WeightOnlyConfig` on flow_lm, T4): all attempts failed — g64/g128 dtype error (`zeros` float32 expected, got bfloat16), g32 `CUDA error: named symbol not found`. No INT4 latency/audio result. | Project | CURRENT | `Code/experiments/int4/exp_int4.py` |
+| FACT-0039 | 2026-11-15 | Sideline INT4 (torchao 0.10.0, T4 sm75): g64/g128 dtype error, g32 CUDA `named symbol not found`. Web-search fixes tried (`hqq`/tile/plain API mismatch in 0.10, v1 CPU int4pack unavailable) — no working INT4 run/sample. Likely needs compatible kernel/lib (tinygemm limits on T4) or other 4-bit stack. | Project | CURRENT | `Code/experiments/int4/exp_int4.py`,`Code/experiments/int4/exp_int4_fix.py` |
 
 ## Read next
 

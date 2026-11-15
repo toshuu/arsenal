@@ -1,0 +1,38 @@
+{
+  "attempts": [
+    {
+      "name": "v2_plain_g64_hqq_fp32",
+      "ok": false,
+      "err": "Int4WeightOnlyConfig.__init__() got an unexpected keyword argument 'int4_packing_format'"
+    },
+    {
+      "name": "v2_tile_g64_hqq_fp32",
+      "ok": false,
+      "err": "Int4WeightOnlyConfig.__init__() got an unexpected keyword argument 'int4_packing_format'"
+    },
+    {
+      "name": "v2_tile_g32_hqq_fp32",
+      "ok": false,
+      "err": "Int4WeightOnlyConfig.__init__() got an unexpected keyword argument 'int4_packing_format'"
+    },
+    {
+      "name": "v2_plain_g64_tiny_fp32",
+      "ok": false,
+      "err": "Int4WeightOnlyConfig.__init__() got an unexpected keyword argument 'int4_packing_format'"
+    },
+    {
+      "name": "v1_g64_fp32",
+      "ok": false,
+      "err": "Could not run 'aten::_convert_weight_to_int4pack' with arguments from the 'CPU' backend. This could be because the operator doesn't exist for this backend, or was omitted during the selective/custom build process (if using custom build). If you are a Facebook employee using PyTorch on mobile, please visit https://fburl.com/ptmfixes for possible resolutions. 'aten::_convert_weight_to_int4pack' is o"
+    }
+  ],
+  "best": null,
+  "error": null,
+  "baseline": {
+    "p50": 57.92,
+    "p95": 102.56,
+    "wall_med": 0.988,
+    "under350": 96,
+    "n": 96
+  }
+}
