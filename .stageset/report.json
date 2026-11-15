@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T13:03:54Z",
+  "generated_at": "2026-11-15T13:04:09Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 6,
     "waiting": 0,
     "draft": 0,
-    "sessions": 31,
+    "sessions": 32,
     "runs": 7,
     "runs_active": 0,
     "results": 3
@@ -642,9 +642,20 @@
       "date": "2026-11-15T18:35:00+05:30",
       "type": "ideation",
       "summary": "Add a per-GPU reproduction runbook for T4 and L4."
+    },
+    {
+      "id": "20261115-183700-PUSH",
+      "date": "2026-11-15T18:37:00+05:30",
+      "type": "push",
+      "summary": "Push the Mimi state fix and Phase C lever work to origin/main."
     }
   ],
   "commits": [
+    {
+      "sha": "597c90a",
+      "date": "2026-11-15T13:04:00+00:00",
+      "subject": "Fix Mimi decoder state and add Phase C levers"
+    },
     {
       "sha": "16b7fbe",
       "date": "2026-11-15T09:52:39+00:00",

@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-183700-PUSH · PUSH · Push the Mimi state fix and Phase C lever work to origin/main.
 - 20261115-183500-IDEATION · IDEATION · Add a per-GPU reproduction runbook for T4 and L4.
 - 20261115-183337-CODING · CODING · Record the lever quality listening gate as PASS.
 - 20261115-182905-CODING · CODING · Add voice and first-chunk levers and measure them at B=96 and B=128 on T4.
 - 20261115-182000-IDEATION · IDEATION · Plan Phase C prefill levers and per-GPU reproduction on T4 and L4.
-- 20261115-181309-CODING · CODING · Record FP16 manual listening gate as PASS.
 
 ## Verified environment facts
 
