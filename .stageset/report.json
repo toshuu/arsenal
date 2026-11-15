@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T16:20:15Z",
+  "generated_at": "2026-11-15T16:53:14Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -807,6 +807,11 @@
   ],
   "commits": [
     {
+      "sha": "028435e",
+      "date": "2026-11-15T16:20:19+00:00",
+      "subject": "Phase D: V10 compaction (default), V8 compile spike, raise B to 160"
+    },
+    {
       "sha": "a5653f1",
       "date": "2026-11-15T16:07:33+00:00",
       "subject": "StageSet: document Phase D status and current B"
@@ -1000,11 +1005,6 @@
       "sha": "98a0abe",
       "date": "2026-11-13T20:18:09+05:30",
       "subject": "Record Pocket TTS ideation session"
-    },
-    {
-      "sha": "5d30396",
-      "date": "2026-11-13T20:18:01+05:30",
-      "subject": "Add Pocket TTS multilingual optimization idea"
     }
   ]
 }
