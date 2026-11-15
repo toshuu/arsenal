@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T07:35:05Z",
+  "generated_at": "2026-11-15T07:35:20Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 2,
     "waiting": 0,
     "draft": 0,
-    "sessions": 14,
+    "sessions": 15,
     "runs": 3,
     "runs_active": 0
   },
@@ -229,9 +229,20 @@
       "date": "2026-11-15T13:05:00+05:30",
       "type": "push",
       "summary": "Push the completed SSLD-002 probe milestone to origin/main."
+    },
+    {
+      "id": "20261115-130514-PUSH",
+      "date": "2026-11-15T13:05:14+05:30",
+      "type": "push",
+      "summary": "Push the completed SSLD-003 benchmark milestone to origin/main."
     }
   ],
   "commits": [
+    {
+      "sha": "9af771c",
+      "date": "2026-11-15T07:35:07+00:00",
+      "subject": "Complete SSLD-003 benchmark harness workspace"
+    },
     {
       "sha": "99ef3f2",
       "date": "2026-11-15T07:34:12+00:00",
