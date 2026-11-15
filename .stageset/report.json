@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T17:41:37Z",
+  "generated_at": "2026-11-15T17:46:13Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 8,
     "waiting": 0,
     "draft": 0,
-    "sessions": 45,
+    "sessions": 46,
     "runs": 10,
     "runs_active": 1,
     "results": 3
@@ -875,9 +875,20 @@
       "date": "2026-11-15T23:30:00+05:30",
       "type": "coding",
       "summary": "Web-search and retry INT4 fixes (torchao 0.10, T4); no working path."
+    },
+    {
+      "id": "20261115-234000-CODING",
+      "date": "2026-11-15T23:40:00+05:30",
+      "type": "coding",
+      "summary": "Wrap sideline experiments (all blocked/no main gain), return to main path."
     }
   ],
   "commits": [
+    {
+      "sha": "15a84e0",
+      "date": "2026-11-15T17:41:52+00:00",
+      "subject": "StageSet: INT4 fix attempts after web search (no working path)"
+    },
     {
       "sha": "8c76ee8",
       "date": "2026-11-15T17:39:22+00:00",
@@ -1072,11 +1083,6 @@
       "sha": "99ef3f2",
       "date": "2026-11-15T07:34:12+00:00",
       "subject": "Complete SSLD-002 probe and record model facts"
-    },
-    {
-      "sha": "144d6d4",
-      "date": "2026-11-15T07:32:38+00:00",
-      "subject": "Complete SSLD-001 setup and download the model"
     }
   ]
 }

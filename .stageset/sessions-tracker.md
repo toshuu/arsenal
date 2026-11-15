@@ -51,10 +51,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-225000-CODING | CODING | 2026-11-15T22:50:00+05:30 | Update ONNX sideline with ORT install and full-export failure detail. | .stageset/sessions/coding-sideline-experiments-update.md | IDEA-0003 | - |
 | 20261115-231000-CODING | CODING | 2026-11-15T23:10:00+05:30 | Try sideline INT4 (torchao) on flow_lm; all attempts fail. | .stageset/sessions/coding-sideline-int4.md | IDEA-0003 | - |
 | 20261115-233000-CODING | CODING | 2026-11-15T23:30:00+05:30 | Web-search and retry INT4 fixes (torchao 0.10, T4); no working path. | .stageset/sessions/coding-sideline-int4-fix.md | IDEA-0003 | - |
+| 20261115-234000-CODING | CODING | 2026-11-15T23:40:00+05:30 | Wrap sideline experiments (all blocked/no main gain), return to main path. | .stageset/sessions/coding-sideline-wrapup.md | IDEA-0003, SSLD-010 | - |
 
 ## Totals
 
-- CODING: 22.
+- CODING: 23.
 - IDEATION: 7.
 - MAINTENANCE: 7.
 - PROBE: 0.

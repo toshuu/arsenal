@@ -18,15 +18,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-234000-CODING · CODING · Wrap sideline experiments (all blocked/no main gain), return to main path.
 - 20261115-233000-CODING · CODING · Web-search and retry INT4 fixes (torchao 0.10, T4); no working path.
 - 20261115-231000-CODING · CODING · Try sideline INT4 (torchao) on flow_lm; all attempts fail.
 - 20261115-225000-CODING · CODING · Update ONNX sideline with ORT install and full-export failure detail.
 - 20261115-223500-CODING · CODING · Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged).
-- 20261115-222000-IDEATION · IDEATION · Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks).
 
 ## Verified environment facts
 
-| FACT-0020 | 2026-11-15 | Tesla T4, FP16, one process, alternating rounds, B=96: median first-chunk time is 163.8 ms at voice 4.0 s (51 frames), 145.2 ms at 3.0 s (39 frames), and 130.0 ms at 2.0 s (26 frames). Shorter voice is faster. The reverse order in FACT-0019 came from running each config in a separate process. Do not compare configs across subprocess runs. | Project | CURRENT | `.stageset/runs/20261115-184910-RUN.md` |
 | FACT-0021 | 2026-11-15 | Tesla T4, FP16, sustained 6 bursts, B=128, voice 3.0 s, cap 16: after warmup p95 TTFA is ~392 ms and ~103/128 rows are under 350 ms. B=128 is not a safe sustained operating point on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0022 | 2026-11-15 | Tesla T4, FP16, sustained alternating 5 bursts, B=96: voice 4.0/cap 16 gives p95 276-341 ms and 96/96 rows under 350 ms in every burst. Voice 3.0/cap 16 gives p95 316-336 ms and 94-96/96 rows under 350 ms. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0023 | 2026-11-15 | A 24-config interleaved in-process probe (3 bursts, B=96/128) produced inflated p95 values and reversed the 2.0 vs 4.0 order at B=96 cap 16. Cross-process and long interleaved comparisons are biased; short sustained alternating checks are more reliable for ranking on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
@@ -46,6 +45,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0037 | 2026-11-15 | Sideline ONNX: ORT CUDA available (1.32.0). Dummy export+run OK (`Code/experiments/out/dummy.onnx`, ~0.05 ms). Full flow_lm export failed: stateful ModelState dict + data-dependent guard `Eq(u0,1)` in attention/cache. No end-to-end gain/sample; needs tensorized state/static refactor. | Project | CURRENT | `Code/experiments/onnx/exp_onnx.py` |
 | FACT-0038 | 2026-11-15 | Sideline TRT: `tensorrt`/`torch_tensorrt` not installed, no dynamo TRT backend in env. Engine build not attempted. | Project | CURRENT | `Code/experiments/trt/exp_trt.py` |
 | FACT-0039 | 2026-11-15 | Sideline INT4 (torchao 0.10.0, T4 sm75): g64/g128 dtype error, g32 CUDA `named symbol not found`. Web-search fixes tried (`hqq`/tile/plain API mismatch in 0.10, v1 CPU int4pack unavailable) — no working INT4 run/sample. Likely needs compatible kernel/lib (tinygemm limits on T4) or other 4-bit stack. | Project | CURRENT | `Code/experiments/int4/exp_int4.py`,`Code/experiments/int4/exp_int4_fix.py` |
+| FACT-0040 | 2026-11-15 | Sideline wrap-up: INT8 functional but wall worse, INT4/ONNX full export/TRT/LiteRT blocked by kernels-libs-stateful API. No B/latency gain merged. Return to main FP16 path; SSLD-010 pending (T005 soak, T006 close). | Project | CURRENT | `Code/experiments/`, `LivingDocs/SSLD-010-gpu-agnostic-optim.md` |
 
 ## Read next
 
