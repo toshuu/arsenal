@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T13:48:41Z",
+  "generated_at": "2026-11-15T14:41:22Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 6,
     "waiting": 2,
     "draft": 0,
-    "sessions": 37,
+    "sessions": 38,
     "runs": 9,
     "runs_active": 1,
     "results": 3
@@ -785,9 +785,25 @@
       "date": "2026-11-15T18:55:00+05:30",
       "type": "ideation",
       "summary": "Plan the Phase C cleanup: cut before pause and in-process lever probe."
+    },
+    {
+      "id": "20261115-194500-CODING",
+      "date": "2026-11-15T19:45:00+05:30",
+      "type": "coding",
+      "summary": "Start voice profiles (disk + conditioned-state reuse) in batched_stream."
     }
   ],
   "commits": [
+    {
+      "sha": "cb7cd55",
+      "date": "2026-11-15T14:39:54+00:00",
+      "subject": "WIP: add voice profiles and conditioned-state path to BatchedStream"
+    },
+    {
+      "sha": "6fff424",
+      "date": "2026-11-15T13:48:41+00:00",
+      "subject": "SSLD-009: refresh report"
+    },
     {
       "sha": "0e38c66",
       "date": "2026-11-15T13:48:38+00:00",
