@@ -24,11 +24,14 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-131127-IDEATION | IDEATION | 2026-11-15T13:11:27+05:30 | Plan the T4 GPU single-stream baseline probe and the results panel. | .stageset/sessions/event-plan-gpu-baseline.md | IDEA-0001; SSLD-004 | - |
 | 20261115-131302-CODING | CODING | 2026-11-15T13:13:02+05:30 | Complete SSLD-004 T4 GPU baseline and publish the results. | .stageset/sessions/coding-ssld-004-gpu-baseline.md | IDEA-0001; SSLD-004; 20261115-131244-RUN; 20261115-131244-RUN-02 | - |
 | 20261115-131316-PUSH | PUSH | 2026-11-15T13:13:16+05:30 | Push the T4 GPU baseline and the results panel to origin/main. | .stageset/sessions/event-push-ssld-004.md | SSLD-004; 11a47fa | 11a47fa |
+| 20261115-140725-IDEATION | IDEATION | 2026-11-15T14:07:25+05:30 | Choose a single-process lockstep batched streaming core for Phase B. | .stageset/sessions/ideation-batch-server.md | IDEA-0003 | - |
+| 20261115-141528-CODING | CODING | 2026-11-15T14:15:28+05:00 | Implement the Phase B lockstep batched streaming core and its parity check. | .stageset/sessions/coding-ssld-005-batch-stream.md | SSLD-005; IDEA-0003 | - |
+| 20261115-141932-CODING | CODING | 2026-11-15T14:19:32+05:00 | Measure the Phase B lockstep batch ceiling with unique texts and B=32 parity. | .stageset/sessions/coding-ssld-006-batch-harness.md | SSLD-006; IDEA-0003; SSLD-005 | - |
 
 ## Totals
 
-- CODING: 4.
-- IDEATION: 2.
+- CODING: 6.
+- IDEATION: 3.
 - MAINTENANCE: 7.
 - PROBE: 0.
 - PUSH: 5.

@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-141932-CODING · CODING · Measure the Phase B lockstep batch ceiling with unique texts and B=32 parity.
+- 20261115-141528-CODING · CODING · Implement the Phase B lockstep batched streaming core and its parity check.
+- 20261115-140725-IDEATION · IDEATION · Choose a single-process lockstep batched streaming core for Phase B.
 - 20261115-131316-PUSH · PUSH · Push the T4 GPU baseline and the results panel to origin/main.
 - 20261115-131302-CODING · CODING · Complete SSLD-004 T4 GPU baseline and publish the results.
-- 20261115-131127-IDEATION · IDEATION · Plan the T4 GPU single-stream baseline probe and the results panel.
-- 20261115-130514-PUSH · PUSH · Push the completed SSLD-003 benchmark milestone to origin/main.
-- 20261115-130500-PUSH · PUSH · Push the completed SSLD-002 probe milestone to origin/main.
 
 ## Verified environment facts
 
@@ -34,6 +34,9 @@ This file is generated. Do not edit it by hand.
 | FACT-0006 | 2026-11-15 | `generate_audio` has no batch argument and the model has no name that contains `batch`. The codec uses streaming modules. The loaded model reports `training: True`. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0007 | 2026-11-15 | On one Tesla T4 with 3 warmup runs and 20 measured streams: p50 first chunk 47.942 ms, p95 56.273 ms, p50 RTF 0.234, p95 RTF 0.258, peak allocated VRAM 496.0 MB, peak reserved 586.0 MB, load 0.991 s. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN.md` |
 | FACT-0008 | 2026-11-15 | One full `generate_audio` run on T4 gave 278.2 ms leading silence. The stream path gave p50 50.5 ms first non-silent time. The two values disagree. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN-02.md` |
+| FACT-0009 | 2026-11-15 | Phase B lockstep batched B=32 on one T4: p95 TTFA 327.0 ms, 156/160 rows under 350 ms, max 404.8 ms, RTF 0.013, peak VRAM 2247 MB. Parity vs B=1: max diff 1.07e-04, correlation 1.0. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
+| FACT-0010 | 2026-11-15 | Phase B batched B=30 on one T4: p95 TTFA 278.8 ms, 149/150 rows under 350 ms, max 375.8 ms, RTF 0.013, peak VRAM 2137 MB. Recommended safe operating point. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
+| FACT-0011 | 2026-11-15 | Phase B batched B=34-36 on one T4 fail the p95 target: B=34 p95 359.7 ms (earlier run 295.0 ms; unstable), B=35 p95 358.5 ms, B=36 p95 357.6 ms. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 
 ## Read next
 
