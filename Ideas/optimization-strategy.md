@@ -195,6 +195,12 @@ Order: V6 FP16, V4 shorter voice, V5 capped first chunk, V11 length buckets.
 - Gate D: aggregate RTF below 1.0 at target N. 30 minute soak, zero errors,
   stable p95.
 
+
+### Phase D progress (2026-11-15)
+
+- V9 decoder grouping: `decode_group` in `Code/batch/batched_stream.py` (default 1). dg=2 near-identical output but worse TTFA at B=128 (FACT-0030). Keep default 1.
+- V10 finished-row masking: TODO.
+- V8/S5 CUDA graphs/compile spike: TODO.
 ### Phase E: serving and L4
 
 - V11 admission control, V12 two-batch scheme only if staggered traffic matters.

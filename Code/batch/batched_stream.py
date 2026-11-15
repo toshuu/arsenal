@@ -63,12 +63,14 @@ class BatchedStream:
         voice_seconds: float | None = None,
         max_first_tokens: int | None = None,
         voice_profile: str | Path | None = None,
+        decode_group: int = 1,
     ):
         self.model = model
         self.device = next(model.flow_lm.parameters()).device
         self.max_tokens = max_tokens
         self.voice_seconds = voice_seconds
         self.max_first_tokens = max_first_tokens
+        self.decode_group = max(1, int(decode_group))
         self.voice: torch.Tensor | None = None
         self.voice_state: ModelState | None = None
         if voice_profile is not None:
@@ -251,6 +253,41 @@ class BatchedStream:
         fade = torch.linspace(0, 1, model.config.mimi.sample_rate // 200, device=device)
         t0 = time.perf_counter()
 
+        pending: list[tuple[torch.Tensor, torch.Tensor, int]] = []
+
+        def flush_pending(force: bool = False) -> bool:
+            nonlocal done
+            if not pending:
+                return bool(done.all())
+            if not force and len(pending) < self.decode_group:
+                return False
+            latents = torch.cat([p[0] for p in pending], dim=1)
+            decode_input = latents * flow_lm.emb_std + flow_lm.emb_mean
+            audio = model.mimi.decode_from_latent(decode_input, mimi_state)
+            increment_steps(model.mimi, mimi_state, increment=mimi_steps * len(pending))
+            # audio: [B, 1, T*samples_per_frame] or [B, T*samples_per_frame]
+            if audio.dim() == 3:
+                audio = audio[:, 0]
+            frame_samples = audio.shape[-1] // len(pending)
+            frames = audio.view(batch_size, len(pending), frame_samples)
+            elapsed = time.perf_counter() - t0
+            for i, (_, nd, stp) in enumerate(pending):
+                frame = frames[:, i]
+                if stp == 0:
+                    fade_len = min(fade.numel(), frame.shape[-1])
+                    frame[:, :fade_len] = frame[:, :fade_len] * fade[:fade_len]
+                for row in range(batch_size):
+                    if done[row]:
+                        continue
+                    if bool(nd[row]):
+                        done[row] = True
+                        continue
+                    audio_chunks[row].append(frame[row].clone())
+                    if on_chunk is not None:
+                        on_chunk(row, frame[row], elapsed)
+            pending.clear()
+            return bool(done.all())
+
         for step in range(max_frames):
             if use_profile_state:
                 conditioning = empty_audio
@@ -272,27 +309,13 @@ class BatchedStream:
             countdown = torch.where(countdown > 0, countdown - 1, countdown)
             now_done = countdown == 0
 
-            decode_input = latent * flow_lm.emb_std + flow_lm.emb_mean
-            audio = model.mimi.decode_from_latent(decode_input, mimi_state)
-            increment_steps(model.mimi, mimi_state, increment=mimi_steps)
-            frame = audio[:, 0]
-
-            if step == 0:
-                fade_len = min(fade.numel(), frame.shape[-1])
-                frame[:, :fade_len] = frame[:, :fade_len] * fade[:fade_len]
-
-            elapsed = time.perf_counter() - t0
-            for row in range(batch_size):
-                if done[row]:
-                    continue
-                if now_done[row]:
-                    done[row] = True
-                    continue
-                audio_chunks[row].append(frame[row].clone())
-                if on_chunk is not None:
-                    on_chunk(row, frame[row], elapsed)
-
-            if bool(done.all()):
-                break
+            pending.append((latent, now_done.clone(), step))
+            if step == 0 or bool(now_done.any()):
+                if flush_pending(force=True):
+                    break
+            else:
+                if flush_pending(force=False):
+                    break
+        flush_pending(force=True)
 
         return [torch.cat(chunks) if chunks else torch.zeros(0, device=device) for chunks in audio_chunks]

@@ -18,15 +18,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-214500-CODING · CODING · Phase D start: add decode grouping (V9) to BatchedStream.
 - 20261115-204000-CODING · CODING · Formalize encoded voice profiles; revert unsafe conditioned-KV path; record B=128.
 - 20261115-185500-IDEATION · IDEATION · Plan the Phase C cleanup: cut before pause and in-process lever probe.
 - 20261115-185100-PUSH · PUSH · Push the voice gap investigation and refreshed StageSet report.
 - 20261115-184910-CODING · CODING · Explain the voice length TTFA gap as a cross-process measurement bias.
-- 20261115-184600-PUSH · PUSH · Push the randomized lever probe and the B=128 safe pair to origin/main.
 
 ## Verified environment facts
 
-| FACT-0009 | 2026-11-15 | Phase B lockstep batched B=32 on one T4: p95 TTFA 327.0 ms, 156/160 rows under 350 ms, max 404.8 ms, RTF 0.013, peak VRAM 2247 MB. Parity vs B=1: max diff 1.07e-04, correlation 1.0. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0010 | 2026-11-15 | Phase B batched B=30 on one T4: p95 TTFA 278.8 ms, 149/150 rows under 350 ms, max 375.8 ms, RTF 0.013, peak VRAM 2137 MB. Recommended safe operating point. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0011 | 2026-11-15 | Phase B batched B=34-36 on one T4 fail the p95 target: B=34 p95 359.7 ms (earlier run 295.0 ms; unstable), B=35 p95 358.5 ms, B=36 p95 357.6 ms. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0012 | 2026-11-15 | S1 FP16 spike on one T4 (FP16 backbone, FP32 head/sampler): B=64 p95 TTFA 233.2 ms, 192/192 under 350 ms, RTF 0.008, VRAM 3313 MB. Parity vs FP32 B=1 at temp 0 (32 frames): max diff 0.036789, correlation 0.998183. | Project | CURRENT | `.stageset/runs/20261115-143500-RUN-fp16-spike.md` |
@@ -46,6 +45,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0027 | 2026-11-15 | T4 FP16, voice 4.0 s, cap 16, B=128, normal path, 5 sustained bursts: p95 342.0, 370.2, 392.9, 375.6, 342.0 ms; under-350 101,121,120,121,125 / 128. B=128 selected as current operating point by user. | Project | CURRENT | `.stageset/runs/20261115-203726-RUN.md` |
 | FACT-0028 | 2026-11-15 | T4 FP16 unbiased sustained probe (alt 5 bursts, cap 16): 4.0/16 B96 p95 264-307 ms 100%<350, B128 p95 372-400 ms 94.4%; 3.0/16 B96 p95 300-359 ms 95.8%, B128 p95 376-380 ms 79.5%. 4.0 s chosen and faster than 3.0 s in this test. | Project | CURRENT | `.stageset/runs/20261115-205122-RUN.md` |
 | FACT-0029 | 2026-11-15 | T4 FP16 4.0s/cap16, conditioned voice profile (`conditioned=True`, KV reuse) 5 bursts: B=96 p95 218-309 ms (94-96/96 <350), B=128 p95 281-331 ms (128/128 <350). | Project | CURRENT | `.stageset/runs/20261115-210858-RUN.md` |
+| FACT-0030 | 2026-11-15 | Phase D V9: `decode_group` added to BatchedStream (default 1). T4 FP16 cond profile B=128 5 bursts: dg=1 p95 343.1 ms 633/640 <350 wall 2.33s; dg=2 p95 365.4 ms 606/640 wall 2.23s, temp0 diff ~8e-7. Grouping hurts TTFA, small wall gain. | Project | CURRENT | `.stageset/runs/20261115-213140-RUN.md` |
 
 ## Read next
 

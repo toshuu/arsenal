@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T15:48:55Z",
+  "generated_at": "2026-11-15T16:02:21Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 8,
     "waiting": 0,
     "draft": 0,
-    "sessions": 38,
+    "sessions": 39,
     "runs": 9,
     "runs_active": 0,
     "results": 3
@@ -791,9 +791,20 @@
       "date": "2026-11-15T20:40:00+05:30",
       "type": "coding",
       "summary": "Formalize encoded voice profiles; revert unsafe conditioned-KV path; record B=128."
+    },
+    {
+      "id": "20261115-214500-CODING",
+      "date": "2026-11-15T21:45:00+05:30",
+      "type": "coding",
+      "summary": "Phase D start: add decode grouping (V9) to BatchedStream."
     }
   ],
   "commits": [
+    {
+      "sha": "fb44892",
+      "date": "2026-11-15T15:48:56+00:00",
+      "subject": "Doc: KV-reuse batching requires uniform text length"
+    },
     {
       "sha": "8676604",
       "date": "2026-11-15T15:42:21+00:00",
