@@ -81,6 +81,15 @@ Parity vs FP32 B=1 at temp 0 (32 frames): max diff 0.036789, correlation 0.99818
 
 B=64 passes p95 TTFA (233 ms) and all rows under 350 ms. FP16 gives 1.16x-1.39x wall speedup at B=32-64. Quality gate (listening/WER) is still required.
 
+## FP16 path formalized (quality gate pending)
+
+- Code: `Code/batch/fp16.py` (`enable_fp16_backbone`), check `Code/probes/check_batch_fp16.py` (PASS with warning).
+- FP32-vs-FP16 B=1 parity: max diff 0.0530, corr 0.9975.
+- FP16 B=1-vs-B=32 parity: max diff 0.3170, corr 0.9469 (numeric drift warning).
+- TTFA check: B64 p95 280.3 ms, B80 p95 261.1 ms under 360 ms.
+- Manual listening WAVs (gitignored on disk): `Code/probes/out/fp16_quality/` (`fp32/fp16` EN B=1, FP16 B=32 row0, HI/MR FP32/FP16). User listening result not recorded yet.
+- Debug/spike scripts saved in repo: `Code/probes/fp16_spike/`, `Code/probes/debug/`.
+
 ## Two T4 results
 
 | N | p50 ms | p95 ms | Under 350 ms | Runs |

@@ -179,6 +179,7 @@ a PASS report.
   - No error and no OOM.
 Phase B measured (see `.stageset/runs/20261115-142500-RUN-batch-harness.md`): B=32 p95 TTFA 327.0 ms with parity diff 1.07e-04; B=30 p95 278.8 ms; B=34-36 fail p95. Safe operating point: B=30.
 S1 FP16 spike measured (see `.stageset/runs/20261115-143500-RUN-fp16-spike.md`): FP16 backbone viable; B=64 p95 233.2 ms, 192/192 under 350 ms, RTF 0.008, VRAM 3313 MB. Parity corr 0.998, diff 0.036789. Quality gate pending.
+FP16 formalized (see `.stageset/runs/20261115-144500-RUN-fp16-formalize.md`, `.stageset/sessions/coding-fp16-quality-wavs.md`): `Code/batch/fp16.py`, `Code/probes/check_batch_fp16.py` PASS with warning (FP16 B1-vs-B32 corr 0.9469). Manual listening WAVs generated in `Code/probes/out/fp16_quality/` (EN/HI/MR), gate pending. Next: record listening result; if pass, shorter voice + capped first chunk. For L4, rerun FP16/BF16 checks and record facts.
 
 ### Phase C: prefill reduction
 

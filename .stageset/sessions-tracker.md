@@ -30,10 +30,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-143500-CODING | CODING | 2026-11-15T14:35:00+05:00 | Run S1 FP16 spike and measure B=64 p95 TTFA under 350 ms. | .stageset/sessions/coding-ssld-006-fp16-spike.md | IDEA-0003; SSLD-006 | - |
 | 20261115-144200-PUSH | PUSH | 2026-11-15T14:42:00+05:00 | Push Phase B batched streaming core and burst harness to origin/main. | .stageset/sessions/event-push-ssld-005-006.md | SSLD-005; SSLD-006; IDEA-0003 | 5f3b8e3 |
 | 20261115-144500-CODING | CODING | 2026-11-15T14:45:00+05:00 | Formalize FP16 backbone path and run parity/TTFA check. | .stageset/sessions/coding-fp16-formalize.md | IDEA-0003 | - |
+| 20261115-150000-CODING | CODING | 2026-11-15T15:00:00+05:00 | Generate FP16 quality WAVs for manual listening check. | .stageset/sessions/coding-fp16-quality-wavs.md | IDEA-0003 | - |
 
 ## Totals
 
-- CODING: 8.
+- CODING: 9.
 - IDEATION: 3.
 - MAINTENANCE: 7.
 - PROBE: 0.
