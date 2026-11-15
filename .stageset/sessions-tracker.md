@@ -39,6 +39,7 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-183500-IDEATION | IDEATION | 2026-11-15T18:35:00+05:30 | Add a per-GPU reproduction runbook for T4 and L4. | .stageset/sessions/ideation-l4-reproduction.md | IDEA-0003; 20261115-182905-RUN | - |
 | 20261115-183700-PUSH | PUSH | 2026-11-15T18:37:00+05:30 | Push the Mimi state fix and Phase C lever work to origin/main. | .stageset/sessions/event-push-ssld-007.md | IDEA-0003; SSLD-007; 597c90a | 597c90a |
 | 20261115-184344-CODING | CODING | 2026-11-15T18:43:44+05:30 | Run the randomized lever probe and pick voice 4.0 s with a 16-token cap. | .stageset/sessions/coding-ssld-008-randomized-lever-probe.md | IDEA-0003; SSLD-008; 20261115-182905-RUN | - |
+| 20261115-184600-PUSH | PUSH | 2026-11-15T18:46:00+05:30 | Push the randomized lever probe and the B=128 safe pair to origin/main. | .stageset/sessions/event-push-ssld-008.md | IDEA-0003; SSLD-008; d15b7a5 | d15b7a5 |
 
 ## Totals
 
@@ -46,4 +47,4 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 - IDEATION: 5.
 - MAINTENANCE: 7.
 - PROBE: 0.
-- PUSH: 7.
+- PUSH: 8.

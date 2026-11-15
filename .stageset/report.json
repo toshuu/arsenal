@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T13:14:03Z",
+  "generated_at": "2026-11-15T13:14:14Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 7,
     "waiting": 0,
     "draft": 0,
-    "sessions": 33,
+    "sessions": 34,
     "runs": 8,
     "runs_active": 0,
     "results": 3
@@ -700,9 +700,20 @@
       "date": "2026-11-15T18:43:44+05:30",
       "type": "coding",
       "summary": "Run the randomized lever probe and pick voice 4.0 s with a 16-token cap."
+    },
+    {
+      "id": "20261115-184600-PUSH",
+      "date": "2026-11-15T18:46:00+05:30",
+      "type": "push",
+      "summary": "Push the randomized lever probe and the B=128 safe pair to origin/main."
     }
   ],
   "commits": [
+    {
+      "sha": "d15b7a5",
+      "date": "2026-11-15T13:14:09+00:00",
+      "subject": "Add randomized lever probe and pick B128 safe pair"
+    },
     {
       "sha": "a4f470c",
       "date": "2026-11-15T13:04:09+00:00",
