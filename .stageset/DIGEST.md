@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-184344-CODING · CODING · Run the randomized lever probe and pick voice 4.0 s with a 16-token cap.
 - 20261115-183700-PUSH · PUSH · Push the Mimi state fix and Phase C lever work to origin/main.
 - 20261115-183500-IDEATION · IDEATION · Add a per-GPU reproduction runbook for T4 and L4.
 - 20261115-183337-CODING · CODING · Record the lever quality listening gate as PASS.
 - 20261115-182905-CODING · CODING · Add voice and first-chunk levers and measure them at B=96 and B=128 on T4.
-- 20261115-182000-IDEATION · IDEATION · Plan Phase C prefill levers and per-GPU reproduction on T4 and L4.
 
 ## Verified environment facts
 
@@ -44,6 +44,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0016 | 2026-11-15 | Manual listening gate passed on the nine WAVs in `Code/probes/out/fp16_quality/`. Language is correct in EN, HI, and MR. FP16 has no audible loss against FP32. Phase C is unblocked. | Project | CURRENT | `.stageset/runs/20261115-181309-RUN-listen-gate-pass.md` |
 | FACT-0017 | 2026-11-15 | T4, FP16, unique texts, 2 bursts: with the voice and first-chunk levers, B=96 p95 TTFA stays under 350 ms for every tested pair (217 to 321 ms). B=128 is not stable: p95 ranges 247 to 404 ms. The best point was voice 4.0 s, first-token cap 16, B=96, p95 217.5 ms. Results have run-order noise; do not treat the ranking as final. Defaults are unchanged. | Project | CURRENT | `.stageset/runs/20261115-182905-RUN.md` |
 | FACT-0018 | 2026-11-15 | Owner listened to the six lever quality WAVs in `Code/probes/out/lever_quality/` (voice 6.5, 3.0, 2.0 s; FP32 and FP16; 24-token cap). Owner reported that they worked. No single voice length was named as the default. A randomized 3-burst probe is still needed before a default is set. | Project | CURRENT | `.stageset/runs/20261115-183337-RUN.md` |
+| FACT-0019 | 2026-11-15 | Randomized 3-burst probe on Tesla T4 with FP16: voice 4.0 s and first-token cap 16 gives p95 TTFA 233.4 ms at B=96 and 247.3 ms at B=128. Both meet 350 ms, so B=128 is safe with the levers. The voice prefix is 82, 51, 39, and 26 frames for 6.5, 4.0, 3.0, and 2.0 s. The 4.0 s pair is faster than 3.0 s and 2.0 s; the cause is unknown. | Project | CURRENT | `.stageset/runs/20261115-184344-RUN.md` |
 
 ## Read next
 
