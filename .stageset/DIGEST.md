@@ -6,7 +6,8 @@ This file is generated. Do not edit it by hand.
 
 ## Ready skeletons
 
-- None.
+- [P0] `Skeletons/Code/batch/batched_stream.py` (revision 4, implemented 3).
+- [P1] `Skeletons/Probes/probe_levers_inproc.md` (revision 1, implemented 0).
 
 ## Open blockers
 
@@ -14,20 +15,18 @@ This file is generated. Do not edit it by hand.
 
 ## Failing checks
 
-- None.
+- `20261115-190154-RUN` — `Skeletons/Probes/probe_levers_inproc.md`, `CHECK-LEVERS-INPROC-02`, attempt 1.
 
 ## Last 5 sessions
 
+- 20261115-185500-IDEATION · IDEATION · Plan the Phase C cleanup: cut before pause and in-process lever probe.
 - 20261115-185100-PUSH · PUSH · Push the voice gap investigation and refreshed StageSet report.
 - 20261115-184910-CODING · CODING · Explain the voice length TTFA gap as a cross-process measurement bias.
 - 20261115-184600-PUSH · PUSH · Push the randomized lever probe and the B=128 safe pair to origin/main.
 - 20261115-184344-CODING · CODING · Run the randomized lever probe and pick voice 4.0 s with a 16-token cap.
-- 20261115-183700-PUSH · PUSH · Push the Mimi state fix and Phase C lever work to origin/main.
 
 ## Verified environment facts
 
-| FACT-0001 | 2026-11-15 | The PyPI package `pocket-tts` 4.0.1 installs the module `pocket_tts` and exposes `TTSModel.load_model`, `generate_audio`, `generate_audio_stream`, and `get_state_for_audio_prompt`. | Environment | CURRENT | `.stageset/runs/20261115-130213-RUN.md` |
-| FACT-0002 | 2026-11-15 | The model repo `Thanushttk/pocket-tts-multilingual` holds `config.yaml`, `model.safetensors`, and `tokenizer.model` in 419 MB. The config has 6 flow layers, `d_model` 1024, 16 heads, 24 kHz, and frame rate 12.5 Hz. | Project | CURRENT | `.stageset/runs/20261115-130213-RUN-02.md` |
 | FACT-0003 | 2026-11-15 | The loaded model has 109,501,826 parameters, all FP32. `sample_rate` is 24000. The codec frame rate is 12.5 Hz, so one frame is 80 ms and 1920 samples. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0004 | 2026-11-15 | The voice state is a `dict` with 18 tensors and 3.844 MB in FP32. `copy.deepcopy` of the voice state takes 0.0051 s. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0005 | 2026-11-15 | On CPU, `generate_audio_stream` gives the first 1920-sample chunk after 361.6 ms. A full 2.48 s generation takes 1.606 s (RTF 0.6476). Leading silence is 5.5 ms. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
@@ -44,8 +43,10 @@ This file is generated. Do not edit it by hand.
 | FACT-0016 | 2026-11-15 | Manual listening gate passed on the nine WAVs in `Code/probes/out/fp16_quality/`. Language is correct in EN, HI, and MR. FP16 has no audible loss against FP32. Phase C is unblocked. | Project | CURRENT | `.stageset/runs/20261115-181309-RUN-listen-gate-pass.md` |
 | FACT-0017 | 2026-11-15 | T4, FP16, unique texts, 2 bursts: with the voice and first-chunk levers, B=96 p95 TTFA stays under 350 ms for every tested pair (217 to 321 ms). B=128 is not stable: p95 ranges 247 to 404 ms. The best point was voice 4.0 s, first-token cap 16, B=96, p95 217.5 ms. Results have run-order noise; do not treat the ranking as final. Defaults are unchanged. | Project | CURRENT | `.stageset/runs/20261115-182905-RUN.md` |
 | FACT-0018 | 2026-11-15 | Owner listened to the six lever quality WAVs in `Code/probes/out/lever_quality/` (voice 6.5, 3.0, 2.0 s; FP32 and FP16; 24-token cap). Owner reported that they worked. No single voice length was named as the default. A randomized 3-burst probe is still needed before a default is set. | Project | CURRENT | `.stageset/runs/20261115-183337-RUN.md` |
-| FACT-0019 | 2026-11-15 | Randomized 3-burst probe on Tesla T4 with FP16: voice 4.0 s and first-token cap 16 gives p95 TTFA 233.4 ms at B=96 and 247.3 ms at B=128. Both meet 350 ms, so B=128 is safe with the levers. The voice prefix is 82, 51, 39, and 26 frames for 6.5, 4.0, 3.0, and 2.0 s. The 4.0 s pair is faster than 3.0 s and 2.0 s; the cause is unknown. | Project | CURRENT | `.stageset/runs/20261115-184344-RUN.md` |
 | FACT-0020 | 2026-11-15 | Tesla T4, FP16, one process, alternating rounds, B=96: median first-chunk time is 163.8 ms at voice 4.0 s (51 frames), 145.2 ms at 3.0 s (39 frames), and 130.0 ms at 2.0 s (26 frames). Shorter voice is faster. The reverse order in FACT-0019 came from running each config in a separate process. Do not compare configs across subprocess runs. | Project | CURRENT | `.stageset/runs/20261115-184910-RUN.md` |
+| FACT-0021 | 2026-11-15 | Tesla T4, FP16, sustained 6 bursts, B=128, voice 3.0 s, cap 16: after warmup p95 TTFA is ~392 ms and ~103/128 rows are under 350 ms. B=128 is not a safe sustained operating point on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
+| FACT-0022 | 2026-11-15 | Tesla T4, FP16, sustained alternating 5 bursts, B=96: voice 4.0/cap 16 gives p95 276-341 ms and 96/96 rows under 350 ms in every burst. Voice 3.0/cap 16 gives p95 316-336 ms and 94-96/96 rows under 350 ms. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
+| FACT-0023 | 2026-11-15 | A 24-config interleaved in-process probe (3 bursts, B=96/128) produced inflated p95 values and reversed the 2.0 vs 4.0 order at B=96 cap 16. Cross-process and long interleaved comparisons are biased; short sustained alternating checks are more reliable for ranking on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 
 ## Read next
 

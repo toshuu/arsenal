@@ -39,10 +39,10 @@ class BatchedStream:
     def _load_voice(self, voice_path: str | Path) -> torch.Tensor:
         audio, sample_rate = audio_read(voice_path)
         audio = convert_audio(audio, sample_rate, self.model.config.mimi.sample_rate, 1)
-        audio = end_on_pause(audio, self.model.config.mimi.sample_rate)
         if self.voice_seconds is not None:
             limit = int(self.voice_seconds * self.model.config.mimi.sample_rate)
             audio = audio[..., :limit]
+        audio = end_on_pause(audio, self.model.config.mimi.sample_rate)
         with torch.no_grad():
             prompt = self.model._encode_audio(audio.unsqueeze(0).to(self.device))
         if self.model.flow_lm.insert_bos_before_voice:

@@ -3,12 +3,12 @@
 @stageset kind: IMPLEMENTATION
 @stageset target: Code/batch/batched_stream.py
 @stageset source_idea: IDEA-0003
-@stageset status: DONE
+@stageset status: READY
 @stageset priority: P0
-@stageset spec_revision: 3
+@stageset spec_revision: 4
 @stageset implemented_revision: 3
 @stageset planned_in: .stageset/sessions/ideation-batch-server.md
-@stageset last_updated_in: .stageset/sessions/coding-ssld-007-prefill-levers.md
+@stageset last_updated_in: .stageset/sessions/ideation-phase-c-cleanup.md
 @stageset implemented_in: .stageset/sessions/coding-ssld-007-prefill-levers.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
@@ -56,7 +56,8 @@ Rules:
   `mimi.encoder_frame_rate / mimi.frame_rate`. The reference path does this.
   Without it, the decoder cache is overwritten at offset 0 and audio is dull.
 - The first audio frame gets a 5 ms fade-in.
-- `voice_seconds` truncates the prompt after resampling and before encoding.
+- `voice_seconds` truncates the prompt after resampling, then calls
+  `end_on_pause` on the cut audio, then encodes. The prompt must end on a pause.
 - `max_first_tokens` overrides `max_tokens` for the first text chunk only.
 - A row stops at its own EOS. The batch stops when all rows stop or hit the cap.
 
@@ -128,6 +129,13 @@ ASSUMPTION: A-12 - `split_into_best_sentences` returns one chunk for a text of a
 - Predicted output: `True`
 - Pass condition: the command prints `True`.
 - Fail condition: the file is missing or the value is 1e-3 or more.
+
+### CHECK-BATCH-STREAM-05 - cut before pause
+
+- Command: `python Code/probes/check_voice_cut_order.py`
+- Predicted output: `CHECK_VOICE_CUT_ORDER PASS`
+- Pass condition: exit code 0 and the line `CHECK_VOICE_CUT_ORDER PASS`.
+- Fail condition: any other output or a non-zero exit code. The check proves that `_load_voice` cuts the audio before it calls `end_on_pause`.
 
 ### CHECK-BATCH-STREAM-04 - lever knobs
 
