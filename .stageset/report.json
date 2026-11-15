@@ -1,22 +1,40 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T07:43:22Z",
+  "generated_at": "2026-11-15T08:57:19Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
     "branch": "main"
   },
   "totals": {
-    "skeletons": 3,
-    "done": 3,
+    "skeletons": 5,
+    "done": 5,
     "waiting": 0,
     "draft": 0,
-    "sessions": 18,
-    "runs": 4,
+    "sessions": 22,
+    "runs": 6,
     "runs_active": 0,
     "results": 3
   },
   "skeletons": [
+    {
+      "id": "batched_stream",
+      "path": "Skeletons/Code/batch/batched_stream.py",
+      "title": "Implementation: batched streaming core",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "bench_batch_server",
+      "path": "Skeletons/Probes/bench_batch_server.md",
+      "title": "Probe: batched streaming burst ceiling",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
     {
       "id": "bench_gpu",
       "path": "Skeletons/Probes/bench_gpu.md",
@@ -269,6 +287,85 @@
           "status": "DONE"
         }
       ]
+    },
+    {
+      "id": "SSLD-005",
+      "path": "LivingDocs/SSLD-005-batch-stream.md",
+      "title": "Batched streaming core",
+      "status": "DONE",
+      "current_task": "T005",
+      "skeleton": "Skeletons/Code/batch/batched_stream.py",
+      "tasks_total": 5,
+      "tasks_done": 5,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create package marker",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Create the batched streaming module",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Create the smoke and parity check",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Run the smoke and parity check",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Update skeleton metadata",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-006",
+      "path": "LivingDocs/SSLD-006-batch-harness.md",
+      "title": "Batched burst harness",
+      "status": "DONE",
+      "current_task": "T006",
+      "skeleton": "Skeletons/Probes/bench_batch_server.md",
+      "tasks_total": 6,
+      "tasks_done": 6,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create the burst harness",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Run the knee probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Check B=32 parity",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Check B=32 p95 and tail",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Check B=30 p95",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Update probe metadata",
+          "status": "DONE"
+        }
+      ]
     }
   ],
   "ideas": [
@@ -276,6 +373,16 @@
       "path": "Ideas/_index.md",
       "title": "Ideas index",
       "status": null
+    },
+    {
+      "path": "Ideas/high-concurrency-burst-optimization.md",
+      "title": "High-concurrency burst plan for pocket-tts on one T4 or L4",
+      "status": "DISCOVERY"
+    },
+    {
+      "path": "Ideas/optimization-strategy.md",
+      "title": "Final optimization strategy for pocket-tts burst concurrency",
+      "status": "DISCOVERY"
     },
     {
       "path": "Ideas/pocket-tts-multilingual-optimization.md",
@@ -391,9 +498,43 @@
       "date": "2026-11-15T13:13:16+05:30",
       "type": "push",
       "summary": "Push the T4 GPU baseline and the results panel to origin/main."
+    },
+    {
+      "id": "20261115-140725-IDEATION",
+      "date": "2026-11-15T14:07:25+05:30",
+      "type": "ideation",
+      "summary": "Choose a single-process lockstep batched streaming core for Phase B."
+    },
+    {
+      "id": "20261115-141528-CODING",
+      "date": "2026-11-15T14:15:28+05:00",
+      "type": "coding",
+      "summary": "Implement the Phase B lockstep batched streaming core and its parity check."
+    },
+    {
+      "id": "20261115-141932-CODING",
+      "date": "2026-11-15T14:19:32+05:00",
+      "type": "coding",
+      "summary": "Measure the Phase B lockstep batch ceiling with unique texts and B=32 parity."
+    },
+    {
+      "id": "20261115-144200-PUSH",
+      "date": "2026-11-15T14:42:00+05:00",
+      "type": "push",
+      "summary": "Push Phase B batched streaming core and burst harness to origin/main."
     }
   ],
   "commits": [
+    {
+      "sha": "5f3b8e3",
+      "date": "2026-11-15T08:55:52+00:00",
+      "subject": "Complete SSLD-005 batched streaming core and SSLD-006 burst harness"
+    },
+    {
+      "sha": "20e43ea",
+      "date": "2026-11-15T07:43:22+00:00",
+      "subject": "Record the T4 GPU baseline push"
+    },
     {
       "sha": "11a47fa",
       "date": "2026-11-15T07:43:13+00:00",
