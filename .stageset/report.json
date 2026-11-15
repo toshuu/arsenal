@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T09:22:29Z",
+  "generated_at": "2026-11-15T09:45:17Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 5,
     "waiting": 0,
     "draft": 0,
-    "sessions": 23,
+    "sessions": 24,
     "runs": 6,
     "runs_active": 0,
     "results": 3
@@ -528,9 +528,25 @@
       "date": "2026-11-15T14:42:00+05:00",
       "type": "push",
       "summary": "Push Phase B batched streaming core and burst harness to origin/main."
+    },
+    {
+      "id": "20261115-144500-CODING",
+      "date": "2026-11-15T14:45:00+05:00",
+      "type": "coding",
+      "summary": "Formalize FP16 backbone path and run parity/TTFA check."
     }
   ],
   "commits": [
+    {
+      "sha": "09cf191",
+      "date": "2026-11-15T09:33:59+00:00",
+      "subject": "Add FP16 spike scripts and baseline burst probe"
+    },
+    {
+      "sha": "ee84161",
+      "date": "2026-11-15T09:22:29+00:00",
+      "subject": "Record S1 FP16 spike: B=64 p95 233ms on T4"
+    },
     {
       "sha": "f3f48f2",
       "date": "2026-11-15T08:57:24+00:00",
