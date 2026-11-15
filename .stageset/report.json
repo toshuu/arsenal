@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T07:34:09Z",
+  "generated_at": "2026-11-15T07:35:05Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,9 +11,9 @@
     "done": 2,
     "waiting": 0,
     "draft": 0,
-    "sessions": 12,
+    "sessions": 14,
     "runs": 3,
-    "runs_active": 1
+    "runs_active": 0
   },
   "skeletons": [
     {
@@ -104,31 +104,31 @@
       "id": "SSLD-003",
       "path": "LivingDocs/SSLD-003-benchmark-harness.md",
       "title": "Build the benchmark harness workspace",
-      "status": "NOT_STARTED",
-      "current_task": "T001",
+      "status": "DONE",
+      "current_task": "T004",
       "skeleton": "-",
       "tasks_total": 4,
-      "tasks_done": 0,
+      "tasks_done": 4,
       "tasks": [
         {
           "id": "T001",
           "title": "Create the benchmark workspace",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T002",
           "title": "Record the environment versions",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T003",
           "title": "Create the fixed test-set manifest",
-          "status": "TODO"
+          "status": "DONE"
         },
         {
           "id": "T004",
           "title": "Create the results schema",
-          "status": "TODO"
+          "status": "DONE"
         }
       ]
     }
@@ -217,9 +217,26 @@
       "date": "2026-11-15T13:04:00+05:30",
       "type": "push",
       "summary": "Push the completed SSLD-001 setup milestone to origin/main."
+    },
+    {
+      "id": "20261115-130457-CODING",
+      "date": "2026-11-15T13:04:57+05:30",
+      "type": "coding",
+      "summary": "Complete SSLD-003 benchmark workspace, env log, test set, and schema."
+    },
+    {
+      "id": "20261115-130500-PUSH",
+      "date": "2026-11-15T13:05:00+05:30",
+      "type": "push",
+      "summary": "Push the completed SSLD-002 probe milestone to origin/main."
     }
   ],
   "commits": [
+    {
+      "sha": "99ef3f2",
+      "date": "2026-11-15T07:34:12+00:00",
+      "subject": "Complete SSLD-002 probe and record model facts"
+    },
     {
       "sha": "144d6d4",
       "date": "2026-11-15T07:32:38+00:00",

@@ -3,9 +3,9 @@
 
 ## STATE
 doc_id: SSLD-003
-status: NOT_STARTED
-current_task: T001
-tasks_done: 0
+status: DONE
+current_task: T004
+tasks_done: 4
 tasks_total: 4
 skeleton: -
 spec_revision: 1
@@ -29,14 +29,14 @@ sync_command: python scripts/ss-living-doc.py LivingDocs/SSLD-003-benchmark-harn
 ## TASKS
 
 ### T001: Create the benchmark workspace
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/pocket-tts-bench/README.md
 context: Phase 0 needs one folder for results and voices. This task makes the folder. The model stays in Code/model from SSLD-001.
 do:
-- [ ] 1. CREATE `Code/pocket-tts-bench/README.md` with the text block below.
-- [ ] 2. CREATE `Code/pocket-tts-bench/results/.gitkeep` as an empty file.
-- [ ] 3. CREATE `Code/pocket-tts-bench/voices/.gitkeep` as an empty file.
+- [x] 1. CREATE `Code/pocket-tts-bench/README.md` with the text block below.
+- [x] 2. CREATE `Code/pocket-tts-bench/results/.gitkeep` as an empty file.
+- [x] 3. CREATE `Code/pocket-tts-bench/voices/.gitkeep` as an empty file.
 
    ```markdown
    # Pocket TTS benchmark
@@ -51,30 +51,30 @@ do:
 verify: `test -f Code/pocket-tts-bench/README.md && test -d Code/pocket-tts-bench/results && test -d Code/pocket-tts-bench/voices && echo ok`
 expect: ok
 if_fail: Create `Code/pocket-tts-bench/README.md` again. Create the `results/` and `voices/` folders with `.gitkeep`. Run `verify:` again.
-result:
+result: ok
 
 ### T002: Record the environment versions
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/pocket-tts-bench/results/environment.txt
 context: The idea requires pinned versions. This task records Python, pip, and GPU details for the benchmark log.
 do:
-- [ ] 1. RUN `python -V > Code/pocket-tts-bench/results/environment.txt`
-- [ ] 2. RUN `pip freeze > Code/pocket-tts-bench/results/pip-freeze.txt`
-- [ ] 3. RUN `command -v nvidia-smi >/dev/null && nvidia-smi > Code/pocket-tts-bench/results/gpu.txt || echo "no gpu" > Code/pocket-tts-bench/results/gpu.txt`
+- [x] 1. RUN `python -V > Code/pocket-tts-bench/results/environment.txt`
+- [x] 2. RUN `pip freeze > Code/pocket-tts-bench/results/pip-freeze.txt`
+- [x] 3. RUN `command -v nvidia-smi >/dev/null && nvidia-smi > Code/pocket-tts-bench/results/gpu.txt || echo "no gpu" > Code/pocket-tts-bench/results/gpu.txt`
 verify: `test -s Code/pocket-tts-bench/results/environment.txt && test -s Code/pocket-tts-bench/results/pip-freeze.txt && test -s Code/pocket-tts-bench/results/gpu.txt && echo ok`
 expect: ok
 if_fail: Run the three commands again. Check that `Code/pocket-tts-bench/results/` exists. Run `verify:` again.
-result:
+result: ok
 
 ### T003: Create the fixed test-set manifest
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/pocket-tts-bench/testset.json
 context: Phase 1 needs one fixed list of languages, groups, and voices. This task records it.
 do:
-- [ ] 1. CREATE `Code/pocket-tts-bench/testset.json` with the JSON block below.
-- [ ] 2. CHECK the language count.
+- [x] 1. CREATE `Code/pocket-tts-bench/testset.json` with the JSON block below.
+- [x] 2. CHECK the language count.
 
    ```json
    {
@@ -87,16 +87,16 @@ do:
 verify: `python -c "import json; d=json.load(open('Code/pocket-tts-bench/testset.json')); print(len(d['languages']))"`
 expect: 7
 if_fail: Open `Code/pocket-tts-bench/testset.json`. Make it match the JSON block exactly. Run `verify:` again.
-result:
+result: 7
 
 ### T004: Create the results schema
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/pocket-tts-bench/schema.json
 context: Every run must save the same fields. This task records the field names.
 do:
-- [ ] 1. CREATE `Code/pocket-tts-bench/schema.json` with the JSON block below.
-- [ ] 2. CHECK the top-level count.
+- [x] 1. CREATE `Code/pocket-tts-bench/schema.json` with the JSON block below.
+- [x] 2. CHECK the top-level count.
 
    ```json
    {
@@ -108,4 +108,4 @@ do:
 verify: `python -c "import json; d=json.load(open('Code/pocket-tts-bench/schema.json')); print(len(d))"`
 expect: 3
 if_fail: Open `Code/pocket-tts-bench/schema.json`. Make it match the JSON block exactly. Run `verify:` again.
-result:
+result: 3

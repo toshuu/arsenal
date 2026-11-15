@@ -1,0 +1,5 @@
+{
+  "request": ["t_request", "t_first_audio", "t_first_nonsilent", "t_end", "audio_seconds", "underruns"],
+  "run": ["p50_ttfa", "p95_ttfa", "p99_ttfa", "rtf", "memory", "errors"],
+  "quality": ["word_error", "prompt_similarity", "utmos"]
+}

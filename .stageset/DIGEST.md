@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-130500-PUSH · PUSH · Push the completed SSLD-002 probe milestone to origin/main.
+- 20261115-130457-CODING · CODING · Complete SSLD-003 benchmark workspace, env log, test set, and schema.
 - 20261115-130400-PUSH · PUSH · Push the completed SSLD-001 setup milestone to origin/main.
 - 20261115-130358-CODING · CODING · Complete SSLD-002 probe and record the model facts.
 - 20261115-130225-CODING · CODING · Complete SSLD-001 setup, install pocket-tts, and download the model.
-- 20261115-125144-PUSH · PUSH · Push the Phase 0 setup and probe plans to origin/main.
-- 20261115-124713-MAINTENANCE · MAINTENANCE · Integrate batch 1 plans and fix skeleton metadata for the Phase 0 setup and probe.
 
 ## Verified environment facts
 

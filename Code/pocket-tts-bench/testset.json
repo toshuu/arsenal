@@ -1,0 +1,6 @@
+{
+  "languages": ["en", "hi", "mr", "kn", "ta", "ml", "te"],
+  "groups": ["card-64", "long-sentence", "code-mixed"],
+  "voices_min": 5,
+  "voices_max": 10
+}
