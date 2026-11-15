@@ -3,9 +3,9 @@
 
 ## STATE
 doc_id: SSLD-001
-status: NOT_STARTED
-current_task: T001
-tasks_done: 0
+status: DONE
+current_task: T004
+tasks_done: 4
 tasks_total: 4
 skeleton: Skeletons/requirements.txt.skeleton.md
 spec_revision: 1
@@ -29,59 +29,59 @@ sync_command: python scripts/ss-living-doc.py LivingDocs/SSLD-001-setup-env.md -
 ## TASKS
 
 ### T001: Create requirements.txt
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/requirements.txt
 context: Code/ exists. This task lists the Python packages for Arsenal. It does not pin versions. The probe records the versions.
 do:
-- [ ] 1. CREATE `Code/requirements.txt` with the text block below. It has 3 lines.
+- [x] 1. CREATE `Code/requirements.txt` with the text block below. It has 3 lines.
 
    ```text
    pocket-tts
    huggingface_hub
    numpy
    ```
-- [ ] 2. CHECK that `Code/requirements.txt` has exactly 3 words.
+- [x] 2. CHECK that `Code/requirements.txt` has exactly 3 words.
 verify: `python -c "print(len(open('Code/requirements.txt').read().split()))"`
 expect: 3
 if_fail: Open `Code/requirements.txt`. Make it match the text block in step 1 exactly. Run `verify:` again.
-result:
+result: 3
 
 ### T002: Install packages
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/requirements.txt
 context: Code/requirements.txt exists. This task installs the 3 packages. It needs internet. It can take several minutes.
 do:
-- [ ] 1. RUN `python -m pip install -r Code/requirements.txt` from the repository root.
-- [ ] 2. CHECK that no line of the pip output starts with `ERROR:`.
+- [x] 1. RUN `python -m pip install -r Code/requirements.txt` from the repository root.
+- [x] 2. CHECK that no line of the pip output starts with `ERROR:`.
 verify: `python -c "import pocket_tts; print('pocket_tts ok')"`
 expect: pocket_tts ok
 if_fail: Run `python -m pip install pocket-tts` and then run `verify:` again.
-result:
+result: pocket_tts ok
 
 ### T003: Download the model files
-status: TODO
+status: DONE
 blocked_reason:
 file: Code/model/config.yaml
 context: pocket-tts and huggingface_hub are installed. This task downloads the model repo into Code/model. It needs internet. The files are large.
 do:
-- [ ] 1. RUN `python -c "from huggingface_hub import snapshot_download; snapshot_download('Thanushttk/pocket-tts-multilingual', local_dir='Code/model')"` from the repository root.
-- [ ] 2. CHECK that the folder `Code/model` has the files `config.yaml`, `model.safetensors`, and `tokenizer.model`.
+- [x] 1. RUN `python -c "from huggingface_hub import snapshot_download; snapshot_download('Thanushttk/pocket-tts-multilingual', local_dir='Code/model')"` from the repository root.
+- [x] 2. CHECK that the folder `Code/model` has the files `config.yaml`, `model.safetensors`, and `tokenizer.model`.
 verify: `python -c "import os; print(sorted(f for f in ['config.yaml','model.safetensors','tokenizer.model'] if os.path.exists('Code/model/'+f)))"`
 expect: ['config.yaml', 'model.safetensors', 'tokenizer.model']
 if_fail: Run the command in step 1 again. The download continues where it stopped. Then run `verify:` again.
-result:
+result: ['config.yaml', 'model.safetensors', 'tokenizer.model']
 
 ### T004: Update skeleton metadata
-status: TODO
+status: DONE
 blocked_reason:
 file: Skeletons/requirements.txt.skeleton.md
 context: All setup tasks are done. This task records that the setup implements spec_revision 1.
 do:
-- [ ] 1. EDIT `Skeletons/requirements.txt.skeleton.md`: find the text `implemented_revision: 0` and replace it with `implemented_revision: 1`.
-- [ ] 2. EDIT `Skeletons/requirements.txt.skeleton.md`: find the text `status: READY` and replace it with `status: DONE`.
+- [x] 1. EDIT `Skeletons/requirements.txt.skeleton.md`: find the text `implemented_revision: 0` and replace it with `implemented_revision: 1`.
+- [x] 2. EDIT `Skeletons/requirements.txt.skeleton.md`: find the text `status: READY` and replace it with `status: DONE`.
 verify: `python -c "t=open('Skeletons/requirements.txt.skeleton.md').read(); print(t.count('implemented_revision: 1'), t.count('status: DONE'))"`
 expect: 1 1
 if_fail: Open `Skeletons/requirements.txt.skeleton.md`. Make the line with `implemented_revision:` end in 1. Make the line with `status:` end in DONE. Run `verify:` again.
-result:
+result: 1 1

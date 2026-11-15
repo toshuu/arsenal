@@ -15,10 +15,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261114-142345-MAINTENANCE | MAINTENANCE | 2026-11-14T14:23:45+05:30 | Update StageSet to the ss-living-doc system and add the Pocket TTS Phase 0 plan. | .stageset/sessions/event-ss-living-doc-pocket-tts.md | IDEA-0001 | - |
 | 20261115-124713-MAINTENANCE | MAINTENANCE | 2026-11-15T12:47:13+05:30 | Integrate batch 1 plans and fix skeleton metadata for the Phase 0 setup and probe. | .stageset/sessions/event-arsenal-batch-1-ready.md | IDEA-0001; SSLD-001; SSLD-002; SSLD-003 | - |
 | 20261115-125144-PUSH | PUSH | 2026-11-15T12:51:44+05:30 | Push the Phase 0 setup and probe plans to origin/main. | .stageset/sessions/event-push-phase0-plans.md | IDEA-0001; SSLD-001; SSLD-002; SSLD-003; 20d35d4 | 20d35d4 |
+| 20261115-130225-CODING | CODING | 2026-11-15T13:02:25+05:30 | Complete SSLD-001 setup, install pocket-tts, and download the model. | .stageset/sessions/coding-ssld-001-setup-env.md | IDEA-0001; SSLD-001; 20261115-130213-RUN; 20261115-130213-RUN-02 | - |
 
 ## Totals
 
-- CODING: 0.
+- CODING: 1.
 - IDEATION: 1.
 - MAINTENANCE: 7.
 - PROBE: 0.

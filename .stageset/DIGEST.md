@@ -7,7 +7,6 @@ This file is generated. Do not edit it by hand.
 ## Ready skeletons
 
 - [P1] `Skeletons/Probes/probe_model.md` (revision 1, implemented 0).
-- [P1] `Skeletons/requirements.txt.skeleton.md` (revision 1, implemented 0).
 
 ## Open blockers
 
@@ -19,15 +18,16 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-130225-CODING · CODING · Complete SSLD-001 setup, install pocket-tts, and download the model.
 - 20261115-125144-PUSH · PUSH · Push the Phase 0 setup and probe plans to origin/main.
 - 20261115-124713-MAINTENANCE · MAINTENANCE · Integrate batch 1 plans and fix skeleton metadata for the Phase 0 setup and probe.
 - 20261114-142345-MAINTENANCE · MAINTENANCE · Update StageSet to the ss-living-doc system and add the Pocket TTS Phase 0 plan.
 - 20261113-201809-IDEATION · IDEATION · Add the Pocket TTS multilingual baseline and optimization plan.
-- 20261113-200910-MAINTENANCE-03 · MAINTENANCE · Add automated GitHub Actions validation for StageSet syntax, generated files, and workspace rules.
 
 ## Verified environment facts
 
-- None.
+| FACT-0001 | 2026-11-15 | The PyPI package `pocket-tts` 4.0.1 installs the module `pocket_tts` and exposes `TTSModel.load_model`, `generate_audio`, `generate_audio_stream`, and `get_state_for_audio_prompt`. | Environment | CURRENT | `.stageset/runs/20261115-130213-RUN.md` |
+| FACT-0002 | 2026-11-15 | The model repo `Thanushttk/pocket-tts-multilingual` holds `config.yaml`, `model.safetensors`, and `tokenizer.model` in 419 MB. The config has 6 flow layers, `d_model` 1024, 16 heads, 24 kHz, and frame rate 12.5 Hz. | Project | CURRENT | `.stageset/runs/20261115-130213-RUN-02.md` |
 
 ## Read next
 
