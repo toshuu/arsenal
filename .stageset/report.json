@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T07:17:23Z",
+  "generated_at": "2026-11-15T07:21:50Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 0,
     "waiting": 2,
     "draft": 0,
-    "sessions": 8,
+    "sessions": 9,
     "runs": 3,
     "runs_active": 3
   },
@@ -193,9 +193,20 @@
       "date": "2026-11-15T12:47:13+05:30",
       "type": "maintenance",
       "summary": "Integrate batch 1 plans and fix skeleton metadata for the Phase 0 setup and probe."
+    },
+    {
+      "id": "20261115-125144-PUSH",
+      "date": "2026-11-15T12:51:44+05:30",
+      "type": "push",
+      "summary": "Push the Phase 0 setup and probe plans to origin/main."
     }
   ],
   "commits": [
+    {
+      "sha": "20d35d4",
+      "date": "2026-11-15T07:21:39+00:00",
+      "subject": "Integrate Phase 0 setup and probe plans"
+    },
     {
       "sha": "c54eb61",
       "date": "2026-11-14T08:54:23+00:00",

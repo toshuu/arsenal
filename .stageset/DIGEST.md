@@ -19,11 +19,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-125144-PUSH · PUSH · Push the Phase 0 setup and probe plans to origin/main.
 - 20261115-124713-MAINTENANCE · MAINTENANCE · Integrate batch 1 plans and fix skeleton metadata for the Phase 0 setup and probe.
 - 20261114-142345-MAINTENANCE · MAINTENANCE · Update StageSet to the ss-living-doc system and add the Pocket TTS Phase 0 plan.
 - 20261113-201809-IDEATION · IDEATION · Add the Pocket TTS multilingual baseline and optimization plan.
 - 20261113-200910-MAINTENANCE-03 · MAINTENANCE · Add automated GitHub Actions validation for StageSet syntax, generated files, and workspace rules.
-- 20261113-200910-MAINTENANCE-02 · MAINTENANCE · Add run evidence, probes, verified facts, digests, validation, and generated event tracking.
 
 ## Verified environment facts
 
