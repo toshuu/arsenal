@@ -49,10 +49,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-222000-IDEATION | IDEATION | 2026-11-15T22:20:00+05:30 | Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks). | .stageset/sessions/ideation-ssld-010-gpu-agnostic.md | IDEA-0003; FACT-0033 | - |
 | 20261115-223500-CODING | CODING | 2026-11-15T22:35:00+05:30 | Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged). | .stageset/sessions/coding-sideline-experiments.md | IDEA-0003 | - |
 | 20261115-225000-CODING | CODING | 2026-11-15T22:50:00+05:30 | Update ONNX sideline with ORT install and full-export failure detail. | .stageset/sessions/coding-sideline-experiments-update.md | IDEA-0003 | - |
+| 20261115-231000-CODING | CODING | 2026-11-15T23:10:00+05:30 | Try sideline INT4 (torchao) on flow_lm; all attempts fail. | .stageset/sessions/coding-sideline-int4.md | IDEA-0003 | - |
 
 ## Totals
 
-- CODING: 20.
+- CODING: 21.
 - IDEATION: 7.
 - MAINTENANCE: 7.
 - PROBE: 0.

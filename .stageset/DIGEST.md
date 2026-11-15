@@ -18,15 +18,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-231000-CODING · CODING · Try sideline INT4 (torchao) on flow_lm; all attempts fail.
 - 20261115-225000-CODING · CODING · Update ONNX sideline with ORT install and full-export failure detail.
 - 20261115-223500-CODING · CODING · Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged).
 - 20261115-222000-IDEATION · IDEATION · Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks).
 - 20261115-215000-CODING · CODING · Phase D status - V9 done, V8/V10 assessed, B=128 under 350ms with conditioned profile.
-- 20261115-214500-CODING · CODING · Phase D start: add decode grouping (V9) to BatchedStream.
 
 ## Verified environment facts
 
-| FACT-0018 | 2026-11-15 | Owner listened to the six lever quality WAVs in `Code/probes/out/lever_quality/` (voice 6.5, 3.0, 2.0 s; FP32 and FP16; 24-token cap). Owner reported that they worked. No single voice length was named as the default. A randomized 3-burst probe is still needed before a default is set. | Project | CURRENT | `.stageset/runs/20261115-183337-RUN.md` |
 | FACT-0020 | 2026-11-15 | Tesla T4, FP16, one process, alternating rounds, B=96: median first-chunk time is 163.8 ms at voice 4.0 s (51 frames), 145.2 ms at 3.0 s (39 frames), and 130.0 ms at 2.0 s (26 frames). Shorter voice is faster. The reverse order in FACT-0019 came from running each config in a separate process. Do not compare configs across subprocess runs. | Project | CURRENT | `.stageset/runs/20261115-184910-RUN.md` |
 | FACT-0021 | 2026-11-15 | Tesla T4, FP16, sustained 6 bursts, B=128, voice 3.0 s, cap 16: after warmup p95 TTFA is ~392 ms and ~103/128 rows are under 350 ms. B=128 is not a safe sustained operating point on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0022 | 2026-11-15 | Tesla T4, FP16, sustained alternating 5 bursts, B=96: voice 4.0/cap 16 gives p95 276-341 ms and 96/96 rows under 350 ms in every burst. Voice 3.0/cap 16 gives p95 316-336 ms and 94-96/96 rows under 350 ms. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
@@ -46,6 +45,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0036 | 2026-11-15 | Sideline INT8 (torchao `int8_weight_only` flow_lm), T4 FP16 cond profile 4.0s/cap16 compact, B=32 3 rounds: baseline p50 87.24 p95 110.88 ms wall 1.091 s; INT8 p50 70.72 p95 100.63 ms wall 1.198 s. Samples in `Code/experiments/out/`. | Project | CURRENT | `Code/experiments/int8/exp_int8.py` |
 | FACT-0037 | 2026-11-15 | Sideline ONNX: ORT CUDA available (1.32.0). Dummy export+run OK (`Code/experiments/out/dummy.onnx`, ~0.05 ms). Full flow_lm export failed: stateful ModelState dict + data-dependent guard `Eq(u0,1)` in attention/cache. No end-to-end gain/sample; needs tensorized state/static refactor. | Project | CURRENT | `Code/experiments/onnx/exp_onnx.py` |
 | FACT-0038 | 2026-11-15 | Sideline TRT: `tensorrt`/`torch_tensorrt` not installed, no dynamo TRT backend in env. Engine build not attempted. | Project | CURRENT | `Code/experiments/trt/exp_trt.py` |
+| FACT-0039 | 2026-11-15 | Sideline INT4 (torchao 0.10.0, `Int4WeightOnlyConfig` on flow_lm, T4): all attempts failed — g64/g128 dtype error (`zeros` float32 expected, got bfloat16), g32 `CUDA error: named symbol not found`. No INT4 latency/audio result. | Project | CURRENT | `Code/experiments/int4/exp_int4.py` |
 
 ## Read next
 

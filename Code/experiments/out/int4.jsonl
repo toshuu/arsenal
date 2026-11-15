@@ -1,0 +1,7 @@
+{"error": "'BatchedStream' object has no attribute 'batched_stream'"}
+{"msg": "baseline", "data": {"p50": 81.03, "p95": 145.33, "wall_med": 0.986, "under350": 96, "n": 96}}
+{"msg": "cfg64_failed", "data": {"err": "Expected Tensor argument zeros to have dtype torch.float32, but got torch.bfloat16 instead."}}
+{"msg": "baseline", "data": {"p50": 65.61, "p95": 117.9, "wall_med": 1.037, "under350": 96, "n": 96}}
+{"msg": "int4_attempt_fail", "data": {"name": "cfg_g64_fp32", "err": "Expected Tensor argument zeros to have dtype torch.float32, but got torch.bfloat16 instead."}}
+{"msg": "int4_attempt_fail", "data": {"name": "cfg_g32_fp32", "err": "CUDA error: named symbol not found\nSearch for `cudaErrorSymbolNotFound' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.\nCUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1\nCompile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.\n"}}
+{"msg": "int4_attempt_fail", "data": {"name": "cfg_g128_fp32", "err": "Expected Tensor argument zeros to have dtype torch.float32, but got torch.bfloat16 instead."}}

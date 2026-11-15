@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T17:34:55Z",
+  "generated_at": "2026-11-15T17:39:20Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 8,
     "waiting": 0,
     "draft": 0,
-    "sessions": 43,
+    "sessions": 44,
     "runs": 10,
     "runs_active": 1,
     "results": 3
@@ -863,9 +863,20 @@
       "date": "2026-11-15T22:50:00+05:30",
       "type": "coding",
       "summary": "Update ONNX sideline with ORT install and full-export failure detail."
+    },
+    {
+      "id": "20261115-231000-CODING",
+      "date": "2026-11-15T23:10:00+05:30",
+      "type": "coding",
+      "summary": "Try sideline INT4 (torchao) on flow_lm; all attempts fail."
     }
   ],
   "commits": [
+    {
+      "sha": "0c6cba2",
+      "date": "2026-11-15T17:34:57+00:00",
+      "subject": "StageSet: ONNX sideline update, ORT install and export limits"
+    },
     {
       "sha": "bda47d2",
       "date": "2026-11-15T17:27:05+00:00",
@@ -1060,11 +1071,6 @@
       "sha": "b73c1af",
       "date": "2026-11-15T07:21:50+00:00",
       "subject": "Record the Phase 0 plan push"
-    },
-    {
-      "sha": "20d35d4",
-      "date": "2026-11-15T07:21:39+00:00",
-      "subject": "Integrate Phase 0 setup and probe plans"
     }
   ]
 }
