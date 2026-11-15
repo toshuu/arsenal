@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T07:43:10Z",
+  "generated_at": "2026-11-15T07:43:22Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 3,
     "waiting": 0,
     "draft": 0,
-    "sessions": 17,
+    "sessions": 18,
     "runs": 4,
     "runs_active": 0,
     "results": 3
@@ -385,9 +385,20 @@
       "date": "2026-11-15T13:13:02+05:30",
       "type": "coding",
       "summary": "Complete SSLD-004 T4 GPU baseline and publish the results."
+    },
+    {
+      "id": "20261115-131316-PUSH",
+      "date": "2026-11-15T13:13:16+05:30",
+      "type": "push",
+      "summary": "Push the T4 GPU baseline and the results panel to origin/main."
     }
   ],
   "commits": [
+    {
+      "sha": "11a47fa",
+      "date": "2026-11-15T07:43:13+00:00",
+      "subject": "Add T4 GPU baseline and results panel"
+    },
     {
       "sha": "d0bd753",
       "date": "2026-11-15T07:35:20+00:00",
