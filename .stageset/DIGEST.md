@@ -27,8 +27,6 @@ This file is generated. Do not edit it by hand.
 
 ## Verified environment facts
 
-| FACT-0003 | 2026-11-15 | The loaded model has 109,501,826 parameters, all FP32. `sample_rate` is 24000. The codec frame rate is 12.5 Hz, so one frame is 80 ms and 1920 samples. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
-| FACT-0004 | 2026-11-15 | The voice state is a `dict` with 18 tensors and 3.844 MB in FP32. `copy.deepcopy` of the voice state takes 0.0051 s. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0005 | 2026-11-15 | On CPU, `generate_audio_stream` gives the first 1920-sample chunk after 361.6 ms. A full 2.48 s generation takes 1.606 s (RTF 0.6476). Leading silence is 5.5 ms. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0006 | 2026-11-15 | `generate_audio` has no batch argument and the model has no name that contains `batch`. The codec uses streaming modules. The loaded model reports `training: True`. | Project | CURRENT | `.stageset/runs/20261115-130345-RUN-02.md` |
 | FACT-0007 | 2026-11-15 | On one Tesla T4 with 3 warmup runs and 20 measured streams: p50 first chunk 47.942 ms, p95 56.273 ms, p50 RTF 0.234, p95 RTF 0.258, peak allocated VRAM 496.0 MB, peak reserved 586.0 MB, load 0.991 s. | Project | CURRENT | `.stageset/runs/20261115-131244-RUN.md` |
@@ -47,6 +45,8 @@ This file is generated. Do not edit it by hand.
 | FACT-0021 | 2026-11-15 | Tesla T4, FP16, sustained 6 bursts, B=128, voice 3.0 s, cap 16: after warmup p95 TTFA is ~392 ms and ~103/128 rows are under 350 ms. B=128 is not a safe sustained operating point on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0022 | 2026-11-15 | Tesla T4, FP16, sustained alternating 5 bursts, B=96: voice 4.0/cap 16 gives p95 276-341 ms and 96/96 rows under 350 ms in every burst. Voice 3.0/cap 16 gives p95 316-336 ms and 94-96/96 rows under 350 ms. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
 | FACT-0023 | 2026-11-15 | A 24-config interleaved in-process probe (3 bursts, B=96/128) produced inflated p95 values and reversed the 2.0 vs 4.0 order at B=96 cap 16. Cross-process and long interleaved comparisons are biased; short sustained alternating checks are more reliable for ranking on T4. | Project | CURRENT | `.stageset/runs/20261115-190154-RUN.md` |
+| FACT-0024 | 2026-11-15 | T4, FP16, B=96, voice 4.0 s, cap 16, 5 alternating bursts: conditioned voice profile (KV reused, text per burst) gives p50 121-126 ms, p95 213-256 ms (avg 232.8), 96/96 <350 ms; normal path gives p95 avg 300.9 ms. ~68 ms avg p95 gain. | Project | CURRENT | `.stageset/runs/20261115-202240-RUN.md` |
+| FACT-0025 | 2026-11-15 | T4, FP16, voice 4.0 s, cap 16, conditioned profile, 3 randomized rounds: B=96 p95 221 ms 100%<350, B=112 p95 294 ms 99.7%, B=128 p95 277 ms 99.7%, B=144 p95 307 ms 95.8%, B=160 p95 402 ms 85.8%. | Project | CURRENT | `.stageset/runs/20261115-202240-RUN.md` |
 
 ## Read next
 
