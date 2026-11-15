@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T16:59:37Z",
+  "generated_at": "2026-11-15T17:04:52Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,9 +11,9 @@
     "done": 8,
     "waiting": 0,
     "draft": 0,
-    "sessions": 40,
-    "runs": 9,
-    "runs_active": 0,
+    "sessions": 41,
+    "runs": 10,
+    "runs_active": 1,
     "results": 3
   },
   "skeletons": [
@@ -539,6 +539,48 @@
           "status": "DONE"
         }
       ]
+    },
+    {
+      "id": "SSLD-010",
+      "path": "LivingDocs/SSLD-010-gpu-agnostic-optim.md",
+      "title": "GPU-agnostic scheduling optimizations",
+      "status": "NOT_STARTED",
+      "current_task": "T001",
+      "skeleton": "Skeletons/Code/batch/batched_stream.py",
+      "tasks_total": 6,
+      "tasks_done": 0,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Add length-bucket admission helper",
+          "status": "TODO"
+        },
+        {
+          "id": "T002",
+          "title": "Add pipelined burst probe (CPU prep overlap)",
+          "status": "TODO"
+        },
+        {
+          "id": "T003",
+          "title": "Run pipelined probe",
+          "status": "TODO"
+        },
+        {
+          "id": "T004",
+          "title": "Stable soak B=128",
+          "status": "TODO"
+        },
+        {
+          "id": "T005",
+          "title": "Stable soak B=144",
+          "status": "TODO"
+        },
+        {
+          "id": "T006",
+          "title": "Record facts and close",
+          "status": "TODO"
+        }
+      ]
     }
   ],
   "ideas": [
@@ -803,9 +845,20 @@
       "date": "2026-11-15T21:50:00+05:30",
       "type": "coding",
       "summary": "Phase D status - V9 done, V8/V10 assessed, B=128 under 350ms with conditioned profile."
+    },
+    {
+      "id": "20261115-222000-IDEATION",
+      "date": "2026-11-15T22:20:00+05:30",
+      "type": "ideation",
+      "summary": "Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks)."
     }
   ],
   "commits": [
+    {
+      "sha": "766c2a8",
+      "date": "2026-11-15T16:59:44+00:00",
+      "subject": "StageSet: defer V8 manual graph and Gate D stability (documented)"
+    },
     {
       "sha": "542be0e",
       "date": "2026-11-15T16:53:26+00:00",
@@ -1000,11 +1053,6 @@
       "sha": "5073322",
       "date": "2026-11-13T20:19:46+05:30",
       "subject": "Real file manually uploaded."
-    },
-    {
-      "sha": "f03d4f2",
-      "date": "2026-11-13T20:18:14+05:30",
-      "subject": "Index Pocket TTS multilingual optimization idea"
     }
   ]
 }
