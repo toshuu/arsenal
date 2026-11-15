@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T15:39:56Z",
+  "generated_at": "2026-11-15T15:48:55Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -794,6 +794,16 @@
     }
   ],
   "commits": [
+    {
+      "sha": "8676604",
+      "date": "2026-11-15T15:42:21+00:00",
+      "subject": "Document common voice profile mistakes"
+    },
+    {
+      "sha": "4a66593",
+      "date": "2026-11-15T15:40:01+00:00",
+      "subject": "Use conditioned voice profile (KV reuse): B=128 under 350ms"
+    },
     {
       "sha": "0aadabd",
       "date": "2026-11-15T15:23:19+00:00",

@@ -56,9 +56,9 @@ audio = stream.stream(texts, on_chunk=callback)
 
 - Save with `conditioned=True`. Without it, profile has no `voice_state`; stream runs normal path (no TTFA gain).
 - Load with `voice_profile=...` (opt-in). Passing `voice=` uses normal path.
-- Keep first-chunk text token lengths uniform for KV-reuse fast path. Set `max_first_tokens` (e.g. 16). Mixed lengths fall back to normal path.
+- Keep first-chunk text token lengths uniform for batched KV reuse. Set `max_first_tokens` (e.g. 16). Mixed lengths in one batch can produce bad/long audio (silence, overrun). If lengths differ, stream one request at a time.
 - Do not compare KV-reuse output bit-for-bit to normal path. Conditioning differs; validate by ear and TTFA, not waveform equality.
-- Do not replace KV-reuse with encoded-only profile for speed; encoded-only skips WAV encode at startup only.
+- Do not use KV-reuse for quality checks without `max_first_tokens` awareness: `max_first_tokens` truncates the first chunk (used in TTFA tests). For full-text ear check, stream per request or use a cap that covers the text.
 
 ## Notes
 
