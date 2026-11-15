@@ -198,10 +198,10 @@ Order: V6 FP16, V4 shorter voice, V5 capped first chunk, V11 length buckets.
 
 ### Phase D progress (2026-11-15)
 
-- V9 decoder grouping: `decode_group` in `Code/batch/batched_stream.py` (default 1). dg=2 near-identical output but worse TTFA at B=128 (FACT-0030). Keep default 1.
-- V10 active-set compaction: `compact` flag (default True) slices flow/mimi states and tensors when rows finish. T4 cond profile 5 bursts: B=128 p95 272.7 ms (636/640), B=144 p95 300.5 ms (700/720), B=160 p95 337.7 ms (800/800) (FACT-0031, `20261115-214659-RUN`). Major gain.
-- V8/S5 CUDA graphs/compile spike: baseline ~14.05 ms/step (B=128); torch.compile 14.68–15.73 ms/step, no gain. Manual CUDA graph not implemented due to dynamic state/compaction (FACT-0032).
-- Gate D soak (partial, ~23 min): B=160, 475 bursts, 76k req, 0 errors/OOM. 97.52% <350 ms but burst p95 unstable (median 275.8, p95-of-p95 416.6 ms, 64/475 >350). RTF pass (0.0015 median). FACT-0033. Manual CUDA graph unlikely to raise stable B (compile no gain, dynamic compaction/state).
+- V9 decoder grouping: `decode_group` in `Code/batch/batched_stream.py` (default 1). dg=2 near-identical output but worse TTFA at B=128 (FACT-0030). Kept default 1.
+- V10 active-set compaction: `compact` flag (default True). T4 cond profile 5 bursts: B=128 p95 272.7 ms (636/640), B=144 p95 300.5 ms (700/720), B=160 p95 337.7 ms (800/800) (FACT-0031). Major gain.
+- V8 manual CUDA graph: **deferred (later if wanted)**. `torch.compile` no gain (baseline 14.05 vs 14.68–15.73 ms/step, B=128, FACT-0032). Dynamic batch/state compaction makes fixed-shape capture hard; benefit uncertain. Not blocking next work.
+- Gate D (TTFA stability): **deferred (later if wanted)**. B=160 soak, 475 sequential bursts (160 parallel/burst), 76k req, ~23 min, 0 errors/OOM (FACT-0033, `20261115-215304-RUN`): 74,115/76k <350 ms (97.52%), burst p95 median 275.8 ms, p95-of-p95 416.6 ms, max 562.3 ms, 64/475 bursts p95>350. RTF pass (median 0.0015, p95 0.0025). Stable sustained <350 ms likely ~B=128–144. Moved to next optimizations.
 ### Phase E: serving and L4
 
 - V11 admission control, V12 two-batch scheme only if staggered traffic matters.

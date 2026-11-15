@@ -20,10 +20,9 @@ branch: main
 - **V10 done:** active-set compaction, default True (FACT-0031). Major TTFA/capacity gain.
 - **V8/S5 spike done:** torch.compile no gain (14.68–15.73 vs 14.05 ms/step baseline, B=128). Manual CUDA graph not implemented (dynamic state/compaction) (FACT-0032).
 
-## Gate D soak (FACT-0033)
-- B=160, 475 sequential bursts (160 parallel/burst), 76,000 req, ~23 min, 0 errors/OOM.
-- TTFA: 97.52% <350 ms; burst p95 median 275.8 ms, p95-of-p95 416.6 ms, 64/475 bursts >350. **Not stable.**
-- RTF: median 0.0015 (pass).
+## Deferred (later if wanted)
+- **V8 manual CUDA graph:** `torch.compile` no gain (14.05 vs 14.68–15.73 ms/step, B=128, FACT-0032). Dynamic batch/state compaction blocks fixed-shape capture; benefit uncertain.
+- **Gate D TTFA stability at B=160:** 475 bursts, 76k req, ~23 min, 0 errors/OOM (FACT-0033). 97.52% <350 ms; burst p95 median 275.8 ms, p95-of-p95 416.6 ms, 64/475 bursts >350. RTF pass (0.0015 median). Stable sustained <350 ms likely ~B=128–144.
 
 ## Next
-- Stable B for <350 ms ~128-144 (sustained). Phase E (L4) or further margin work on approval.
+- Next optimizations / Phase E (L4) on approval. Revisit Gate D/V8 only if needed.
