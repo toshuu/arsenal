@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-144200-PUSH · PUSH · Push Phase B batched streaming core and burst harness to origin/main.
+- 20261115-143500-CODING · CODING · Run S1 FP16 spike and measure B=64 p95 TTFA under 350 ms.
 - 20261115-141932-CODING · CODING · Measure the Phase B lockstep batch ceiling with unique texts and B=32 parity.
 - 20261115-141528-CODING · CODING · Implement the Phase B lockstep batched streaming core and its parity check.
 - 20261115-140725-IDEATION · IDEATION · Choose a single-process lockstep batched streaming core for Phase B.
-- 20261115-131316-PUSH · PUSH · Push the T4 GPU baseline and the results panel to origin/main.
-- 20261115-131302-CODING · CODING · Complete SSLD-004 T4 GPU baseline and publish the results.
 
 ## Verified environment facts
 
@@ -37,6 +37,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0009 | 2026-11-15 | Phase B lockstep batched B=32 on one T4: p95 TTFA 327.0 ms, 156/160 rows under 350 ms, max 404.8 ms, RTF 0.013, peak VRAM 2247 MB. Parity vs B=1: max diff 1.07e-04, correlation 1.0. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0010 | 2026-11-15 | Phase B batched B=30 on one T4: p95 TTFA 278.8 ms, 149/150 rows under 350 ms, max 375.8 ms, RTF 0.013, peak VRAM 2137 MB. Recommended safe operating point. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
 | FACT-0011 | 2026-11-15 | Phase B batched B=34-36 on one T4 fail the p95 target: B=34 p95 359.7 ms (earlier run 295.0 ms; unstable), B=35 p95 358.5 ms, B=36 p95 357.6 ms. | Project | CURRENT | `.stageset/runs/20261115-142500-RUN-batch-harness.md` |
+| FACT-0012 | 2026-11-15 | S1 FP16 spike on one T4 (FP16 backbone, FP32 head/sampler): B=64 p95 TTFA 233.2 ms, 192/192 under 350 ms, RTF 0.008, VRAM 3313 MB. Parity vs FP32 B=1 at temp 0 (32 frames): max diff 0.036789, correlation 0.998183. | Project | CURRENT | `.stageset/runs/20261115-143500-RUN-fp16-spike.md` |
 
 ## Read next
 

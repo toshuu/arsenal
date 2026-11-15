@@ -4,9 +4,9 @@ title: Final optimization strategy for pocket-tts burst concurrency
 status: DISCOVERY
 priority: P0
 created_in: .stageset/sessions/ideation-pocket-tts-multilingual.md
-updated_in: .stageset/sessions/coding-ssld-006-batch-harness.md
+updated_in: .stageset/sessions/coding-ssld-006-fp16-spike.md
 created_at: 2026-11-15T14:30:00+05:30
-updated_at: 2026-11-15T14:22:00+05:30
+updated_at: 2026-11-15T14:35:00+05:30
 related_ideas: [IDEA-0001, IDEA-0002]
 related_reports: [Reports/burst-concurrency-2026-11-15.md]
 ---
@@ -178,6 +178,7 @@ a PASS report.
   - Measured N at 350 ms is 32 or more.
   - No error and no OOM.
 Phase B measured (see `.stageset/runs/20261115-142500-RUN-batch-harness.md`): B=32 p95 TTFA 327.0 ms with parity diff 1.07e-04; B=30 p95 278.8 ms; B=34-36 fail p95. Safe operating point: B=30.
+S1 FP16 spike measured (see `.stageset/runs/20261115-143500-RUN-fp16-spike.md`): FP16 backbone viable; B=64 p95 233.2 ms, 192/192 under 350 ms, RTF 0.008, VRAM 3313 MB. Parity corr 0.998, diff 0.036789. Quality gate pending.
 
 ### Phase C: prefill reduction
 

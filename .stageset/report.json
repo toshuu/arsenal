@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T08:57:19Z",
+  "generated_at": "2026-11-15T09:22:29Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 5,
     "waiting": 0,
     "draft": 0,
-    "sessions": 22,
+    "sessions": 23,
     "runs": 6,
     "runs_active": 0,
     "results": 3
@@ -518,6 +518,12 @@
       "summary": "Measure the Phase B lockstep batch ceiling with unique texts and B=32 parity."
     },
     {
+      "id": "20261115-143500-CODING",
+      "date": "2026-11-15T14:35:00+05:00",
+      "type": "coding",
+      "summary": "Run S1 FP16 spike and measure B=64 p95 TTFA under 350 ms."
+    },
+    {
       "id": "20261115-144200-PUSH",
       "date": "2026-11-15T14:42:00+05:00",
       "type": "push",
@@ -525,6 +531,11 @@
     }
   ],
   "commits": [
+    {
+      "sha": "f3f48f2",
+      "date": "2026-11-15T08:57:24+00:00",
+      "subject": "Regenerate StageSet report.json after Phase B push"
+    },
     {
       "sha": "5f3b8e3",
       "date": "2026-11-15T08:55:52+00:00",

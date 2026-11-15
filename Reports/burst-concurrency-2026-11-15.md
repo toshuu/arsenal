@@ -65,6 +65,22 @@ B=30 passes p95 with 99.3% under 350 ms. B=32 passes p95 with 97.5% under 350 ms
 
 One batched T4 server supports **30** requests safely and **32** at the measured p95 ceiling. That is **7.5x to 8x** the baseline of 4 concurrent requests.
 
+## S1 FP16 spike (Phase C)
+
+Runtime: one process, one model copy, lockstep batch. FP16 backbone, FP32 head/sampler, FP32 Mimi decode. Streaming on. Unique texts. Temp 0.3.
+
+| Batch | p50 ms | p95 ms | max ms | under 350 ms | RTF | VRAM MB |
+|---|---|---|---|---|---|---|
+| 32 | 72.9 | 155.3 | 246.3 | 96/96 | 0.011 | 1811 |
+| 40 | 93.8 | 156.5 | 209.9 | 120/120 | 0.010 | 2182 |
+| 48 | 117.3 | 206.1 | 256.9 | 144/144 | 0.009 | 2559 |
+| 56 | 136.5 | 140.8 | 283.4 | 168/168 | 0.009 | 2935 |
+| 64 | 160.0 | 233.2 | 340.1 | 192/192 | 0.008 | 3313 |
+
+Parity vs FP32 B=1 at temp 0 (32 frames): max diff 0.036789, correlation 0.998183.
+
+B=64 passes p95 TTFA (233 ms) and all rows under 350 ms. FP16 gives 1.16x-1.39x wall speedup at B=32-64. Quality gate (listening/WER) is still required.
+
 ## Two T4 results
 
 | N | p50 ms | p95 ms | Under 350 ms | Runs |
@@ -114,6 +130,8 @@ This is the baseline to beat. The next design must:
 3. Use one decoder thread or a vectorized decoder, not one thread per request.
 4. Keep per-request Python work off the critical path.
 
-Phase B met the target: one batched T4 server supports **30** requests safely and **32** at the measured p95 ceiling at p95 TTFA <= 350 ms. Baseline was 4 requests.
+Phase B met the target: one batched T4 server supports **30** requests safely and **32** at p95 TTFA <= 350 ms. Baseline was 4 requests.
 
-Next step: run the S1 FP16 spike (Phase C). Do not start TensorRT, ONNX, or shared voice KV without owner permission.
+S1 FP16 spike: **B=64** passes p95 (233 ms) and all 192/192 rows under 350 ms on one T4. Parity is close (corr 0.998) but quality gate is pending.
+
+Next steps: run FP16 quality gate, then add shorter voice/capped first chunk and RTF work. Do not start TensorRT, ONNX, or shared voice KV without owner permission.
