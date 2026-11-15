@@ -6,9 +6,9 @@ priority: P1
 created_at: PENDING
 updated_at: PENDING
 created_in: .stageset/sessions/ideation-pocket-tts-multilingual.md
-updated_in: .stageset/sessions/ideation-pocket-tts-multilingual.md
+updated_in: .stageset/sessions/event-arsenal-batch-1-ready.md
 related_ideas: []
-related_skeletons: []
+related_skeletons: ["Skeletons/requirements.txt.skeleton.md", "Skeletons/Probes/probe_model.md"]
 ---
 
 # Pocket TTS Multilingual: Baseline, Potential, Optimization
@@ -139,6 +139,22 @@ Assumptions: cached voice state, FP16, slot-based batching, CUDA graphs,
 8. Does the codec decoder support streaming state? How big is that state?
 9. Does the code allow a batch of different-length texts and different voices?
 10. How does quality change on long text? (Feather's old failure: mid-sentence.)
+
+### Probe map
+
+One read-only probe answers Q-01 to Q-07. The probe is `Code/probes/probe_model.py`.
+Its contract is `Skeletons/Probes/probe_model.md`. Its step list is `LivingDocs/SSLD-002-probe-model.md`.
+A probe answer becomes a fact only after a `PROBE` run report proves it.
+
+| Question | Section in `probe_model.json` |
+| --- | --- |
+| Q-01 Environment | `env` |
+| Q-02 Architecture | `arch` |
+| Q-03 Streaming | `stream` |
+| Q-04 Voice state | `voice` |
+| Q-05 Leading silence | `silence` |
+| Q-06 Batching | `batch` |
+| Q-07 Codec state | `codec` |
 
 ## 7. Phase 0: Setup
 

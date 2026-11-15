@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+# Large model files and probe output. Do not commit them.
+Code/model/
+Code/probes/out/

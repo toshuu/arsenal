@@ -13,11 +13,12 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261113-200910-MAINTENANCE-03 | MAINTENANCE | 2026-11-13T20:09:10+05:30 | Add automated GitHub Actions validation for StageSet syntax, generated files, and workspace rules. | .stageset/sessions/event-validation-workflow.md | - | - |
 | 20261113-201809-IDEATION | IDEATION | 2026-11-13T20:18:09+05:30 | Add the Pocket TTS multilingual baseline and optimization plan. | .stageset/sessions/ideation-pocket-tts-multilingual.md | IDEA-0001 | - |
 | 20261114-142345-MAINTENANCE | MAINTENANCE | 2026-11-14T14:23:45+05:30 | Update StageSet to the ss-living-doc system and add the Pocket TTS Phase 0 plan. | .stageset/sessions/event-ss-living-doc-pocket-tts.md | IDEA-0001 | - |
+| 20261115-124713-MAINTENANCE | MAINTENANCE | 2026-11-15T12:47:13+05:30 | Integrate batch 1 plans and fix skeleton metadata for the Phase 0 setup and probe. | .stageset/sessions/event-arsenal-batch-1-ready.md | IDEA-0001; SSLD-001; SSLD-002; SSLD-003 | - |
 
 ## Totals
 
 - CODING: 0.
 - IDEATION: 1.
-- MAINTENANCE: 6.
+- MAINTENANCE: 7.
 - PROBE: 0.
 - PUSH: 0.
