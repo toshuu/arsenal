@@ -52,8 +52,15 @@ audio = stream.stream(texts, on_chunk=callback)
 
 - T4, FP16, 4.0 s, cap 16, **B=128** target (may increase). With conditioned profile KV reuse: B=128 p95 281–331 ms, 128/128 <350 ms (5 bursts, FACT-0029). Normal path B=128: 372–400 ms 94.4% (FACT-0028).
 
+## Common mistakes
+
+- Save with `conditioned=True`. Without it, profile has no `voice_state`; stream runs normal path (no TTFA gain).
+- Load with `voice_profile=...` (opt-in). Passing `voice=` uses normal path.
+- Keep first-chunk text token lengths uniform for KV-reuse fast path. Set `max_first_tokens` (e.g. 16). Mixed lengths fall back to normal path.
+- Do not compare KV-reuse output bit-for-bit to normal path. Conditioning differs; validate by ear and TTFA, not waveform equality.
+- Do not replace KV-reuse with encoded-only profile for speed; encoded-only skips WAV encode at startup only.
+
 ## Notes
 
-- Impl: `Code/batch/batched_stream.py` (KV-reuse path when `voice_state` present and uniform text lengths; else normal path).
-- KV-reuse path is a different conditioning procedure than normal; not bit-identical, quality checked by ear in probes.
+- Impl: `Code/batch/batched_stream.py`.
 - `max_first_tokens` truncates first text chunk; stream later chunks in production.
