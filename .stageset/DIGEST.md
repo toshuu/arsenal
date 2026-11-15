@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261115-225000-CODING · CODING · Update ONNX sideline with ORT install and full-export failure detail.
 - 20261115-223500-CODING · CODING · Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged).
 - 20261115-222000-IDEATION · IDEATION · Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks).
 - 20261115-215000-CODING · CODING · Phase D status - V9 done, V8/V10 assessed, B=128 under 350ms with conditioned profile.
 - 20261115-214500-CODING · CODING · Phase D start: add decode grouping (V9) to BatchedStream.
-- 20261115-204000-CODING · CODING · Formalize encoded voice profiles; revert unsafe conditioned-KV path; record B=128.
 
 ## Verified environment facts
 
@@ -44,7 +44,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0034 | 2026-11-15 | GPU-agnostic pipelined burst probe (CPU prep overlap), T4 FP16 cond profile 4.0s/cap16 compact, B=128 10 rounds: p50 161.31 ms, p95 272.58 ms, 1280/1280 <350 ms (100%). | Project | CURRENT | `.stageset/runs/20261115-215304-RUN.md` |
 | FACT-0035 | 2026-11-15 | Partial B=128 soak (interrupted ~12-13 min, salvaged), T4 FP16 cond profile 4.0s/cap16 compact, 305 bursts, 39,040 req: 39,005 <350 ms (99.91%), burst p95 median 226.21 ms, p95-of-p95 302.22 ms, max 364.49 ms, 2 bursts p95>350, 0 errors/OOM. | Project | CURRENT | `Code/probes/out/soak_b128_summary.json` |
 | FACT-0036 | 2026-11-15 | Sideline INT8 (torchao `int8_weight_only` flow_lm), T4 FP16 cond profile 4.0s/cap16 compact, B=32 3 rounds: baseline p50 87.24 p95 110.88 ms wall 1.091 s; INT8 p50 70.72 p95 100.63 ms wall 1.198 s. Samples in `Code/experiments/out/`. | Project | CURRENT | `Code/experiments/int8/exp_int8.py` |
-| FACT-0037 | 2026-11-15 | Sideline ONNX: dummy export OK (`Code/experiments/out/dummy.onnx`); full flow/mimi export blocked by stateful ModelState dict API; onnxruntime not installed. | Project | CURRENT | `Code/experiments/onnx/exp_onnx.py` |
+| FACT-0037 | 2026-11-15 | Sideline ONNX: ORT CUDA available (1.32.0). Dummy export+run OK (`Code/experiments/out/dummy.onnx`, ~0.05 ms). Full flow_lm export failed: stateful ModelState dict + data-dependent guard `Eq(u0,1)` in attention/cache. No end-to-end gain/sample; needs tensorized state/static refactor. | Project | CURRENT | `Code/experiments/onnx/exp_onnx.py` |
 | FACT-0038 | 2026-11-15 | Sideline TRT: `tensorrt`/`torch_tensorrt` not installed, no dynamo TRT backend in env. Engine build not attempted. | Project | CURRENT | `Code/experiments/trt/exp_trt.py` |
 
 ## Read next

@@ -48,10 +48,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-215000-CODING | CODING | 2026-11-15T21:50:00+05:30 | Phase D status - V9 done, V8/V10 assessed, B=128 under 350ms with conditioned profile. | .stageset/sessions/coding-phase-d-status.md | IDEA-0003; FACT-0028; FACT-0029; FACT-0030 | - |
 | 20261115-222000-IDEATION | IDEATION | 2026-11-15T22:20:00+05:30 | Create SSLD-010 for GPU-agnostic optimizations (V11/V12 + stable soaks). | .stageset/sessions/ideation-ssld-010-gpu-agnostic.md | IDEA-0003; FACT-0033 | - |
 | 20261115-223500-CODING | CODING | 2026-11-15T22:35:00+05:30 | Add isolated TRT/ONNX/INT8 experiments (sideline, main path unchanged). | .stageset/sessions/coding-sideline-experiments.md | IDEA-0003 | - |
+| 20261115-225000-CODING | CODING | 2026-11-15T22:50:00+05:30 | Update ONNX sideline with ORT install and full-export failure detail. | .stageset/sessions/coding-sideline-experiments-update.md | IDEA-0003 | - |
 
 ## Totals
 
-- CODING: 19.
+- CODING: 20.
 - IDEATION: 7.
 - MAINTENANCE: 7.
 - PROBE: 0.

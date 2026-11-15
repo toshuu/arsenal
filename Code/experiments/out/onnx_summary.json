@@ -1,14 +1,21 @@
 {
-  "export": {
-    "dummy": "ok",
-    "path": "/kaggle/working/arsenal/Code/experiments/out/dummy.onnx",
-    "note": "full model export blocked by stateful dict API"
-  },
-  "runtime": {
-    "available": false
-  },
+  "ort_available": true,
+  "dummy_export": "ok",
+  "dummy_ort_ms": 0.0518,
+  "full_export_error": "GuardOnDataDependentSymNode: Could not guard on data-dependent expression Eq(u0, 1) (unhinted: Eq(u0, 1)).  (Size-like symbols: none)\n\nconsider using data-dependent friendly APIs such as guard_or_false, guard_or_true and statically_known_true.\nCaused by: (_export/non_strict_utils.py:1159 in __torch_function__)\nFor more informat",
+  "gain_note": "No end-to-end ONNX gain: full flow/mimi export blocked by stateful dict API + data-dependent cache guards. ORT micro-bench on dummy op only.",
+  "sample_audio": null,
   "notes": [
-    "Stateful ModelState/dict I/O makes direct torch.onnx.export of flow/mimi steps non-trivial in current API.",
-    "onnxruntime not installed; pip install attempted? skipped by default to keep sideline fast."
+    "Full stateful streaming export needs API/state refactor (tensorized state, static control flow)."
+  ],
+  "ort_providers": [
+    "TensorrtExecutionProvider",
+    "CUDAExecutionProvider",
+    "CPUExecutionProvider"
+  ],
+  "dummy_path": "/kaggle/working/arsenal/Code/experiments/onnx/../out/dummy.onnx",
+  "ort_session_providers": [
+    "CUDAExecutionProvider",
+    "CPUExecutionProvider"
   ]
 }
