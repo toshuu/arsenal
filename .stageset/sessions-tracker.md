@@ -59,10 +59,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261116-134000-CODING | CODING | 2026-11-16T13:40:00+05:30 | M2 overlap decode. Add a second CUDA stream helper and pipeline decode with the next flow step. | .stageset/sessions/coding-ssld-014-overlap.md | IDEA-0004; SSLD-014 | - |
 | 20261116-151000-CODING | CODING | 2026-11-16T15:10:00+05:30 | Cold-start probe and prewarm budget test. Boot 5.56 s. Cold p95 575-657 ms. Prewarm 633 ms, over the 100 ms budget. | .stageset/sessions/coding-ssld-015-cold.md | SSLD-015; IDEA-0004; FACT-0054 | - |
 | 20261116-151000-CODING-02 | CODING | 2026-11-16T15:10:00+05:30 | Plan SSLD-016. FP16 weight cache, B=256 memory profile, shared voice KV, per-component steady split. | .stageset/sessions/coding-ssld-016-t4.md | SSLD-016; IDEA-0004 | - |
+| 20261116-191000-CODING | CODING | 2026-11-16T19:10:00+05:30 | Step1 memory safety (OOM+fit, limits), admission guard, KV scan note, voice cache prebuild script, Modal plan doc. | .stageset/sessions/coding-ssld-017-step1-2-guard.md | SSLD-017; FACT-0079; FACT-0080; FACT-0081; FACT-0082; FACT-0083 | - |
 
 ## Totals
 
-- CODING: 29.
+- CODING: 30.
 - IDEATION: 8.
 - MAINTENANCE: 7.
 - PROBE: 0.

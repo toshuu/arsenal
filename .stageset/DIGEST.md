@@ -20,15 +20,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261116-191000-CODING · CODING · Step1 memory safety (OOM+fit, limits), admission guard, KV scan note, voice cache prebuild script, Modal plan doc.
 - 20261116-151000-CODING-02 · CODING · Plan SSLD-016. FP16 weight cache, B=256 memory profile, shared voice KV, per-component steady split.
 - 20261116-151000-CODING · CODING · Cold-start probe and prewarm budget test. Boot 5.56 s. Cold p95 575-657 ms. Prewarm 633 ms, over the 100 ms budget.
 - 20261116-134000-CODING · CODING · M2 overlap decode. Add a second CUDA stream helper and pipeline decode with the next flow step.
 - 20261116-132000-CODING · CODING · E1/E4/E2/E3 and max-B. Prep 65->2.2 ms, emit 26->0.28 ms, B=160 soak 100% under 350.
-- 20261116-130000-CODING · CODING · Run E0 stage probe; the 50 to 180 ms gap is not present with a separate-process client.
 
 ## Verified environment facts
 
-| FACT-0064 | 2026-11-16 | B=224 20-burst soak (conditioned profile, FP16 weights, prewarm 224): p50 107.8, p95 112.2, max 118.6 ms, 4480/4480 under 350, steady 65.9 ms, RTF 0.824, peak 7.08 GB. B=224 is the new candidate cap. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0065 | 2026-11-16 | B=256 now fits with FP16 weights: max allocated 3.24 GB, reserved 4.35 GB, free 10.4 GB. Voice state is only 1.2 MB; activations/KV/workspace is the largest item. Shared voice-prefix KV is not justified (voice is not a top item). | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0066 | 2026-11-16 | Voice-embedding cache: miss 649.9 ms, hit 1.4 ms, audio identical (corr 1.0, max diff 0.0). The encode is at stream construction, not per request, so TTFA does not change; boot drops by about 0.65 s. Prebuild at image time. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0067 | 2026-11-16 | Owner listening gate for FP16 weights: PASS. Same sentence twice, no clicks or audible difference against autocast FP32. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
@@ -48,6 +47,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0081 | 2026-11-16 | Safe limit: keep >=1.5 GiB free at B=224 → peak_alloc <= 13.06 GiB → max_frames <= ~192 (15.36 s). Proposed `BATCH_SAFE_MAX_FRAMES_224=192`. Real soaks used auto short texts (~32–40 frames); 5–10 s covered, 15 s near limit. | Project | CURRENT | this session |
 | FACT-0082 | 2026-11-16 | `complete_kv` slices `cache[:, :, :offset_value+k.shape[1]]` (valid prefix). Attention queries the computed `k_attn/v_attn` over that prefix (no full preallocated length scanned). Flow “other” includes CPU cost of building masks/rope/copy ops but KV scan is over valid length. No big gain from slicing cache beyond current behavior. | Project | CURRENT | `pocket_tts/modules/attention.py` |
 | FACT-0083 | 2026-11-16 | Added `max_allowed_frames` (env `ARSENAL_MAX_FRAMES`) to `BatchedStream`; raises `ValueError` before init if exceeded. Safe at B=224: max_frames<=192 (from peak fit). `build_voice_cache.py` added. | Project | CURRENT | `Code/batch/batched_stream.py`, `Code/batch/build_voice_cache.py` |
+| FACT-0084 | 2026-11-16 | Guard added: `BatchedStream` accepts `max_allowed_frames` or env `ARSENAL_MAX_FRAMES`; raises `ValueError` before init if `max_frames` exceeds it. No server-side text chunker implemented (guard only). | Project | CURRENT | `Code/batch/batched_stream.py` |
 
 ## Read next
 

@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-16T09:59:19Z",
+  "generated_at": "2026-11-16T10:01:42Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 14,
     "waiting": 0,
     "draft": 1,
-    "sessions": 53,
+    "sessions": 54,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -1191,9 +1191,20 @@
       "date": "2026-11-16T15:10:00+05:30",
       "type": "coding",
       "summary": "Plan SSLD-016. FP16 weight cache, B=256 memory profile, shared voice KV, per-component steady split."
+    },
+    {
+      "id": "20261116-191000-CODING",
+      "date": "2026-11-16T19:10:00+05:30",
+      "type": "coding",
+      "summary": "Step1 memory safety (OOM+fit, limits), admission guard, KV scan note, voice cache prebuild script, Modal plan doc."
     }
   ],
   "commits": [
+    {
+      "sha": "37f2407",
+      "date": "2026-11-16T09:59:31+00:00",
+      "subject": "Step1-2: memory safety limits+guard, KV scan note, Modal plan, facts 0079-0083"
+    },
     {
       "sha": "e00af4a",
       "date": "2026-11-16T09:40:31+00:00",
@@ -1388,11 +1399,6 @@
       "sha": "16b7fbe",
       "date": "2026-11-15T09:52:39+00:00",
       "subject": "Document FP16 quality WAVs and save debug scripts"
-    },
-    {
-      "sha": "dbf58c4",
-      "date": "2026-11-15T09:45:17+00:00",
-      "subject": "Formalize FP16 backbone path and parity/TTFA check"
     }
   ]
 }
