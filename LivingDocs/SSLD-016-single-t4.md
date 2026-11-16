@@ -2,6 +2,7 @@
 # SSLD-016: Single-T4 gains after E2
 
 ## STATE
+status_note: closed_phase
 doc_id: SSLD-016
 status: DONE
 current_task: T006

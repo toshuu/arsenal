@@ -424,3 +424,17 @@ Open items before a default is set:
 - Frame growth by index not measured (OOM at long frames).
 - Voice cache prebuild script added; expected boot saving ~0.65 s.
 - Final single-T4 cap: B=224 (p95 112, max 119, RTF 0.824). B=256 rejected RTF 0.902.
+
+### Memory safety (step 1)
+
+- B=224 OOM at max_frames=300: Mimi KV sized to (max_frames+4)*16, no window. No fragmentation fix.
+- Safe cap: max_frames <= 192 (15.36 s) at B=224 to keep >=1.5 GiB free.
+- Need admission guard + text chunking by frame limit.
+
+## Final single-T4 summary (closed)
+
+- Cap: B=224, conditioned profile, FP16 Mimi weights, prewarm B=192 frames=1. p95 112.2 ms, max 118.6 ms, RTF 0.824.
+- Safe limit: max_frames <= 192 (15.36 s) at B=224 (>=1.5 GiB free). Guard raises ValueError if exceeded.
+- What worked: E1 prep batching, E4 emit copy removal, Mimi FP16 weights (decoder-only), voice cache (650→1.4 ms), prewarm accepted.
+- What failed (see FACT-0085): M2, decode_group, prewarm budget rule, full Mimi cast, CUDA graphs (blocked), EOS threshold gain, long-frame profiling OOM, two-process scaling, B256 RTF, prefetch/cache boot gains.
+- Open: long-text chunker, Modal build (SSLD-017), L4 re-run, wire voice cache build.

@@ -2,6 +2,7 @@
 # SSLD-015: Cold start, boot budget, production cap
 
 ## STATE
+status_note: closed_phase
 doc_id: SSLD-015
 status: DONE
 current_task: T005

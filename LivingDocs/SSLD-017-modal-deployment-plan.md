@@ -1,3 +1,5 @@
+<!-- status: PLANNED, not built -->
+
 # Modal deployment plan (single-T4)
 
 ## Scope

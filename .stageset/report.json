@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-16T10:01:42Z",
+  "generated_at": "2026-11-16T10:07:48Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -1201,6 +1201,11 @@
   ],
   "commits": [
     {
+      "sha": "8499af3",
+      "date": "2026-11-16T10:01:47+00:00",
+      "subject": "Docs: SSLD-017 session + FACT-0084, report sync"
+    },
+    {
       "sha": "37f2407",
       "date": "2026-11-16T09:59:31+00:00",
       "subject": "Step1-2: memory safety limits+guard, KV scan note, Modal plan, facts 0079-0083"
@@ -1394,11 +1399,6 @@
       "sha": "597c90a",
       "date": "2026-11-15T13:04:00+00:00",
       "subject": "Fix Mimi decoder state and add Phase C levers"
-    },
-    {
-      "sha": "16b7fbe",
-      "date": "2026-11-15T09:52:39+00:00",
-      "subject": "Document FP16 quality WAVs and save debug scripts"
     }
   ]
 }
