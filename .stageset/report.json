@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-16T09:28:47Z",
+  "generated_at": "2026-11-16T09:40:31Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -1195,6 +1195,11 @@
   ],
   "commits": [
     {
+      "sha": "0cfa1e5",
+      "date": "2026-11-16T09:31:41+00:00",
+      "subject": "Step1-4: gap measure, EOS threshold, B256/B224 results, two-process test, prof"
+    },
+    {
       "sha": "5d0d76a",
       "date": "2026-11-16T08:18:32+00:00",
       "subject": "StageSet: close E2 listening gate, FACT-0053"
@@ -1388,11 +1393,6 @@
       "sha": "09cf191",
       "date": "2026-11-15T09:33:59+00:00",
       "subject": "Add FP16 spike scripts and baseline burst probe"
-    },
-    {
-      "sha": "ee84161",
-      "date": "2026-11-15T09:22:29+00:00",
-      "subject": "Record S1 FP16 spike: B=64 p95 233ms on T4"
     }
   ]
 }

@@ -416,3 +416,11 @@ Open items before a default is set:
 - Other 8–10 ms from EOS/compaction/Python; threshold patch no gain.
 - Two processes per T4 run but share GPU (latency worse than one B=224).
 - Cap remains B=224 (B=256 RTF 0.902).
+
+### Step 1–4 (2026-11-16, this turn)
+
+- other 8–10 ms unchanged (threshold patch); <3 ms not met (parity OK).
+- Mimi CUDA graphs: attempted, state blocker; no replay savings measured, skipped.
+- Frame growth by index not measured (OOM at long frames).
+- Voice cache prebuild script added; expected boot saving ~0.65 s.
+- Final single-T4 cap: B=224 (p95 112, max 119, RTF 0.824). B=256 rejected RTF 0.902.
