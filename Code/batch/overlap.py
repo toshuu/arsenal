@@ -1,19 +1,3 @@
-<!--
-@stageset version: 2
-@stageset kind: IMPLEMENTATION
-@stageset target: Code/batch/overlap.py
-@stageset source_idea: IDEA-0004
-@stageset status: DONE
-@stageset priority: P0
-@stageset spec_revision: 1
-@stageset implemented_revision: 1
-@stageset planned_in: .stageset/sessions/coding-ssld-014-overlap.md
-@stageset last_updated_in: .stageset/sessions/coding-ssld-014-overlap.md
-@stageset implemented_in: .stageset/sessions/coding-ssld-014-overlap.md
-@stageset blocker_ref: -
-@stageset resolution_of: -
--->
-
 """Overlap a GPU decode with the next GPU step on a second CUDA stream."""
 
 from __future__ import annotations
