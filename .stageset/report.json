@@ -1,19 +1,19 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-15T18:02:57Z",
+  "generated_at": "2026-11-16T08:05:19Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
     "branch": "main"
   },
   "totals": {
-    "skeletons": 8,
-    "done": 8,
+    "skeletons": 11,
+    "done": 11,
     "waiting": 0,
     "draft": 0,
-    "sessions": 47,
-    "runs": 11,
-    "runs_active": 2,
+    "sessions": 51,
+    "runs": 13,
+    "runs_active": 0,
     "results": 3
   },
   "skeletons": [
@@ -22,8 +22,26 @@
       "path": "Skeletons/Code/batch/batched_stream.py",
       "title": "Implementation: batched streaming core",
       "status": "DONE",
-      "spec_revision": 4,
-      "implemented_revision": 4,
+      "spec_revision": 6,
+      "implemented_revision": 6,
+      "phase": "done"
+    },
+    {
+      "id": "fp16",
+      "path": "Skeletons/Code/batch/fp16.py",
+      "title": "Implementation: FP16 helpers",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "overlap",
+      "path": "Skeletons/Code/batch/overlap.py",
+      "title": "Implementation: overlap decode",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
       "phase": "done"
     },
     {
@@ -75,6 +93,15 @@
       "id": "probe_prefill_random",
       "path": "Skeletons/Probes/probe_prefill_random.md",
       "title": "Probe: randomized prefill lever probe",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "probe_ttfa_stages",
+      "path": "Skeletons/Probes/probe_ttfa_stages.md",
+      "title": "Probe: TTFA stage breakdown with a separate load generator",
       "status": "DONE",
       "spec_revision": 1,
       "implemented_revision": 1,
@@ -544,11 +571,11 @@
       "id": "SSLD-010",
       "path": "LivingDocs/SSLD-010-gpu-agnostic-optim.md",
       "title": "GPU-agnostic scheduling optimizations",
-      "status": "BLOCKED",
-      "current_task": "T005",
+      "status": "DONE",
+      "current_task": "T006",
       "skeleton": "Skeletons/Code/batch/batched_stream.py",
       "tasks_total": 6,
-      "tasks_done": 3,
+      "tasks_done": 6,
       "tasks": [
         {
           "id": "T001",
@@ -558,7 +585,7 @@
         {
           "id": "T002",
           "title": "Add pipelined burst probe (CPU prep overlap)",
-          "status": "DOING"
+          "status": "DONE"
         },
         {
           "id": "T003",
@@ -573,12 +600,12 @@
         {
           "id": "T005",
           "title": "Stable soak B=144",
-          "status": "BLOCKED"
+          "status": "DONE"
         },
         {
           "id": "T006",
           "title": "Record facts and close",
-          "status": "TODO"
+          "status": "DONE"
         }
       ]
     },
@@ -586,8 +613,8 @@
       "id": "SSLD-011",
       "path": "LivingDocs/SSLD-011-shrink-model-tests.md",
       "title": "Shrink-model tests (multilingual-safe, sideline)",
-      "status": "IN_PROGRESS",
-      "current_task": "T003",
+      "status": "DONE",
+      "current_task": "T005",
       "skeleton": "none",
       "tasks_total": 5,
       "tasks_done": 5,
@@ -618,9 +645,98 @@
           "status": "DONE"
         }
       ]
+    },
+    {
+      "id": "SSLD-013",
+      "path": "LivingDocs/SSLD-013-ttfa-levers.md",
+      "title": "TTFA levers E1, E4, E2, E3 and max B",
+      "status": "DONE",
+      "current_task": "T007",
+      "skeleton": "Skeletons/Code/batch/batched_stream.py",
+      "tasks_total": 7,
+      "tasks_done": 7,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Run the max-B sweep with the clean client",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Remove text prep from the critical path",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Remove the per-row emit cost",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Run the Mimi decoder under FP16 autocast",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Sweep decode_group for steady frames",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Re-run the B=144 and B=160 soaks with the clean client",
+          "status": "DONE"
+        },
+        {
+          "id": "T007",
+          "title": "Record facts and close the document",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-014",
+      "path": "LivingDocs/SSLD-014-overlap-decode.md",
+      "title": "Overlap Mimi decode with the next flow step (M2)",
+      "status": "DONE",
+      "current_task": "T005",
+      "skeleton": "Skeletons/Code/batch/overlap.py",
+      "tasks_total": 5,
+      "tasks_done": 5,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Add the overlap helper",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Use the helper in the stream loop",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Check audio parity of the overlap path",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Measure the steady gain",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Record facts and close the document",
+          "status": "DONE"
+        }
+      ]
     }
   ],
   "ideas": [
+    {
+      "path": "Ideas/IDEA-0004-ttfa-burst-gain.md",
+      "title": "TTFA and burst capacity gain plan",
+      "status": "DISCOVERY"
+    },
     {
       "path": "Ideas/_index.md",
       "title": "Ideas index",
@@ -924,9 +1040,38 @@
       "date": "2026-11-15T23:55:00+05:30",
       "type": "coding",
       "summary": "Profile TTFA/steady-frame breakdown (B=32,B=128 cond path) and document bottlenecks."
+    },
+    {
+      "id": "20261116-073000-IDEATION",
+      "date": "2026-11-16T07:30:00+05:30",
+      "type": "ideation",
+      "summary": "Plan E0 stage-timestamp probe to explain the 50 to 180 ms TTFA gap."
+    },
+    {
+      "id": "20261116-130000-CODING",
+      "date": "2026-11-16T13:00:00+05:30",
+      "type": "coding",
+      "summary": "Run E0 stage probe; the 50 to 180 ms gap is not present with a separate-process client."
+    },
+    {
+      "id": "20261116-132000-CODING",
+      "date": "2026-11-16T13:20:00+05:30",
+      "type": "coding",
+      "summary": "E1/E4/E2/E3 and max-B. Prep 65->2.2 ms, emit 26->0.28 ms, B=160 soak 100% under 350."
+    },
+    {
+      "id": "20261116-134000-CODING",
+      "date": "2026-11-16T13:40:00+05:30",
+      "type": "coding",
+      "summary": "M2 overlap decode. Add a second CUDA stream helper and pipeline decode with the next flow step."
     }
   ],
   "commits": [
+    {
+      "sha": "3b6b2c6",
+      "date": "2026-11-15T18:03:14+00:00",
+      "subject": "StageSet: SSLD-011 shrink-model sideline tests"
+    },
     {
       "sha": "e23304f",
       "date": "2026-11-15T17:49:53+00:00",
@@ -1121,11 +1266,6 @@
       "sha": "20e43ea",
       "date": "2026-11-15T07:43:22+00:00",
       "subject": "Record the T4 GPU baseline push"
-    },
-    {
-      "sha": "11a47fa",
-      "date": "2026-11-15T07:43:13+00:00",
-      "subject": "Add T4 GPU baseline and results panel"
     }
   ]
 }

@@ -372,3 +372,16 @@ Open items before a default is set:
 
 - V11 helper: `Code/batch/scheduler.py` (bucketing/admission). V12 probe: `Code/probes/probe_pipelined_bursts.py` (CPU prep overlap) B=128 10 rounds p95 272.58 ms, 1280/1280 <350 (FACT-0034).
 - Stable soak B=128 (partial, interrupted, salvaged): 305 bursts, 39,040 req, 99.91% <350, burst p95 median 226.21 ms, p95-of-p95 302.22 ms, max 364.49 ms, 2 bursts >350, RTF median 0.0018 (FACT-0035). B=144 not run (time). Data in `Code/probes/out/soak_b128.jsonl`/summary.
+
+### TTFA levers E1/E4/E2 and max B (SSLD-013, 2026-11-16)
+
+- Measurement: use the clean separate-process client. The old 50-180 ms tail was measurement bias (FACT-0044).
+- E1: batched tokenizer + one embedding call. Prep 65 -> 2.2 ms at B=128 (FACT-0046).
+- E4: frame views, no per-row clone. Emit 26 -> 0.28 ms at B=128 (FACT-0047).
+- E2: Mimi decode under FP16 autocast, params stay FP32. Steady B=160 79.1 -> 65.4 ms (FACT-0049).
+- E3: decode_group 2/4 is slower. Dropped (FACT-0050).
+- Max B on one T4: warm p50 TTFA 67.6/78.8/91.6/107.1 ms at B=128/160/192/224. B=256 OOM (FACT-0048).
+- Clean soak with autocast Mimi: B=144 p95 84.1 ms, 100% <350; B=160 p95 95.0 ms, 100% <350 (FACT-0051).
+- Next: M2 (Mimi on a second CUDA stream), then M1 (workers per GPU). SSLD-014.
+- M2 (second CUDA stream for decode) gives no gain: 69.99 vs 70.68 ms at B=192. The T4 SMs are shared. Dropped (FACT-0052).
+- decode_group 2/4 is also dropped (FACT-0050).

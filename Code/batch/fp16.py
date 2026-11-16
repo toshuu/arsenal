@@ -45,8 +45,12 @@ def _fp16_forward(self, sequence, text_embeddings, model_state, sampler_decode_s
     return latent.to(backbone_dtype), out_eos
 
 
-def enable_fp16_backbone(model):
-    """Convert flow_lm backbone to FP16. Keep head/sampler and Mimi decode in FP32."""
+def enable_fp16_backbone(model, mimi_fp16: bool = False):
+    """Convert flow_lm backbone to FP16.
+
+    By default the head/sampler and the Mimi decoder stay in FP32. Set
+    `mimi_fp16=True` to also convert the Mimi decoder to FP16.
+    """
     flm.FlowLMModel.forward = _fp16_forward
     model.flow_lm = model.flow_lm.half()
     model.flow_lm.flow_net = model.flow_lm.flow_net.float()
@@ -63,8 +67,15 @@ def enable_fp16_backbone(model):
 
     _orig_decode = model.mimi.decode_from_latent
 
-    def decode_fp32(self, latent, mimi_state):
-        return _orig_decode(latent.float(), mimi_state)
+    if mimi_fp16:
+        def decode_half(self, latent, mimi_state):
+            with torch.autocast(device_type="cuda", dtype=torch.float16):
+                return _orig_decode(latent, mimi_state)
 
-    model.mimi.decode_from_latent = types.MethodType(decode_fp32, model.mimi)
+        model.mimi.decode_from_latent = types.MethodType(decode_half, model.mimi)
+    else:
+        def decode_fp32(self, latent, mimi_state):
+            return _orig_decode(latent.float(), mimi_state)
+
+        model.mimi.decode_from_latent = types.MethodType(decode_fp32, model.mimi)
     return model

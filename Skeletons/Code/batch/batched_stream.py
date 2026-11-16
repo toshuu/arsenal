@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0003
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 4
-@stageset implemented_revision: 4
-@stageset planned_in: .stageset/sessions/ideation-batch-server.md
-@stageset last_updated_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md
-@stageset implemented_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md
+@stageset spec_revision: 6
+@stageset implemented_revision: 6
+@stageset planned_in: .stageset/sessions/coding-ssld-013-ttfa-levers.md
+@stageset last_updated_in: .stageset/sessions/coding-ssld-013-ttfa-levers.md
+@stageset implemented_in: .stageset/sessions/coding-ssld-013-ttfa-levers.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -38,6 +38,17 @@ Inputs:
 - `on_chunk(row, chunk, elapsed_s)`: optional callback.
 - `max_frames`: optional frame cap. One frame is 80 ms.
 - `frames_after_eos`: frames to add after EOS. Default 2.
+- `on_stage(row, name, t)`: optional callback. `t` is an absolute
+  `time.perf_counter()` value. `row` is `-1` for a batch-level event. The
+  callback must stay cheap and must not synchronize the GPU. Stage names:
+  - `stream_start`: the first line of `stream()`.
+  - `prep_start`: just before text prep.
+  - `prep_done`: after the text or prefix tensor is ready.
+  - `state_done`: after the flow state is allocated and padded.
+  - `cond_done`: after the conditioning forward.
+  - `flow0_done`: after the step 0 flow forward.
+  - `mimi0_done`: after the step 0 Mimi decode.
+  - `first_emit`: for each row when its first audio chunk is appended.
 
 Outputs:
 
@@ -60,6 +71,12 @@ Rules:
   `end_on_pause` on the cut audio, then encodes. The prompt must end on a pause.
 - `max_first_tokens` overrides `max_tokens` for the first text chunk only.
 - A row stops at its own EOS. The batch stops when all rows stop or hit the cap.
+- Revision 6 adds two performance contracts:
+  - Text prep: tokenize all texts with one pool of workers and one batched
+    embedding call. Use a per-text id cache. Do not run one GPU op per row.
+  - Emit path: append a view of the decoded frame. Do not clone each row.
+    Keep a `row_ids` map through compaction. No per-row `.item()` or `.cpu()`.
+  - The decoded audio returns as float32.
 
 ## Structure
 
@@ -75,8 +92,13 @@ Rules:
     and the token count.
   - `_build_prefixes(texts)`: build a right-aligned prefix tensor, a pad tensor,
     and the token counts.
-  - `stream(texts, on_chunk=None, max_frames=None, frames_after_eos=2)`:
+  - `stream(texts, on_chunk=None, max_frames=None, frames_after_eos=2, on_stage=None)`:
     run the batch and return the audio per row.
+- `_text_ids(text)`: return cached token ids for one text.
+- `_encode_texts(texts)`: one batched embedding call. Right-align rows and zero
+  the leading pad positions. Return the batch, pad, and token counts.
+- `mark(row, name)`: emit one stage timestamp through `on_stage` when it is set.
+  It uses `time.perf_counter()`. It must not call any CUDA sync.
 
 ## Pseudo-code
 
@@ -151,9 +173,40 @@ ASSUMPTION: A-12 - `split_into_best_sentences` returns one chunk for a text of a
 - Pass condition: exit code 0 and the line `DECODER PARITY PASS`.
 - Fail condition: any other output or a non-zero exit code. If the correlation is below 0.99, the Mimi state increment is missing.
 
+### CHECK-BATCH-STREAM-06 - stage timestamps
+
+- Command: `python -c "import re; s=open('Code/batch/batched_stream.py').read(); print(bool(re.search(r'on_stage: StageCallback', s)))"`
+- Predicted output: `True`
+- Pass condition: the command prints `True`. The probe run report must also
+  show all eight stage names in order for one row.
+- Fail condition: `on_stage` is absent from the signature, or a stage name is
+  missing in the probe output.
+
+### CHECK-BATCH-STREAM-07 - prep under 10 ms
+
+- Command: `python -c "import json; d=json.load(open('Code/probes/out/probe_ttfa_maxb.json')); print(d['stages']['128']['prep_ms']['p50'] < 10)"`
+- Predicted output: `True`
+- Pass condition: the command prints `True`.
+- Fail condition: the B=128 text-prep p50 is 10 ms or more.
+
+### CHECK-BATCH-STREAM-08 - emit under 5 ms
+
+- Command: `python -c "import json; d=json.load(open('Code/probes/out/probe_ttfa_maxb.json')); print(d['stages']['128']['emit_ms']['p50'] < 5)"`
+- Predicted output: `True`
+- Pass condition: the command prints `True`.
+- Fail condition: the B=128 emit p50 is 5 ms or more.
+
+### CHECK-BATCH-STREAM-09 - parity regression
+
+- Command: `python Code/probes/check_batch_stream.py`
+- Predicted output: `CHECK_BATCH_STREAM PASS`
+- Pass condition: exit code 0 and the exact line `CHECK_BATCH_STREAM PASS`.
+- Fail condition: any other output or a non-zero exit code.
+
 ## References
 
 - `Ideas/optimization-strategy.md`
+- `Ideas/IDEA-0004-ttfa-burst-gain.md`
 - `Ideas/high-concurrency-burst-optimization.md`
 - `training/modules/model.py` (`generate`, the ragged batch reference)
 - `pocket_tts/models/tts_model.py` (`_run_flow_lm_and_increment_step`, `_encode_audio`)

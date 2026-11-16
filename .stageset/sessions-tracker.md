@@ -53,11 +53,15 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261115-233000-CODING | CODING | 2026-11-15T23:30:00+05:30 | Web-search and retry INT4 fixes (torchao 0.10, T4); no working path. | .stageset/sessions/coding-sideline-int4-fix.md | IDEA-0003 | - |
 | 20261115-234000-CODING | CODING | 2026-11-15T23:40:00+05:30 | Wrap sideline experiments (all blocked/no main gain), return to main path. | .stageset/sessions/coding-sideline-wrapup.md | IDEA-0003, SSLD-010 | - |
 | 20261115-235500-CODING | CODING | 2026-11-15T23:55:00+05:30 | Profile TTFA/steady-frame breakdown (B=32,B=128 cond path) and document bottlenecks. | .stageset/sessions/coding-ttfa-breakdown.md | IDEA-0003, SSLD-010, FACT-0033, FACT-0034, FACT-0035 | - |
+| 20261116-073000-IDEATION | IDEATION | 2026-11-16T07:30:00+05:30 | Plan E0 stage-timestamp probe to explain the 50 to 180 ms TTFA gap. | .stageset/sessions/ideation-ttfa-burst-gain.md | IDEA-0004; IDEA-0003; FACT-0041; SSLD-010 | - |
+| 20261116-130000-CODING | CODING | 2026-11-16T13:00:00+05:30 | Run E0 stage probe; the 50 to 180 ms gap is not present with a separate-process client. | .stageset/sessions/coding-ttfa-stages-e0.md | IDEA-0004; FACT-0041; FACT-0043; FACT-0044; FACT-0045; 20261116-125702-RUN; 20261116-125702-RUN-02 | - |
+| 20261116-132000-CODING | CODING | 2026-11-16T13:20:00+05:30 | E1/E4/E2/E3 and max-B. Prep 65->2.2 ms, emit 26->0.28 ms, B=160 soak 100% under 350. | .stageset/sessions/coding-ssld-013-ttfa-levers.md | IDEA-0004; SSLD-013; SSLD-010; FACT-0046; FACT-0047; FACT-0048; FACT-0049; FACT-0050; FACT-0051 | - |
+| 20261116-134000-CODING | CODING | 2026-11-16T13:40:00+05:30 | M2 overlap decode. Add a second CUDA stream helper and pipeline decode with the next flow step. | .stageset/sessions/coding-ssld-014-overlap.md | IDEA-0004; SSLD-014 | - |
 
 ## Totals
 
-- CODING: 24.
-- IDEATION: 7.
+- CODING: 27.
+- IDEATION: 8.
 - MAINTENANCE: 7.
 - PROBE: 0.
 - PUSH: 9.
