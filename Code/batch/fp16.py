@@ -57,7 +57,7 @@ def enable_fp16_backbone(model, mimi_fp16: bool = False):
     model.flow_lm.out_eos = model.flow_lm.out_eos.float()
 
     def _encode_audio_dtype(self, audio):
-        with torch.no_grad():
+        with torch.no_grad(), torch.autocast(device_type="cuda", dtype=torch.float16):
             latents = self.mimi.encode_to_latent(audio)
         w = self.flow_lm.speaker_proj_weight
         conditioning = F.linear(latents.to(w.dtype), w).to(self.flow_lm.input_linear.weight.dtype)

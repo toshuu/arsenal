@@ -126,7 +126,7 @@ class ResourceSampler:
         self._thread.join(timeout=2)
 
 
-def server(cmd_q, res_q, profile_path, voice_path, bs, frames, fp16_mimi, decode_group, overlap):
+def server(cmd_q, res_q, profile_path, voice_path, bs, frames, fp16_mimi, decode_group, overlap, prewarm_b, fp16_weights, normal_voice):
     os.environ.setdefault("CUDA_VISIBLE_DEVICES", "0")
     os.chdir(REPO / "Code" / "model")
     import logging
@@ -144,15 +144,26 @@ def server(cmd_q, res_q, profile_path, voice_path, bs, frames, fp16_mimi, decode
 
     model = TTSModel.load_model(config="config.yaml").to("cuda").eval()
     enable_fp16_backbone(model, mimi_fp16=fp16_mimi)
+    if fp16_weights:
+        from batch.fp16_weights import load_fp16_weights
+        load_fp16_weights(model, REPO / 'Code' / 'model' / 'fp16_weights.pt')
     model.temp = 0.3
     profile = Path(profile_path)
     if not profile.exists():
         base = BatchedStream(model, voice=voice_path, voice_seconds=4.0, max_first_tokens=16)
         profile.parent.mkdir(parents=True, exist_ok=True)
         base.save_voice_profile(profile, conditioned=True)
-    stream = BatchedStream(model, voice_profile=profile, max_first_tokens=16, compact=True, decode_group=decode_group, overlap_decode=overlap)
+    if normal_voice:
+        stream = BatchedStream(model, voice=voice_path, voice_seconds=4.0, max_first_tokens=16, compact=True, decode_group=decode_group, overlap_decode=overlap)
+    else:
+        stream = BatchedStream(model, voice_profile=profile, max_first_tokens=16, compact=True, decode_group=decode_group, overlap_decode=overlap)
     sr = model.config.mimi.sample_rate
     texts = make_texts(400)
+    if prewarm_b:
+        from batch.boot import maybe_prewarm
+        import os as _os
+        _os.environ['ARSENAL_PREWARM_B'] = str(prewarm_b)
+        maybe_prewarm(stream, texts)
     for b in bs:
         stream.stream(texts[: min(8, b)], max_frames=8)
     torch.cuda.synchronize()
@@ -195,6 +206,7 @@ def server(cmd_q, res_q, profile_path, voice_path, bs, frames, fp16_mimi, decode
             "first_emit": first_emit,
             "samples": samples,
             "sr": sr,
+            "max_alloc_mb": torch.cuda.max_memory_allocated() / 2**20,
         })
 
 
@@ -208,6 +220,9 @@ def main():
     parser.add_argument("--fp16-mimi", action="store_true")
     parser.add_argument("--decode-group", type=int, default=1)
     parser.add_argument("--overlap", action="store_true")
+    parser.add_argument("--prewarm", type=int, default=0)
+    parser.add_argument("--fp16-weights", action="store_true")
+    parser.add_argument("--normal-voice", action="store_true")
     parser.add_argument("--profile", default=str(PROFILE))
     parser.add_argument("--voice", default=str(REF))
     parser.add_argument("--out", default=str(OUT))
@@ -218,7 +233,7 @@ def main():
     ctx = mp.get_context("spawn")
     cmd_q = ctx.Queue()
     res_q = ctx.Queue()
-    proc = ctx.Process(target=server, args=(cmd_q, res_q, args.profile, args.voice, bs, args.frames, args.fp16_mimi, args.decode_group, args.overlap), daemon=True)
+    proc = ctx.Process(target=server, args=(cmd_q, res_q, args.profile, args.voice, bs, args.frames, args.fp16_mimi, args.decode_group, args.overlap, args.prewarm, args.fp16_weights, args.normal_voice), daemon=True)
     proc.start()
     ready = res_q.get(timeout=300)
     if ready[0] != "ready":
@@ -298,6 +313,7 @@ def main():
                 )
                 steady.append(((result["t_end"] - result["t_recv"]) * 1000.0 - burst_ttfa) / (n_frames - 1))
         summary["steady_ms"] = summarize_ms(steady)
+        summary["peak_vram_mb"] = max((r.get("max_alloc_mb") or 0) for r in rows) if rows else None
         stages[str(b)] = summary
 
     gpu_vals = [s["gpu"] for s in sampler.samples if s["gpu"] is not None]

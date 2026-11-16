@@ -57,10 +57,12 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261116-130000-CODING | CODING | 2026-11-16T13:00:00+05:30 | Run E0 stage probe; the 50 to 180 ms gap is not present with a separate-process client. | .stageset/sessions/coding-ttfa-stages-e0.md | IDEA-0004; FACT-0041; FACT-0043; FACT-0044; FACT-0045; 20261116-125702-RUN; 20261116-125702-RUN-02 | - |
 | 20261116-132000-CODING | CODING | 2026-11-16T13:20:00+05:30 | E1/E4/E2/E3 and max-B. Prep 65->2.2 ms, emit 26->0.28 ms, B=160 soak 100% under 350. | .stageset/sessions/coding-ssld-013-ttfa-levers.md | IDEA-0004; SSLD-013; SSLD-010; FACT-0046; FACT-0047; FACT-0048; FACT-0049; FACT-0050; FACT-0051 | - |
 | 20261116-134000-CODING | CODING | 2026-11-16T13:40:00+05:30 | M2 overlap decode. Add a second CUDA stream helper and pipeline decode with the next flow step. | .stageset/sessions/coding-ssld-014-overlap.md | IDEA-0004; SSLD-014 | - |
+| 20261116-151000-CODING | CODING | 2026-11-16T15:10:00+05:30 | Cold-start probe and prewarm budget test. Boot 5.56 s. Cold p95 575-657 ms. Prewarm 633 ms, over the 100 ms budget. | .stageset/sessions/coding-ssld-015-cold.md | SSLD-015; IDEA-0004; FACT-0054 | - |
+| 20261116-151000-CODING-02 | CODING | 2026-11-16T15:10:00+05:30 | Plan SSLD-016. FP16 weight cache, B=256 memory profile, shared voice KV, per-component steady split. | .stageset/sessions/coding-ssld-016-t4.md | SSLD-016; IDEA-0004 | - |
 
 ## Totals
 
-- CODING: 27.
+- CODING: 29.
 - IDEATION: 8.
 - MAINTENANCE: 7.
 - PROBE: 0.

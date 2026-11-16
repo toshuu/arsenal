@@ -1,0 +1,98 @@
+{
+  "probe": "probe_ttfa_stages",
+  "mode": "separate-process load generator, one server child",
+  "gpu_name": "Tesla T4",
+  "bs": [
+    128
+  ],
+  "bursts": 10,
+  "rounds": 1,
+  "threshold_ms": 350.0,
+  "frames": 0,
+  "fp16_mimi": true,
+  "decode_group": 1,
+  "errors": [],
+  "stages": {
+    "128": {
+      "queue_ms": {
+        "p50": 0.283,
+        "p95": 0.666,
+        "mean": 0.316,
+        "max": 0.666
+      },
+      "prep_ms": {
+        "p50": 2.721,
+        "p95": 7.964,
+        "mean": 3.227,
+        "max": 7.964
+      },
+      "state_ms": {
+        "p50": 0.669,
+        "p95": 2.245,
+        "mean": 0.824,
+        "max": 2.245
+      },
+      "cond_ms": {
+        "p50": 32.103,
+        "p95": 38.053,
+        "mean": 32.094,
+        "max": 38.053
+      },
+      "flow0_ms": {
+        "p50": 57.311,
+        "p95": 68.393,
+        "mean": 53.519,
+        "max": 68.393
+      },
+      "mimi0_ms": {
+        "p50": 8.13,
+        "p95": 10.866,
+        "mean": 8.445,
+        "max": 10.866
+      },
+      "emit_ms": {
+        "p50": 0.309,
+        "p95": 0.494,
+        "mean": 0.304,
+        "max": 0.545
+      },
+      "ttfa_ms": {
+        "p50": 104.833,
+        "p95": 118.911,
+        "mean": 98.731,
+        "max": 119.088
+      },
+      "compute_ms": {
+        "p50": 104.538,
+        "p95": 118.244,
+        "mean": 98.414,
+        "max": 118.421
+      },
+      "gap_ms": {
+        "p50": 0.001,
+        "p95": 0.001,
+        "mean": 0.001,
+        "max": 0.001
+      },
+      "under": 1280,
+      "total": 1280,
+      "under_pct": 100.0,
+      "steady_ms": {
+        "p50": 76.149,
+        "p95": 92.205,
+        "mean": 68.47,
+        "max": 98.388
+      },
+      "peak_vram_mb": 4160.86376953125
+    }
+  },
+  "util": {
+    "gpu_mean": 86.79,
+    "gpu_max": 100.0,
+    "cpu_mean": 54.01,
+    "cpu_max": 88.9908256880734,
+    "samples": 78
+  },
+  "done": true,
+  "generated_at": "2026-11-16T09:25:37+0000"
+}

@@ -1,0 +1,13 @@
+server ready on Tesla T4
+round=0 b=128 burst=0 rows=128 ttfa_p95=88.37 ms
+round=0 b=128 burst=1 rows=128 ttfa_p95=72.58 ms
+round=0 b=128 burst=2 rows=128 ttfa_p95=72.08 ms
+round=0 b=128 burst=3 rows=128 ttfa_p95=82.71 ms
+round=0 b=128 burst=4 rows=128 ttfa_p95=108.86 ms
+round=0 b=128 burst=5 rows=128 ttfa_p95=139.36 ms
+round=0 b=128 burst=6 rows=128 ttfa_p95=138.94 ms
+round=0 b=128 burst=7 rows=128 ttfa_p95=132.66 ms
+round=0 b=128 burst=8 rows=128 ttfa_p95=132.7 ms
+round=0 b=128 burst=9 rows=128 ttfa_p95=132.81 ms
+{"128": {"p50": 120.553, "p95": 139.204, "mean": 109.926, "max": 139.381}}
+TTFA_STAGES_DONE

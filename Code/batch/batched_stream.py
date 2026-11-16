@@ -74,6 +74,9 @@ def _slice_model_state(state: ModelState, keep: torch.Tensor, cur_batch: int) ->
     return out
 
 
+_VOICE_MEM: dict[str, torch.Tensor] = {}
+
+
 class BatchedStream:
     def __init__(
         self,
@@ -86,6 +89,7 @@ class BatchedStream:
         decode_group: int = 1,
         compact: bool = True,
         overlap_decode: bool = False,
+        profile_steps: bool = False,
     ):
         self.model = model
         self.device = next(model.flow_lm.parameters()).device
@@ -96,6 +100,11 @@ class BatchedStream:
         self.compact = compact
         self.overlap = OverlapDecoder(self.device) if overlap_decode else None
         self._inflight = None
+        self.profile_steps = profile_steps
+        self._pe = [] if profile_steps else None
+        self._emit_ms = 0.0
+        self._loop_ms = 0.0
+        self.last_profile = None
         self._ids_cache: dict[str, list[int]] = {}
         self._pool = ThreadPoolExecutor(max_workers=4)
         self.voice: torch.Tensor | None = None
@@ -109,6 +118,20 @@ class BatchedStream:
 
     @torch.no_grad()
     def _load_voice(self, voice_path: str | Path) -> torch.Tensor:
+        import hashlib
+        import os
+
+        raw = Path(voice_path).read_bytes()
+        key = hashlib.sha256(raw + f"|{self.voice_seconds}".encode()).hexdigest()[:16]
+        cache_dir = Path(os.getenv("ARSENAL_VOICE_CACHE",
+                                   str(Path(__file__).resolve().parents[1] / "model" / "voice_cache")))
+        cache_file = cache_dir / f"{key}.pt"
+        if key in _VOICE_MEM:
+            return _VOICE_MEM[key]
+        if cache_file.exists():
+            prompt = torch.load(cache_file, map_location=self.device)
+            _VOICE_MEM[key] = prompt
+            return prompt
         audio, sample_rate = audio_read(voice_path)
         audio = convert_audio(audio, sample_rate, self.model.config.mimi.sample_rate, 1)
         if self.voice_seconds is not None:
@@ -119,6 +142,9 @@ class BatchedStream:
             prompt = self.model._encode_audio(audio.unsqueeze(0).to(self.device))
         if self.model.flow_lm.insert_bos_before_voice:
             prompt = torch.cat([self.model.flow_lm.bos_before_voice, prompt], dim=1)
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        torch.save(prompt.detach().cpu(), cache_file)
+        _VOICE_MEM[key] = prompt
         return prompt
 
     @torch.no_grad()
@@ -283,7 +309,7 @@ class BatchedStream:
 
         mimi_steps = int(model.mimi.encoder_frame_rate / model.mimi.frame_rate)
         mimi_state = init_states(model.mimi, batch_size, (max_frames + 4) * mimi_steps)
-        mimi_dtype = next(model.mimi.parameters()).dtype
+        mimi_dtype = next(model.mimi.decoder.parameters()).dtype
         if mimi_dtype != torch.float32:
             mimi_state = {
                 name: {
@@ -308,6 +334,7 @@ class BatchedStream:
         pending: list[tuple[torch.Tensor, list[bool], int]] = []
 
         def emit_frame(frame: torch.Tensor, nd_cpu: list[bool], stp: int, elapsed: float) -> None:
+            _et = time.perf_counter() if self._pe is not None else 0.0
             if stp == 0:
                 fade_len = min(fade.numel(), frame.shape[-1])
                 frame[:, :fade_len] = frame[:, :fade_len] * fade[:fade_len]
@@ -323,6 +350,8 @@ class BatchedStream:
                     mark(orig, "first_emit")
                 if on_chunk is not None:
                     on_chunk(orig, frame[local], elapsed)
+            if self._pe is not None:
+                self._emit_ms += (time.perf_counter() - _et) * 1000.0
 
         def flush_pending(force: bool = False) -> bool:
             if self.overlap is not None:
@@ -333,8 +362,15 @@ class BatchedStream:
                 return False
             latents = torch.cat([p[0] for p in pending], dim=1)
             decode_input = latents * flow_lm.emb_std + flow_lm.emb_mean
+            if self._pe is not None:
+                _ma = torch.cuda.Event(enable_timing=True)
+                _ma.record()
             audio = model.mimi.decode_from_latent(decode_input, mimi_state)
             increment_steps(model.mimi, mimi_state, increment=mimi_steps * len(pending))
+            if self._pe is not None:
+                _mb = torch.cuda.Event(enable_timing=True)
+                _mb.record()
+                self._pe.append(("mimi", _ma, _mb))
             if pending[0][2] == 0:
                 mark(-1, "mimi0_done")
             if audio.dim() == 3:
@@ -394,16 +430,24 @@ class BatchedStream:
             return False
 
         for step in range(max_frames):
+            _st = time.perf_counter() if self._pe is not None else 0.0
             if step == 0:
                 conditioning = step0_cond if "step0_cond" in locals() else (empty_audio if use_profile_state else prefix)
             else:
                 conditioning = empty_audio
+            if self._pe is not None:
+                _fa = torch.cuda.Event(enable_timing=True)
+                _fa.record()
             latent, is_eos = model._run_flow_lm_and_increment_step(
                 model_state=state,
                 text_tokens=empty_tokens,
                 backbone_input_latents=latent,
                 audio_conditioning=conditioning,
             )
+            if self._pe is not None:
+                _fb = torch.cuda.Event(enable_timing=True)
+                _fb.record()
+                self._pe.append(("flow", _fa, _fb))
             if step == 0:
                 mark(-1, "flow0_done")
             eligible = torch.full_like(
@@ -418,28 +462,43 @@ class BatchedStream:
 
             pending.append((latent, nd_cpu, step))
             force = step == 0 or any(nd_cpu)
+            if self._pe is not None:
+                self._loop_ms += (time.perf_counter() - _st) * 1000.0
             if flush_pending(force=force):
                 break
 
             if self.compact and any(nd_cpu) and not all(done_cpu):
-                keep = [i for i, finished in enumerate(done_cpu) if not finished]
-                if keep and len(keep) < batch_size:
-                    keep_t = torch.tensor(keep, dtype=torch.long, device=device)
-                    row_ids = [row_ids[i] for i in keep]
-                    done_cpu = [done_cpu[i] for i in keep]
-                    state = _slice_model_state(state, keep_t, batch_size)
-                    mimi_state = _slice_model_state(mimi_state, keep_t, batch_size)
-                    latent = latent.index_select(0, keep_t).contiguous()
-                    countdown = countdown.index_select(0, keep_t).contiguous()
-                    empty_tokens = (
-                        empty_tokens.index_select(0, keep_t).contiguous()
-                        if empty_tokens.dim() > 0
-                        else torch.empty(len(keep), 0, dtype=torch.int64, device=device)
-                    )
-                    empty_audio = empty_audio.index_select(0, keep_t).contiguous()
-                    batch_size = len(keep)
+                n_done = sum(1 for f in done_cpu if f)
+                if n_done >= max(1, batch_size // 8) or all(done_cpu):
+                    keep = [i for i, finished in enumerate(done_cpu) if not finished]
+                    if keep and len(keep) < batch_size:
+                        keep_t = torch.tensor(keep, dtype=torch.long, device=device)
+                        row_ids = [row_ids[i] for i in keep]
+                        done_cpu = [done_cpu[i] for i in keep]
+                        state = _slice_model_state(state, keep_t, batch_size)
+                        mimi_state = _slice_model_state(mimi_state, keep_t, batch_size)
+                        latent = latent.index_select(0, keep_t).contiguous()
+                        countdown = countdown.index_select(0, keep_t).contiguous()
+                        empty_tokens = (
+                            empty_tokens.index_select(0, keep_t).contiguous()
+                            if empty_tokens.dim() > 0
+                            else torch.empty(len(keep), 0, dtype=torch.int64, device=device)
+                        )
+                        empty_audio = empty_audio.index_select(0, keep_t).contiguous()
+                        batch_size = len(keep)
 
         flush_pending(force=True)
+
+        if self._pe is not None:
+            torch.cuda.synchronize()
+            flow_ms = sum(a.elapsed_time(b) for kind, a, b in self._pe if kind == "flow")
+            mimi_ms = sum(a.elapsed_time(b) for kind, a, b in self._pe if kind == "mimi")
+            self.last_profile = {"flow_ms": flow_ms, "mimi_ms": mimi_ms,
+                                 "emit_ms": self._emit_ms, "loop_ms": self._loop_ms,
+                                 "steps": sum(1 for kind, _, _ in self._pe if kind == "flow")}
+            self._emit_ms = 0.0
+            self._loop_ms = 0.0
+            self._pe.clear()
 
         out: list[torch.Tensor] = []
         for orig in range(len(audio_chunks)):

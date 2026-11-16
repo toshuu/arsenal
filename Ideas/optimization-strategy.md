@@ -386,3 +386,33 @@ Open items before a default is set:
 - M2 (second CUDA stream for decode) gives no gain: 69.99 vs 70.68 ms at B=192. The T4 SMs are shared. Dropped (FACT-0052).
 - decode_group 2/4 is also dropped (FACT-0050).
 - E2 listening gate passed on `/kaggle/working/mimi_compare.wav` (FACT-0053). FP16 decode is cleared for production.
+
+### Cold start and production cap (SSLD-015, 2026-11-16)
+
+- Boot 5.56 s. Prewarm at B=160 costs 636 ms and brings cold p95 from 613 to 148 ms (FACT-0055).
+- Prewarm is on by default: `ARSENAL_PREWARM=1`, `ARSENAL_PREWARM_B=192`, `ARSENAL_PREWARM_FRAMES=1`. Set `ARSENAL_PREWARM=0` to disable.
+- Production cap: B=192 (cold p95 203 ms, RTF 0.82). B=160 is the safe fallback (FACT-0056).
+- Prefetch and CUDA_CACHE_PATH give no gain (FACT-0057, FACT-0058).
+- Later phase, Modal only: memory snapshot (`snap=True`) should run import, weight load and prewarm once per image version, so the per-boot cost goes to zero. Do not build it now.
+
+### SSLD-016 results (2026-11-16)
+
+- FP16 weight cache: corr 0.9999991, encoder stays FP32. Steady B192 57.2 ms, B224 ~66 ms (FACT-0060, FACT-0063).
+- Component split: flow ~13.5 ms, Mimi ~27 ms, other ~5 ms. Mimi is the target.
+- B=224 passes: p95 112 ms, max 119 ms, RTF 0.824, peak 7.08 GB. Cap candidate B=224 (FACT-0064).
+- B=256 fits now (3.24 GB allocated). Memory is no longer the blocker; steady RTF is (FACT-0065).
+- Voice-embedding cache: 650 ms -> 1.4 ms at boot, audio identical. Prebuild at image time (FACT-0066).
+- Shared voice-prefix KV is dropped: voice state is 1.2 MB (FACT-0065).
+
+### Gap and scaling (2026-11-16)
+
+- The 12–18 ms steady gap is EOS/compaction/Python overhead (~8–10 ms profiled). Not harness IPC (server-side timings).
+- B=224 is the confirmed cap: p95 112 ms, max 119 ms, RTF 0.824. B=256 gives RTF 0.902 (>0.85), rejected.
+- Two processes per T4 are not viable (VRAM). The only remaining compute lever is Mimi (26–29 ms).
+
+### Step 1–4 results (2026-11-16)
+
+- GPU busy ~60% at B=224; CUDA graphs skipped (not under 70%).
+- Other 8–10 ms from EOS/compaction/Python; threshold patch no gain.
+- Two processes per T4 run but share GPU (latency worse than one B=224).
+- Cap remains B=224 (B=256 RTF 0.902).

@@ -1,0 +1,40 @@
+/usr/local/lib/python3.13/dist-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True.
+  _warn_once(
+wall_ms 1899.9462699994183
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+fmha_cutlassF_f16_aligned_64x64_rf_sm75(PyTorchMemEf...         0.00%       0.000us         0.00%       0.000us       0.000us     157.531ms        13.69%     157.531ms     601.265us           262  
+void at::native::_scatter_gather_elementwise_kernel<...         0.00%       0.000us         0.00%       0.000us       0.000us     135.354ms        11.76%     135.354ms       1.119ms           121  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us     120.033ms        10.43%     120.033ms     163.088us           736  
+         turing_fp16_s1688gemm_fp16_128x128_ldg8_f2f_tn         0.00%       0.000us         0.00%       0.000us       0.000us      69.792ms         6.06%      69.792ms     112.932us           618  
+void cudnn::engines_precompiled::nchwToNhwcKernel<__...         0.00%       0.000us         0.00%       0.000us       0.000us      61.548ms         5.35%      61.548ms     119.280us           516  
+void cudnn::engines_precompiled::nhwcToNchwKernel<__...         0.00%       0.000us         0.00%       0.000us       0.000us      59.142ms         5.14%      59.142ms     202.541us           292  
+void at::native::(anonymous namespace)::CatArrayBatc...         0.00%       0.000us         0.00%       0.000us       0.000us      56.120ms         4.88%      56.120ms     438.440us           128  
+                                  volta_sgemm_128x64_tn         0.00%       0.000us         0.00%       0.000us       0.000us      41.016ms         3.56%      41.016ms      64.288us           638  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      34.261ms         2.98%      34.261ms     152.949us           224  
+void cudnn::cnn::dgrad2d_grouped_direct_kernel<__hal...         0.00%       0.000us         0.00%       0.000us       0.000us      30.165ms         2.62%      30.165ms     942.665us            32  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      29.649ms         2.58%      29.649ms     308.843us            96  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      27.518ms         2.39%      27.518ms      13.489us          2040  
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      26.850ms         2.33%      26.850ms       8.529us          3148  
+sm75_xmma_dgrad_implicit_gemm_indexed_f16f16_f16f32_...         0.00%       0.000us         0.00%       0.000us       0.000us      21.538ms         1.87%      21.538ms     742.704us            29  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      20.420ms         1.77%      20.420ms      16.193us          1261  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      15.106ms         1.31%      15.106ms      11.232us          1345  
+void at::native::elementwise_kernel<128, 4, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      15.055ms         1.31%      15.055ms      13.940us          1080  
+turing_fp16_s1688gemm_fp16_128x256_ldg8_f2f_stages_3...         0.00%       0.000us         0.00%       0.000us       0.000us      14.159ms         1.23%      14.159ms      79.544us           178  
+sm75_xmma_dgrad_implicit_gemm_indexed_f16f16_f16f32_...         0.00%       0.000us         0.00%       0.000us       0.000us      13.290ms         1.15%      13.290ms     577.815us            23  
+sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16...         0.00%       0.000us         0.00%       0.000us       0.000us      12.616ms         1.10%      12.616ms     394.243us            32  
+sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16...         0.00%       0.000us         0.00%       0.000us       0.000us      11.171ms         0.97%      11.171ms     310.292us            36  
+sm75_xmma_fprop_implicit_gemm_f16f16_f16f32_f32_nhwc...         0.00%       0.000us         0.00%       0.000us       0.000us      11.097ms         0.96%      11.097ms     346.770us            32  
+sm75_xmma_dgrad_implicit_gemm_indexed_f16f16_f16f32_...         0.00%       0.000us         0.00%       0.000us       0.000us      11.056ms         0.96%      11.056ms     381.242us            29  
+_5x_cudnn_turing_fp16_s1688cudnn_fp16_128x128_ldg8_r...         0.00%       0.000us         0.00%       0.000us       0.000us      10.294ms         0.89%      10.294ms     395.927us            26  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      10.125ms         0.88%      10.125ms      38.644us           262  
+sm75_xmma_fprop_implicit_gemm_f16f16_f16f32_f32_nhwc...         0.00%       0.000us         0.00%       0.000us       0.000us       8.395ms         0.73%       8.395ms     365.019us            23  
+sm75_xmma_fprop_implicit_gemm_indexed_f16f16_f16f32_...         0.00%       0.000us         0.00%       0.000us       0.000us       8.395ms         0.73%       8.395ms     310.927us            27  
+void at::native::(anonymous namespace)::vectorized_l...         0.00%       0.000us         0.00%       0.000us       0.000us       7.472ms         0.65%       7.472ms      58.377us           128  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       6.223ms         0.54%       6.223ms      12.648us           492  
+void at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us       6.221ms         0.54%       6.221ms      10.216us           609  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 709.725ms
+Self CUDA time total: 1.151s
+
