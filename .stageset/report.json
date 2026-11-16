@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-16T08:05:19Z",
+  "generated_at": "2026-11-16T08:18:30Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -1068,6 +1068,16 @@
   ],
   "commits": [
     {
+      "sha": "e5d8514",
+      "date": "2026-11-16T08:07:56+00:00",
+      "subject": "Fix overlap module metadata header"
+    },
+    {
+      "sha": "34055ab",
+      "date": "2026-11-16T08:05:39+00:00",
+      "subject": "StageSet: TTFA levers E1/E2/E4, M2 negative result"
+    },
+    {
       "sha": "3b6b2c6",
       "date": "2026-11-15T18:03:14+00:00",
       "subject": "StageSet: SSLD-011 shrink-model sideline tests"
@@ -1256,16 +1266,6 @@
       "sha": "f3f48f2",
       "date": "2026-11-15T08:57:24+00:00",
       "subject": "Regenerate StageSet report.json after Phase B push"
-    },
-    {
-      "sha": "5f3b8e3",
-      "date": "2026-11-15T08:55:52+00:00",
-      "subject": "Complete SSLD-005 batched streaming core and SSLD-006 burst harness"
-    },
-    {
-      "sha": "20e43ea",
-      "date": "2026-11-15T07:43:22+00:00",
-      "subject": "Record the T4 GPU baseline push"
     }
   ]
 }

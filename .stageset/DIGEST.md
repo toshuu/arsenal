@@ -27,7 +27,6 @@ This file is generated. Do not edit it by hand.
 
 ## Verified environment facts
 
-| FACT-0033 | 2026-11-15 | Gate D soak, T4 FP16 cond profile 4.0s/cap16 compact dg=1, B=160, 475 sequential bursts (~23 min), 76,000 req (160 parallel/burst): 74,115/76,000 <350 ms (97.52%), 0 errors/OOM. Burst p95 median 275.8 ms, p95-of-p95 416.58 ms, max 562.3 ms, 64/475 bursts p95>350. RTF median 0.0015 p95 0.0025. TTFA stability not met; RTF pass. | Project | CURRENT | `.stageset/runs/20261115-215304-RUN.md` |
 | FACT-0034 | 2026-11-15 | GPU-agnostic pipelined burst probe (CPU prep overlap), T4 FP16 cond profile 4.0s/cap16 compact, B=128 10 rounds: p50 161.31 ms, p95 272.58 ms, 1280/1280 <350 ms (100%). | Project | CURRENT | `.stageset/runs/20261115-215304-RUN.md` |
 | FACT-0035 | 2026-11-15 | Partial B=128 soak (interrupted ~12-13 min, salvaged), T4 FP16 cond profile 4.0s/cap16 compact, 305 bursts, 39,040 req: 39,005 <350 ms (99.91%), burst p95 median 226.21 ms, p95-of-p95 302.22 ms, max 364.49 ms, 2 bursts p95>350, 0 errors/OOM. | Project | CURRENT | `Code/probes/out/soak_b128_summary.json` |
 | FACT-0036 | 2026-11-15 | Sideline INT8 (torchao `int8_weight_only` flow_lm), T4 FP16 cond profile 4.0s/cap16 compact, B=32 3 rounds: baseline p50 87.24 p95 110.88 ms wall 1.091 s; INT8 p50 70.72 p95 100.63 ms wall 1.198 s. Samples in `Code/experiments/out/`. | Project | CURRENT | `Code/experiments/int8/exp_int8.py` |
@@ -47,6 +46,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0050 | 2026-11-16 | E3 decode_group at B=192 with autocast Mimi: steady p50 70.68 ms for group 1, 75.41 for group 2, 75.89 for group 4. Grouping is slower. Drop E3 per the stop rule. | Project | CURRENT | `.stageset/runs/20261116-130500-RUN-04.md` |
 | FACT-0051 | 2026-11-16 | Clean-client soak with autocast Mimi, 20 bursts: B=144 2880/2880 under 350 ms, p95 84.1 ms, steady p50 56.4; B=160 3200/3200 under 350 ms, p95 95.0 ms, steady p50 58.3. No OOM and no error. This closes SSLD-010 T005. | Project | CURRENT | `.stageset/runs/20261116-130500-RUN-05.md` |
 | FACT-0052 | 2026-11-16 | M2 (decode on a second CUDA stream) gives no gain: steady p50 at B=192 is 69.99 ms vs 70.68 ms for one stream. Audio parity is exact (max abs diff 0.0). Two T4 streams share the same SMs, so decode adds work. Drop M2. Do not retry. | Project | CURRENT | `.stageset/runs/20261116-135100-RUN.md` |
+| FACT-0053 | 2026-11-16 | E2 listening gate closed. Owner listened to `/kaggle/working/mimi_compare.wav` (one sentence, FP32, 0.5 s gap, FP16, 0.5 s gap, 6.16 s per clip). Owner reported perfect: no audible loss. The earlier 19.84 s WAV was 8 different rows concatenated with no silence, not a defect. | Project | CURRENT | `.stageset/runs/20261116-141500-RUN-listen.md` |
 
 ## Read next
 

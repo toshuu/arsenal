@@ -385,3 +385,4 @@ Open items before a default is set:
 - Next: M2 (Mimi on a second CUDA stream), then M1 (workers per GPU). SSLD-014.
 - M2 (second CUDA stream for decode) gives no gain: 69.99 vs 70.68 ms at B=192. The T4 SMs are shared. Dropped (FACT-0052).
 - decode_group 2/4 is also dropped (FACT-0050).
+- E2 listening gate passed on `/kaggle/working/mimi_compare.wav` (FACT-0053). FP16 decode is cleared for production.
