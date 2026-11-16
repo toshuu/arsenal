@@ -90,6 +90,7 @@ class BatchedStream:
         compact: bool = True,
         overlap_decode: bool = False,
         profile_steps: bool = False,
+        max_allowed_frames: int | None = None,
     ):
         self.model = model
         self.device = next(model.flow_lm.parameters()).device
@@ -109,6 +110,12 @@ class BatchedStream:
         self._pool = ThreadPoolExecutor(max_workers=4)
         self.voice: torch.Tensor | None = None
         self.voice_state: ModelState | None = None
+        import os as _os
+        if max_allowed_frames is None:
+            _env = _os.getenv("ARSENAL_MAX_FRAMES")
+            self.max_allowed_frames = int(_env) if _env else None
+        else:
+            self.max_allowed_frames = max_allowed_frames
         if voice_profile is not None:
             self._load_voice_profile(voice_profile)
         elif voice is not None:

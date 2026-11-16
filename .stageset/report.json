@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-16T09:40:31Z",
+  "generated_at": "2026-11-16T09:59:19Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -1195,6 +1195,11 @@
   ],
   "commits": [
     {
+      "sha": "e00af4a",
+      "date": "2026-11-16T09:40:31+00:00",
+      "subject": "Steps 1-4: other threshold, mimi graph attempt, build_voice_cache, facts"
+    },
+    {
       "sha": "0cfa1e5",
       "date": "2026-11-16T09:31:41+00:00",
       "subject": "Step1-4: gap measure, EOS threshold, B256/B224 results, two-process test, prof"
@@ -1388,11 +1393,6 @@
       "sha": "dbf58c4",
       "date": "2026-11-15T09:45:17+00:00",
       "subject": "Formalize FP16 backbone path and parity/TTFA check"
-    },
-    {
-      "sha": "09cf191",
-      "date": "2026-11-15T09:33:59+00:00",
-      "subject": "Add FP16 spike scripts and baseline burst probe"
     }
   ]
 }
