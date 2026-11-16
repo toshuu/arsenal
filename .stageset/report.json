@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-16T10:07:48Z",
+  "generated_at": "2026-11-16T10:14:42Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -1201,6 +1201,16 @@
   ],
   "commits": [
     {
+      "sha": "319abe6",
+      "date": "2026-11-16T10:08:59+00:00",
+      "subject": "Save step1 debug scripts (mem model, OOM, cProfile)"
+    },
+    {
+      "sha": "6f11acf",
+      "date": "2026-11-16T10:08:05+00:00",
+      "subject": "Close single-T4 phase: mark SSLD-015/016 done, SSLD-017 planned; FACT-0085/0086; strategy summary"
+    },
+    {
       "sha": "8499af3",
       "date": "2026-11-16T10:01:47+00:00",
       "subject": "Docs: SSLD-017 session + FACT-0084, report sync"
@@ -1389,16 +1399,6 @@
       "sha": "d15b7a5",
       "date": "2026-11-15T13:14:09+00:00",
       "subject": "Add randomized lever probe and pick B128 safe pair"
-    },
-    {
-      "sha": "a4f470c",
-      "date": "2026-11-15T13:04:09+00:00",
-      "subject": "Record push of Phase C lever work"
-    },
-    {
-      "sha": "597c90a",
-      "date": "2026-11-15T13:04:00+00:00",
-      "subject": "Fix Mimi decoder state and add Phase C levers"
     }
   ]
 }

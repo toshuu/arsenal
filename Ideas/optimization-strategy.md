@@ -438,3 +438,5 @@ Open items before a default is set:
 - What worked: E1 prep batching, E4 emit copy removal, Mimi FP16 weights (decoder-only), voice cache (650→1.4 ms), prewarm accepted.
 - What failed (see FACT-0085): M2, decode_group, prewarm budget rule, full Mimi cast, CUDA graphs (blocked), EOS threshold gain, long-frame profiling OOM, two-process scaling, B256 RTF, prefetch/cache boot gains.
 - Open: long-text chunker, Modal build (SSLD-017), L4 re-run, wire voice cache build.
+
+- Mini 30-burst B=224 soak: p95 119.9, max 129.5, RTF 0.741 (FACT-0087).

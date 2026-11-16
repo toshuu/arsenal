@@ -28,7 +28,6 @@ This file is generated. Do not edit it by hand.
 
 ## Verified environment facts
 
-| FACT-0067 | 2026-11-16 | Owner listening gate for FP16 weights: PASS. Same sentence twice, no clicks or audible difference against autocast FP32. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0068 | 2026-11-16 | Steady gap: per-frame profile with auto frames gives flow 13–14, Mimi 26–32, emit 0.4, other 8–10 ms (B=160/192/224). The remaining 8–10 ms is EOS checks, compaction, slicing and Python overhead. Soak RTF implies ~12–18 ms extra at scale; the 32-frame probe underestimates. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0069 | 2026-11-16 | B=256 20-burst soak with FP16 weights and prewarm 256: p95 132.3 ms, max 133.8, 5120/5120 under 350, steady 72.2 ms, RTF 0.902 (>0.85). B=224 stays the cap (RTF 0.824). | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0070 | 2026-11-16 | Two worker processes of B=112 on one T4 both loaded (a1 ok), but a2 did not record a result in the parallel run (likely OOM/competition). Two copies of the model plus states do not fit well on one T4. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
@@ -48,6 +47,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0084 | 2026-11-16 | Guard added: `BatchedStream` accepts `max_allowed_frames` or env `ARSENAL_MAX_FRAMES`; raises `ValueError` before init if `max_frames` exceeds it. No server-side text chunker implemented (guard only). | Project | CURRENT | `Code/batch/batched_stream.py` |
 | FACT-0085 | 2026-11-16 | Failed levers (numbers): M2 overlap steady B192 69.99 vs 70.68 ms (no gain). decode_group 2/4 steady worse 70.7→75.4/75.9 ms (B192). Prewarm +636 ms boot over 100 ms rule (accepted). Full Mimi cast broke parity corr 0.981 (fixed to decoder-only corr 0.9999991). CUDA graphs blocked by state (no replay). EOS threshold: other still 8–10 ms. Frame-growth long test OOM. Two T4 processes: 112+112 p95 119.1/134.1 RTF 0.83/0.88, 128+128 p95 139.2/118.9 RTF 0.90/0.95 (worse than single B224). B256 soak RTF 0.902>0.85. Prefetch no boot gain (5685 vs 5561 ms). CUDA cache no gain. | Project | CURRENT | `.stageset/facts.md` |
 | FACT-0086 | 2026-11-16 | Open items: long-text chunker with carried state (guard `max_frames<=192` at B224 only); Modal build not started (SSLD-017 planned); L4 re-run (B224/256/288). Voice cache prebuild script exists, not wired to image build. | Project | CURRENT | `LivingDocs/SSLD-017-modal-deployment-plan.md` |
+| FACT-0087 | 2026-11-16 | B=224 mini soak (30 bursts, conditioned profile, FP16 weights, prewarm 224): p50 108.4 ms, p95 119.9 ms, max 129.5 ms, 6720/6720 under 350, steady p50 59.3 ms, RTF 0.741. | Project | CURRENT | `Code/probes/out/probe_b224_soak5x.json` |
 
 ## Read next
 
