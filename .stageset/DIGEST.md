@@ -19,11 +19,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261120-005500-PUSH · PUSH · Push burst recovery fixes, StageSet evidence, and report JSON.
 - 20261120-004000-CODING · CODING · Diagnose post-dislike regressions, recover the 32-client gate, and define the 224-client limit.
 - 20261119-214200-PUSH · PUSH · Push the owner dislike point and refreshed report JSON.
 - 20261119-214148-MAINTENANCE · MAINTENANCE · Record the owner dislike point after the B224 under-120 ms baseline.
 - 20261119-214000-PUSH · PUSH · Push the 224-client burst handoff and READY skeleton.
-- 20261119-213900-IDEATION · IDEATION · Handoff for the failed 224-client burst gate. Record traps, evidence, and a READY skeleton.
 
 ## Verified environment facts
 
