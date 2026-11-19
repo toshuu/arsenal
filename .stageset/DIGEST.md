@@ -20,7 +20,7 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
-- 20261120-013315-CODING · CODING · Ramp HTTP B and sweep windows (Steps 1,2,4). Find max passing B and 224 gap.
+- 20261120-013315-CODING · CODING · Steps 1,2,4 ramp and window sweep. Max HTTP pass B=37. B=224 still fails.
 - 20261120-005500-PUSH · PUSH · Push burst recovery fixes, StageSet evidence, and report JSON.
 - 20261120-004532-MAINTENANCE · MAINTENANCE · Record current standing: B and time, reverted regressions, delusion, and next steps.
 - 20261120-004000-CODING · CODING · Diagnose post-dislike regressions, recover the 32-client gate, and define the 224-client limit.

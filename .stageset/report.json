@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T20:12:40Z",
+  "generated_at": "2026-11-19T20:21:31Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -1417,10 +1417,15 @@
       "id": "20261120-013315-CODING",
       "date": "2026-11-20T01:33:15+05:30",
       "type": "coding",
-      "summary": "Ramp HTTP B and sweep windows (Steps 1,2,4). Find max passing B and 224 gap."
+      "summary": "Steps 1,2,4 ramp and window sweep. Max HTTP pass B=37. B=224 still fails."
     }
   ],
   "commits": [
+    {
+      "sha": "e6c8153",
+      "date": "2026-11-19T20:13:09+00:00",
+      "subject": "Ramp HTTP B and sweep windows (Steps 1,2,4): max pass B=37"
+    },
     {
       "sha": "f7e2b70",
       "date": "2026-11-19T19:16:39+00:00",
@@ -1615,11 +1620,6 @@
       "sha": "37f2407",
       "date": "2026-11-16T09:59:31+00:00",
       "subject": "Step1-2: memory safety limits+guard, KV scan note, Modal plan, facts 0079-0083"
-    },
-    {
-      "sha": "e00af4a",
-      "date": "2026-11-16T09:40:31+00:00",
-      "subject": "Steps 1-4: other threshold, mimi graph attempt, build_voice_cache, facts"
     }
   ]
 }
