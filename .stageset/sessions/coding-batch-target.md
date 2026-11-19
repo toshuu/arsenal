@@ -4,7 +4,7 @@ time: 2026-11-19T21:32:00+05:30
 summary: Add target-driven batching. Set window to 300 ms with target 32. Recheck B224 with 40 ms.
 paths: Code/batch/server.py; Code/probes/probe_http_load.py; docs/voice-profiles.md; Code/batch/VOICE_PROFILES.md; Ideas/IDEA-0005-long-text-and-production-readiness.md; Skeletons/Code/batch/server.py; .stageset/facts.md
 related: IDEA-0005; FACT-0107; FACT-0108
-commit: -
+commit: 284618c
 remote: -
 branch: -
 ---

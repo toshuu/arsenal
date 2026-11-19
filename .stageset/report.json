@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T15:44:11Z",
+  "generated_at": "2026-11-19T16:05:21Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 15,
     "waiting": 0,
     "draft": 1,
-    "sessions": 77,
+    "sessions": 79,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -58,8 +58,8 @@
       "path": "Skeletons/Code/batch/server.py",
       "title": "Implementation: HTTP serving layer",
       "status": "DONE",
-      "spec_revision": 7,
-      "implemented_revision": 7,
+      "spec_revision": 8,
+      "implemented_revision": 8,
       "phase": "done"
     },
     {
@@ -1349,9 +1349,31 @@
       "date": "2026-11-19T21:14:00+05:30",
       "type": "push",
       "summary": "Push batch window tuning and B224 40 ms evidence."
+    },
+    {
+      "id": "20261119-213200-CODING",
+      "date": "2026-11-19T21:32:00+05:30",
+      "type": "coding",
+      "summary": "Add target-driven batching. Set window to 300 ms with target 32. Recheck B224 with 40 ms."
+    },
+    {
+      "id": "20261119-213300-PUSH",
+      "date": "2026-11-19T21:33:00+05:30",
+      "type": "push",
+      "summary": "Push target-driven batching and final load evidence."
     }
   ],
   "commits": [
+    {
+      "sha": "284618c",
+      "date": "2026-11-19T16:05:21+00:00",
+      "subject": "Add target-driven batching and final load evidence"
+    },
+    {
+      "sha": "2123782",
+      "date": "2026-11-19T15:44:11+00:00",
+      "subject": "StageSet: record batch window push"
+    },
     {
       "sha": "8909d78",
       "date": "2026-11-19T15:44:11+00:00",
@@ -1541,16 +1563,6 @@
       "sha": "6c820be",
       "date": "2026-11-15T17:46:14+00:00",
       "subject": "StageSet: sideline wrap-up, return to main path"
-    },
-    {
-      "sha": "15a84e0",
-      "date": "2026-11-15T17:41:52+00:00",
-      "subject": "StageSet: INT4 fix attempts after web search (no working path)"
-    },
-    {
-      "sha": "8c76ee8",
-      "date": "2026-11-15T17:39:22+00:00",
-      "subject": "StageSet: sideline INT4 attempt (torchao, failed on T4)"
     }
   ]
 }
