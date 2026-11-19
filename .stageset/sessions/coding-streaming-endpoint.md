@@ -4,7 +4,7 @@ time: 2026-11-19T20:15:00+05:30
 summary: Add first-chunk PCM streaming endpoint and latency metrics.
 paths: Code/batch/server.py; Code/probes/check_server.py; Skeletons/Code/batch/server.py; .stageset/facts.md
 related: IDEA-0005; FACT-0097
-commit: -
+commit: 2748839
 remote: -
 branch: -
 ---
