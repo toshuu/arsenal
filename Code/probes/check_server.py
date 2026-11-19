@@ -20,8 +20,16 @@ from batch.server import QueueFull, Settings, create_app
 
 class FakeEngine:
     ready = True
+    last_profile = None
 
-    def synthesize(self, texts, max_frames=None, stop=None):
+    def has_profile(self, profile_id):
+        return profile_id == "v1"
+
+    def batch_key(self, text, profile_id=None):
+        return len(text.split())
+
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None):
+        type(self).last_profile = profile_id
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
 
 
@@ -32,7 +40,7 @@ class BlockingEngine:
         self.started = threading.Event()
         self.release = threading.Event()
 
-    def synthesize(self, texts, max_frames=None, stop=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None):
         self.started.set()
         self.release.wait(5)
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
@@ -41,7 +49,7 @@ class BlockingEngine:
 class SlowEngine:
     ready = True
 
-    def synthesize(self, texts, max_frames=None, stop=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None):
         time.sleep(0.3)
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
 
@@ -66,6 +74,18 @@ def main() -> int:
     body = many.json() if many.status_code == 200 else {}
     decoded = [len(base64.b64decode(item["wav_base64"])) for item in body.get("audio", [])]
     result["batch_ok"] = many.status_code == 200 and len(decoded) == 2 and min(decoded) > 44
+
+    profile = client.post("/tts", json={"text": "Hi.", "voice_profile": "v1"})
+    result["profile_ok"] = (
+        profile.status_code == 200 and FakeEngine.last_profile == "v1"
+    )
+    unknown = client.post("/tts", json={"text": "Hi.", "voice_profile": "nope"})
+    result["unknown_profile_rejected"] = unknown.status_code == 400
+    mixed = client.post(
+        "/tts/batch",
+        json={"texts": ["one two", "three four five"], "voice_profile": "v1"},
+    )
+    result["mixed_profile_rejected"] = mixed.status_code == 422
 
     empty = client.post("/tts", json={"text": "   "})
     result["empty_rejected"] = empty.status_code == 422

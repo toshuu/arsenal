@@ -18,15 +18,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-193100-CODING · CODING · Add per-request voice profile selection. Default is the reference clip. Add profile build script.
 - 20261119-192014-PUSH · PUSH · Push production-readiness fixes: full-text chunking, frame guard, HTTP server.
 - 20261119-191120-CODING · CODING · Full-text chunking, frame guard, truncation reporting, HTTP server, sideline archive.
 - 20261116-191000-CODING · CODING · Step1 memory safety (OOM+fit, limits), admission guard, KV scan note, voice cache prebuild script, Modal plan doc.
 - 20261116-151000-CODING-02 · CODING · Plan SSLD-016. FP16 weight cache, B=256 memory profile, shared voice KV, per-component steady split.
-- 20261116-151000-CODING · CODING · Cold-start probe and prewarm budget test. Boot 5.56 s. Cold p95 575-657 ms. Prewarm 633 ms, over the 100 ms budget.
 
 ## Verified environment facts
 
-| FACT-0071 | 2026-11-16 | B=224 profiling (32 frames, 224 rows): wall 1.9 s, CUDA kernel time sum ~1.15 s → GPU busy about 60%. Kernel mix: FMHA/GEMM/conv dominate. Launch overhead present but GPU not under 70% idle; CUDA graphs not worth a half-day try now. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0072 | 2026-11-16 | Per-frame profile with auto frames: flow 13–14 ms, Mimi 26–32 ms, emit 0.4 ms, other 8–10 ms at B=160/192/224. Other is EOS/compaction/Python (threshold patch added; still 8–10 ms). No strong growth across B. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0073 | 2026-11-16 | Two-process concurrent on one T4: B=112+112 → p95 119.1/134.1 ms, RTF 0.83/0.88 (no OOM). B=128+128 → p95 139.2/118.9 ms, RTF 0.90/0.95 (no OOM). Worse than one process B=224 (p95 112 ms). Two model copies fit but GPU sharing hurts latency. | Project | CURRENT | `/tmp/two/c1.json`, `/tmp/two/c2.json`, `/tmp/two/d1.json`, `/tmp/two/d2.json` |
 | FACT-0074 | 2026-11-16 | EOS compaction threshold (compact when >=12.5% done or all done) applied in `Code/batch/batched_stream.py`; other remains 8–10 ms. Target <3 ms not reached; no easy tensor-only fix in hot path. | Project | CURRENT | `Code/batch/batched_stream.py` |
@@ -46,6 +45,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0090 | 2026-11-19 | Auto `max_frames` is no longer capped at 128. It comes from the token estimate. An explicit `max_frames` records `last_truncated_rows` and does not raise. An auto budget that ends before EOS raises `RuntimeError`. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-03.md` |
 | FACT-0091 | 2026-11-19 | `Code/batch/server.py` serves `/health`, `/tts`, `/tts/batch`, and `/metrics` with one bounded queue. Empty text gets 422, long text gets 413, a full queue gets 503, and a request over the timeout gets 504. The real engine loads and returns a 69,164-byte WAV. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-04.md`, `.stageset/runs/20261119-191120-RUN.md` |
 | FACT-0092 | 2026-11-19 | The Mimi-swap shrink experiment is archived as a negative result. Both attempts fail on a dtype mismatch between the FP16 backbone and the FP32 Mimi module. | Project | CURRENT | `.stageset/runs/20261119-191120-RUN-02.md` |
+| FACT-0093 | 2026-11-19 | The server uses the reference voice clip by default. A request with `voice_profile` selects a precomputed id from `ARSENAL_VOICE_PROFILES`. An unknown id gets 400. A profile batch with mixed first-chunk token lengths gets 422. The worker groups jobs by profile id and first-chunk token length. `build_voice_profiles.py` writes a 1.39 MB conditioned profile. The real engine served default and profile requests with 200 and a 34,604-byte WAV. | Project | CURRENT | `.stageset/runs/20261119-193019-RUN.md`, `.stageset/runs/20261119-193019-RUN-02.md`, `.stageset/runs/20261119-193019-RUN-03.md` |
 
 ## Read next
 

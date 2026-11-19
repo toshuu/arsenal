@@ -27,6 +27,7 @@ class QueueFull(Exception):
 class Job:
     texts: list[str]
     max_frames: int | None
+    profile_id: str | None = None
     future: Future = field(default_factory=Future)
     stop: threading.Event = field(default_factory=threading.Event)
     cancelled: bool = False
@@ -70,12 +71,12 @@ class Metrics:
 class BatchWorker:
     def __init__(
         self,
-        synthesize: Callable[..., list[Any]],
+        engine: Any,
         max_batch: int,
         max_queue: int,
         metrics: Metrics,
     ) -> None:
-        self.synthesize = synthesize
+        self.engine = engine
         self.max_batch = max_batch
         self.metrics = metrics
         self.jobs: queue.Queue[Job] = queue.Queue(maxsize=max_queue)
@@ -86,8 +87,10 @@ class BatchWorker:
     def depth(self) -> int:
         return self.jobs.qsize()
 
-    def submit(self, texts: list[str], max_frames: int | None) -> Job:
-        job = Job(texts=texts, max_frames=max_frames)
+    def submit(
+        self, texts: list[str], max_frames: int | None, profile_id: str | None = None
+    ) -> Job:
+        job = Job(texts=texts, max_frames=max_frames, profile_id=profile_id)
         try:
             self.jobs.put_nowait(job)
         except queue.Full as exc:
@@ -116,6 +119,12 @@ class BatchWorker:
                 batch.append(nxt)
             self._execute(batch)
 
+    def _group_key(self, job: Job) -> tuple[Any, Any]:
+        key = getattr(self.engine, "batch_key", None)
+        if key is None:
+            return (job.profile_id, None)
+        return (job.profile_id, key(job.texts[0], job.profile_id))
+
     def _execute(self, batch: list[Job]) -> None:
         active = [job for job in batch if not job.cancelled]
         for job in batch:
@@ -124,20 +133,29 @@ class BatchWorker:
                 self.metrics.add("cancelled")
         if not active:
             return
-        texts = [text for job in active for text in job.texts]
-        frames = [job.max_frames for job in active]
+        groups: dict[tuple[Any, Any], list[Job]] = {}
+        for job in active:
+            groups.setdefault(self._group_key(job), []).append(job)
+        for (profile_id, _), jobs in groups.items():
+            self._execute_group(jobs, profile_id)
+
+    def _execute_group(self, jobs: list[Job], profile_id: str | None) -> None:
+        texts = [text for job in jobs for text in job.texts]
+        frames = [job.max_frames for job in jobs]
         max_frames = None if any(f is None for f in frames) else max(frames)
-        stop = active[0].stop if len(active) == 1 else None
+        stop = jobs[0].stop if len(jobs) == 1 else None
         try:
-            audio = self.synthesize(texts, max_frames=max_frames, stop=stop)
+            audio = self.engine.synthesize(
+                texts, max_frames=max_frames, stop=stop, profile_id=profile_id
+            )
         except Exception as exc:
             self.metrics.add("failed")
-            for job in active:
+            for job in jobs:
                 if not job.future.done():
                     job.future.set_exception(exc)
             return
         offset = 0
-        for job in active:
+        for job in jobs:
             count = len(job.texts)
             part = audio[offset : offset + count]
             offset += count
@@ -169,6 +187,10 @@ class TTSEngine:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
         self.stream = None
+        self.model = None
+        self.profiles: dict[str, str] = {}
+        self.profile_streams: dict[str, Any] = {}
+        self.default_is_profile = False
         self.ready = False
 
     def load(self) -> None:
@@ -181,6 +203,9 @@ class TTSEngine:
         code_root = Path(__file__).resolve().parents[1]
         model_dir = Path(os.getenv("ARSENAL_MODEL_DIR", code_root / "model"))
         sys.path.insert(0, str(code_root))
+        extra = os.getenv("ARSENAL_POCKET_TTS")
+        if extra:
+            sys.path.insert(0, extra)
         old = os.getcwd()
         os.chdir(model_dir)
         logging.disable(logging.CRITICAL)
@@ -213,27 +238,78 @@ class TTSEngine:
                 kwargs["voice_seconds"] = float(os.getenv("ARSENAL_VOICE_SECONDS", "4.0"))
             self.stream = BatchedStream(**kwargs)
             self.stream.stream(["Ready."], max_frames=1)
+            self.model = model
+            self._cls = BatchedStream
+            self.default_is_profile = bool(profile)
+            raw = os.getenv("ARSENAL_VOICE_PROFILES", "")
+            for part in raw.replace(",", ";").split(";"):
+                if "=" not in part:
+                    continue
+                name, path = part.split("=", 1)
+                if name.strip() and path.strip():
+                    self.profiles[name.strip()] = path.strip()
             torch.cuda.synchronize()
             self.ready = True
         finally:
             os.chdir(old)
 
+    def has_profile(self, profile_id: str) -> bool:
+        import os as _os
+
+        path = self.profiles.get(profile_id)
+        return bool(path and _os.path.exists(path))
+
+    def _profile_stream(self, profile_id: str) -> Any:
+        if not self.has_profile(profile_id):
+            raise ValueError(f"unknown voice profile {profile_id!r}")
+        stream = self.profile_streams.get(profile_id)
+        if stream is None:
+            stream = self._cls(
+                self.model,
+                voice_profile=self.profiles[profile_id],
+                max_first_tokens=int(os.getenv("ARSENAL_FIRST_TOKENS", "16")),
+                max_allowed_frames=int(os.getenv("ARSENAL_MAX_FRAMES", "192")),
+            )
+            self.profile_streams[profile_id] = stream
+        return stream
+
+    def _stream_for(self, profile_id: str | None) -> Any:
+        if profile_id is None:
+            return self.stream
+        return self._profile_stream(profile_id)
+
+    def batch_key(self, text: str, profile_id: str | None = None) -> Any:
+        conditioned = profile_id is not None or self.default_is_profile
+        if not conditioned:
+            return None
+        stream = self._stream_for(profile_id)
+        first = stream._text_chunks(text)[0]
+        return len(stream._text_ids(first))
+
     def synthesize(
-        self, texts: list[str], max_frames: int | None = None, stop: Any = None
+        self,
+        texts: list[str],
+        max_frames: int | None = None,
+        stop: Any = None,
+        profile_id: str | None = None,
     ) -> list[Any]:
         if self.stream is None:
             raise RuntimeError("engine is not loaded")
-        return self.stream.stream(texts, max_frames=max_frames, stop=stop)
+        return self._stream_for(profile_id).stream(
+            texts, max_frames=max_frames, stop=stop
+        )
 
 
 class TTSRequest(BaseModel):
     text: str = Field(min_length=1)
     max_frames: int | None = Field(default=None, ge=1)
+    voice_profile: str | None = None
 
 
 class BatchRequest(BaseModel):
     texts: list[str] = Field(min_length=1)
     max_frames: int | None = Field(default=None, ge=1)
+    voice_profile: str | None = None
 
 
 def create_app(
@@ -251,7 +327,7 @@ def create_app(
     )
     metrics = Metrics()
     engine = engine or TTSEngine(settings)
-    worker = BatchWorker(engine.synthesize, settings.max_batch, settings.max_queue, metrics)
+    worker = BatchWorker(engine, settings.max_batch, settings.max_queue, metrics)
     app = FastAPI(title="arsenal-tts")
     app.state.engine = engine
     app.state.worker = worker
@@ -267,7 +343,7 @@ def create_app(
             except Exception:
                 engine.ready = False
 
-    def validate(texts: list[str]) -> None:
+    def validate(texts: list[str], profile_id: str | None = None) -> None:
         if len(texts) > settings.max_texts:
             raise HTTPException(status_code=413, detail="too many texts")
         for text in texts:
@@ -275,6 +351,15 @@ def create_app(
                 raise HTTPException(status_code=422, detail="empty text")
             if len(text) > settings.max_chars:
                 raise HTTPException(status_code=413, detail="text is too long")
+        if profile_id is not None:
+            if not getattr(engine, "has_profile", lambda _: False)(profile_id):
+                raise HTTPException(status_code=400, detail="unknown voice profile")
+            key = getattr(engine, "batch_key", None)
+            if key is not None and len({key(text, profile_id) for text in texts}) > 1:
+                raise HTTPException(
+                    status_code=422,
+                    detail="voice profile needs equal first-chunk token lengths",
+                )
 
     async def wait_for(job: Job, request: Request) -> list[Any]:
         wrapped = asyncio.wrap_future(job.future)
@@ -322,9 +407,9 @@ def create_app(
 
     @app.post("/tts")
     async def tts(body: TTSRequest, request: Request) -> Response:
-        validate([body.text])
+        validate([body.text], body.voice_profile)
         try:
-            job = worker.submit([body.text], body.max_frames)
+            job = worker.submit([body.text], body.max_frames, body.voice_profile)
         except QueueFull as exc:
             raise HTTPException(status_code=503, detail="queue is full") from exc
         audio = await wait_for(job, request)
@@ -333,9 +418,9 @@ def create_app(
 
     @app.post("/tts/batch")
     async def tts_batch(body: BatchRequest, request: Request) -> JSONResponse:
-        validate(body.texts)
+        validate(body.texts, body.voice_profile)
         try:
-            job = worker.submit(body.texts, body.max_frames)
+            job = worker.submit(body.texts, body.max_frames, body.voice_profile)
         except QueueFull as exc:
             raise HTTPException(status_code=503, detail="queue is full") from exc
         audio = await wait_for(job, request)

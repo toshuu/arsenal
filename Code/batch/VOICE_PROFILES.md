@@ -52,6 +52,37 @@ audio = stream.stream(texts, on_chunk=callback)
 
 - T4, FP16, 4.0 s, cap 16, **B=128** target (may increase). With conditioned profile KV reuse: B=128 p95 281–331 ms, 128/128 <350 ms (5 bursts, FACT-0029). Normal path B=128: 372–400 ms 94.4% (FACT-0028).
 
+## Server: default clip, opt-in profile
+
+The server uses the **reference voice clip** by default (normal path). To use a
+precomputed profile, send `voice_profile` in the payload:
+
+```json
+{"text": "Hello.", "voice_profile": "alba"}
+```
+
+The server reads profiles from `ARSENAL_VOICE_PROFILES`:
+
+```bash
+ARSENAL_VOICE_PROFILES="alba=/app/profiles/alba.pt;casual=/app/profiles/casual.pt"
+```
+
+An unknown id returns 400. A batch request with a profile must have equal
+first-chunk token lengths across its texts, else it returns 422. The worker
+groups jobs by profile id and first-chunk token length, so one batch never
+mixes conditioned states.
+
+Build the profile files at image time:
+
+```bash
+python Code/batch/build_voice_profiles.py /app/profiles \
+    alba=voices/alba.wav casual=voices/casual.wav
+```
+
+This is separate from the voice-embedding cache (`build_voice_cache.py`). The
+cache saves the 650 ms voice encode at boot. A conditioned profile also saves
+the per-burst voice conditioning, so it is the TTFA lever.
+
 ## Common mistakes
 
 - Save with `conditioned=True`. Without it, profile has no `voice_state`; stream runs normal path (no TTFA gain).

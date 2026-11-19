@@ -62,10 +62,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261116-191000-CODING | CODING | 2026-11-16T19:10:00+05:30 | Step1 memory safety (OOM+fit, limits), admission guard, KV scan note, voice cache prebuild script, Modal plan doc. | .stageset/sessions/coding-ssld-017-step1-2-guard.md | SSLD-017; FACT-0079; FACT-0080; FACT-0081; FACT-0082; FACT-0083 | - |
 | 20261119-191120-CODING | CODING | 2026-11-19T19:11:20+05:30 | Full-text chunking, frame guard, truncation reporting, HTTP server, sideline archive. | .stageset/sessions/coding-production-readiness-fixes.md | IDEA-0005; FACT-0088; FACT-0089; FACT-0090; FACT-0091; FACT-0092 | dab34cb |
 | 20261119-192014-PUSH | PUSH | 2026-11-19T19:20:14+05:30 | Push production-readiness fixes: full-text chunking, frame guard, HTTP server. | .stageset/sessions/event-push-production-readiness.md | IDEA-0005; FACT-0088; FACT-0089; FACT-0090; FACT-0091; FACT-0092; dab34cb | dab34cb |
+| 20261119-193100-CODING | CODING | 2026-11-19T19:31:00+05:30 | Add per-request voice profile selection. Default is the reference clip. Add profile build script. | .stageset/sessions/coding-voice-profile-selection.md | IDEA-0005; FACT-0066; FACT-0093; FACT-0091 | - |
 
 ## Totals
 
-- CODING: 31.
+- CODING: 32.
 - IDEATION: 8.
 - MAINTENANCE: 7.
 - PROBE: 0.
