@@ -22,13 +22,16 @@ class FakeEngine:
     ready = True
     last_profile = None
 
+    def chunks_for(self, text, profile_id=None):
+        return [text]
+
     def has_profile(self, profile_id):
         return profile_id == "v1"
 
     def batch_key(self, text, profile_id=None):
         return len(text.split())
 
-    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, on_chunk=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, profile_ids=None, on_chunk=None):
         type(self).last_profile = profile_id
         if on_chunk is not None:
             for row, _ in enumerate(texts):
@@ -36,23 +39,28 @@ class FakeEngine:
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
 
 
-class BlockingEngine:
+class ChunksMixin:
+    def chunks_for(self, text, profile_id=None):
+        return [text]
+
+
+class BlockingEngine(ChunksMixin):
     ready = True
 
     def __init__(self) -> None:
         self.started = threading.Event()
         self.release = threading.Event()
 
-    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, on_chunk=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, profile_ids=None, on_chunk=None):
         self.started.set()
         self.release.wait(5)
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
 
 
-class SlowEngine:
+class SlowEngine(ChunksMixin):
     ready = True
 
-    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, on_chunk=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, profile_ids=None, on_chunk=None):
         time.sleep(0.3)
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
 

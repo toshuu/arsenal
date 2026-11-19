@@ -18,17 +18,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-205200-CODING · CODING · Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching.
 - 20261119-203600-PUSH · PUSH · Push stream backpressure fix and probe.
 - 20261119-203500-PUSH · PUSH · Push long-text validation probes and evidence.
 - 20261119-203500-CODING · CODING · Bound the stream queue and stop work for slow readers. Add a slow-reader probe.
 - 20261119-203400-CODING · CODING · Add probes for long-text edges, long text over HTTP with a profile, and chunk joins.
-- 20261119-202200-PUSH · PUSH · Push the production validation plan and the refreshed StageSet report.
 
 ## Verified environment facts
 
-| FACT-0078 | 2026-11-16 | Step 4 (voice cache prebuild): `Code/batch/build_voice_cache.py` writes voice cache to `ARSENAL_VOICE_CACHE`/default `Code/model/voice_cache`. Verified writes (miss 650 ms → hit 1.4 ms). Boot save about 0.65 s when prebuilt. | Project | CURRENT | `Code/batch/build_voice_cache.py` |
-| FACT-0079 | 2026-11-16 | OOM at B=224, max_frames=300, long text: OOM in `BatchedStream.stream` at `init_states(model.mimi, batch_size,(max_frames+4)*mimi_steps)` line ~311. Error: tried to allocate 2.08 GiB, free 773 MiB, using 13.8 GiB. | Project | CURRENT | `/tmp/oom_test.py` |
-| FACT-0080 | 2026-11-16 | Memory fit at B=224 (fp16 weights+decoder): peak allocated 6.97/10.02/13.08/14.36 GiB at max_frames 100/150/200/250 (+6.71/9.76/12.82/14.10 GiB delta). Fit ~+61 MB per frame (from deltas). Mimi/flow KV allocated by `max_frames`; no sliding window. | Project | CURRENT | `/tmp/mem_model.py` |
 | FACT-0081 | 2026-11-16 | Safe limit: keep >=1.5 GiB free at B=224 → peak_alloc <= 13.06 GiB → max_frames <= ~192 (15.36 s). Proposed `BATCH_SAFE_MAX_FRAMES_224=192`. Real soaks used auto short texts (~32–40 frames); 5–10 s covered, 15 s near limit. | Project | CURRENT | this session |
 | FACT-0082 | 2026-11-16 | `complete_kv` slices `cache[:, :, :offset_value+k.shape[1]]` (valid prefix). Attention queries the computed `k_attn/v_attn` over that prefix (no full preallocated length scanned). Flow “other” includes CPU cost of building masks/rope/copy ops but KV scan is over valid length. No big gain from slicing cache beyond current behavior. | Project | CURRENT | `pocket_tts/modules/attention.py` |
 | FACT-0085 | 2026-11-16 | Failed levers (numbers): M2 overlap steady B192 69.99 vs 70.68 ms (no gain). decode_group 2/4 steady worse 70.7→75.4/75.9 ms (B192). Prewarm +636 ms boot over 100 ms rule (accepted). Full Mimi cast broke parity corr 0.981 (fixed to decoder-only corr 0.9999991). CUDA graphs blocked by state (no replay). EOS threshold: other still 8–10 ms. Frame-growth long test OOM. Two T4 processes: 112+112 p95 119.1/134.1 RTF 0.83/0.88, 128+128 p95 139.2/118.9 RTF 0.90/0.95 (worse than single B224). B256 soak RTF 0.902>0.85. Prefetch no boot gain (5685 vs 5561 ms). CUDA cache no gain. | Project | CURRENT | `.stageset/facts.md` |
@@ -46,6 +43,9 @@ This file is generated. Do not edit it by hand.
 | FACT-0099 | 2026-11-19 | Long text through the HTTP path with a conditioned profile passes. A 4-chunk text returns a 664,364-byte WAV and a 637,440-byte PCM stream. First-chunk p95 is 110.4 ms. The profile is loaded. The default stream stays unconditioned. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN-02.md` |
 | FACT-0100 | 2026-11-19 | Chunk joins have no objective click. Three joins in a 4-chunk text. Join jumps are 0.00018, 0.00107, 0.00021; global p99.9 jump is 0.035. RMS does not drop. WAVs are saved for the owner listening gate. Carried state is not implemented; keep independent chunks unless listening finds a defect. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN-03.md` |
 | FACT-0101 | 2026-11-19 | `/tts/stream` has a 64-chunk bound. A full queue sets the job stop event and counts one `slow_clients` event. A slow reader probe delivered fewer chunks than the engine produced, with queue depth 0. | Project | CURRENT | `.stageset/runs/20261119-203427-RUN.md` |
+| FACT-0102 | 2026-11-19 | B=224 with `max_frames=192` fits on T4 after stray servers are stopped. Peak allocated 12.303 GiB, reserved 12.475 GiB, free 1.952 GiB. All 224 rows produce audio. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN.md` |
+| FACT-0103 | 2026-11-19 | HTTP load now meets the gate. 160 requests in 5 bursts of 32, mixed profiles and text lengths. First-chunk p50 173.68 ms, p95 226.66 ms, 0 errors. Burst RTF 0.024-0.029. Fixes: 100 ms batch window, one text chunk per job, per-row voice batching for mixed profiles in the normal path. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN-02.md` |
+| FACT-0104 | 2026-11-19 | Mixed voice profiles can run in one normal-path GPU call with per-row voice tensors. The conditioned fast path still needs one profile id and uniform first-chunk token lengths. The server exposes `last_errors` in `/metrics`. All earlier probes pass after the scheduler change. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN-02.md`, `.stageset/runs/20261119-205020-RUN-03.md` |
 
 ## Read next
 

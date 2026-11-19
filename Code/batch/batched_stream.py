@@ -87,6 +87,7 @@ class BatchedStream:
         voice_seconds: float | None = None,
         max_first_tokens: int | None = None,
         voice_profile: str | Path | None = None,
+        voices: list[torch.Tensor] | None = None,
         decode_group: int = 1,
         compact: bool = True,
         overlap_decode: bool = False,
@@ -111,6 +112,7 @@ class BatchedStream:
         self.last_truncated_rows: list[int] = []
         self._pool = ThreadPoolExecutor(max_workers=4)
         self.voice: torch.Tensor | None = None
+        self.voices: list[torch.Tensor] | None = voices
         self.voice_state: ModelState | None = None
         import os as _os
         if max_allowed_frames is None:
@@ -122,8 +124,8 @@ class BatchedStream:
             self._load_voice_profile(voice_profile)
         elif voice is not None:
             self.voice = self._load_voice(voice)
-        else:
-            raise ValueError("voice or voice_profile is required")
+        elif voices is None:
+            raise ValueError("voice, voice_profile, or voices is required")
 
     @torch.no_grad()
     def _load_voice(self, voice_path: str | Path) -> torch.Tensor:
@@ -330,6 +332,30 @@ class BatchedStream:
             emb = emb.masked_fill(mask.unsqueeze(-1), 0.0)
         return emb, pad, lengths
 
+    def _build_prefixes_with_voices(
+        self, texts: list[str], voices: list[torch.Tensor]
+    ) -> tuple[torch.Tensor, torch.Tensor, list[int]]:
+        rows: list[torch.Tensor] = []
+        lengths: list[int] = []
+        token_counts: list[int] = []
+        for text, voice in zip(texts, voices, strict=True):
+            ids = self._text_ids(text)
+            tokens = torch.tensor([ids], dtype=torch.long, device=self.device)
+            text_emb = self.model.flow_lm.conditioner(tokens)[0]
+            rows.append(torch.cat([voice, text_emb], dim=0))
+            lengths.append(voice.shape[0] + text_emb.shape[0])
+            token_counts.append(len(ids))
+        width = max(lengths)
+        dim = rows[0].shape[1]
+        batch = torch.zeros(len(rows), width, dim, device=self.device, dtype=rows[0].dtype)
+        pad_values: list[int] = []
+        for index, (row, length) in enumerate(zip(rows, lengths, strict=True)):
+            pad = width - length
+            batch[index, pad:] = row
+            pad_values.append(pad)
+        pad = torch.tensor(pad_values, dtype=torch.long, device=self.device)
+        return batch, pad, token_counts
+
     def _build_prefixes(self, texts: list[str]) -> tuple[torch.Tensor, torch.Tensor, list[int]]:
         text_batch, pad, token_counts = self._encode_texts(texts)
         rows, width, dim = text_batch.shape
@@ -375,8 +401,14 @@ class BatchedStream:
                 if on_stage is not None:
                     on_stage(-1 if local < 0 else active[local], name, at)
 
+            active_voices = (
+                [self.voices[row] for row in active]
+                if self.voices is not None
+                else None
+            )
             audios = self._stream_single(
                 active_texts,
+                voices=active_voices,
                 on_chunk=map_chunk,
                 max_frames=max_frames,
                 frames_after_eos=frames_after_eos,
@@ -404,6 +436,7 @@ class BatchedStream:
         frames_after_eos: int = 2,
         on_stage: StageCallback | None = None,
         stop=None,
+        voices: list[torch.Tensor] | None = None,
     ) -> list[torch.Tensor]:
         model = self.model
         flow_lm = model.flow_lm
@@ -421,6 +454,8 @@ class BatchedStream:
         use_profile_state = self.voice_state is not None
         if use_profile_state:
             text_batch, text_pad, token_counts = self._build_text_batch(texts)
+        elif voices is not None:
+            prefix, pad, token_counts = self._build_prefixes_with_voices(texts, voices)
         else:
             prefix, pad, token_counts = self._build_prefixes(texts)
         mark(-1, "prep_done")

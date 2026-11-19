@@ -15,9 +15,12 @@ OUT = Path(__file__).resolve().parent / "out" / "check_stream_backpressure.json"
 
 
 class ChunkEngine:
+    def chunks_for(self, text, profile_id=None):
+        return [text]
+
     ready = True
 
-    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, on_chunk=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, profile_ids=None, on_chunk=None):
         for _ in range(200):
             if stop is not None and stop.is_set():
                 break

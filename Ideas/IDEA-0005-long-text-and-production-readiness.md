@@ -278,3 +278,16 @@ Do these before L4 and Modal.
 - No true conditioned mixed-length single call. Both need the risky attention change in the permission gate.
 - No L4 run.
 - No Modal build.
+
+## 13. Results of planned work 1 to 4 (2026-11-19)
+
+| Item | Status | Evidence |
+| --- | --- | --- |
+| P1 HTTP load probe | **DONE** | `probe_http_load.py`: 160 requests, p50 173.68 ms, p95 226.66 ms, 0 errors, RTF 0.024-0.029. FACT-0103. |
+| P2 Long text through HTTP | **DONE** | 4-chunk text with a profile: 664,364-byte WAV and 645,120-byte PCM stream. FACT-0099. |
+| P3 Chunk joins | **OBJECTIVE PASS, LISTENER PENDING** | No click, no RMS drop, exact word order. WAVs saved. Owner listening gate still required. FACT-0100. |
+| P4 Slow-client backpressure | **DONE** | 64-chunk bound. Full queue stops the job and counts `slow_clients`. FACT-0101. |
+
+The load probe first failed at p95 8641 ms. Fixes: one chunk per job (first chunks batch first), a 100 ms batch window, and per-row voice batching for mixed profiles in the normal path. B=224 with max_frames=192 fits with 1.95 GiB free (FACT-0102).
+
+Carried state is not implemented. Keep independent chunks unless owner listening finds a defect.

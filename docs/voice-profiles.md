@@ -65,10 +65,11 @@ can contain jobs for different profiles. The worker splits the queue by profile
 id and runs one synthesis call per group. The model copy is shared.
 
 Limits:
-- One synthesis call uses one profile id. A live HTTP batch can mix ids; the
-  worker splits it into one call per profile.
-- True mixed-profile GPU batches are not supported now. They need a per-row
-  stacked voice state and a full audio test. Treat that as a future option.
+- One conditioned call uses one profile id. A live HTTP batch can mix ids; the
+  server uses the normal path with per-row voices for that call.
+- Mixed profiles in one GPU call now use the normal path with per-row voice
+  tensors. The conditioned fast path still needs one profile id and equal
+  first-chunk token lengths.
 - A conditioned call needs equal first-chunk token lengths.
 - If one profile call has mixed lengths, the server uses the normal voice path
   for that call. The voice still comes from the same profile. No 422. No bad

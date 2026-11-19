@@ -59,6 +59,7 @@ class Metrics:
         self.failed = 0
         self.cancelled = 0
         self.slow_clients = 0
+        self.last_errors: list[str] = []
         self.queue_ms: list[float] = []
         self.first_ms: list[float] = []
         self.total_ms: list[float] = []
@@ -66,6 +67,11 @@ class Metrics:
     def add(self, name: str, value: int = 1) -> None:
         with self.lock:
             setattr(self, name, getattr(self, name) + value)
+
+    def add_error(self, message: str) -> None:
+        with self.lock:
+            self.last_errors.append(message)
+            del self.last_errors[:-20]
 
     @staticmethod
     def _stats(values: list[float]) -> dict[str, float]:
@@ -97,6 +103,7 @@ class Metrics:
                 "failed": self.failed,
                 "cancelled": self.cancelled,
                 "slow_clients": self.slow_clients,
+                "last_errors": self.last_errors[-5:],
                 "queue_ms": self._stats(self.queue_ms),
                 "first_chunk_ms": self._stats(self.first_ms),
                 "total_ms": self._stats(self.total_ms),
@@ -153,7 +160,7 @@ class BatchWorker:
             job = self.jobs.get()
             batch = [job]
             rows = len(job.texts)
-            deadline = time.monotonic() + 0.008
+            deadline = time.monotonic() + float(os.getenv("ARSENAL_BATCH_WINDOW_MS", "100")) / 1000.0
             while len(batch) < self.max_batch and rows < self.max_rows:
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
@@ -174,7 +181,7 @@ class BatchWorker:
             self._execute(batch)
 
     def _group_key(self, job: Job) -> str | None:
-        return job.profile_id
+        return None
 
     def _execute(self, batch: list[Job]) -> None:
         active = [job for job in batch if not job.cancelled]
@@ -208,15 +215,20 @@ class BatchWorker:
                 job.on_chunk(frame, elapsed)
 
         try:
+            profile_ids = [
+                job.profile_id for job in jobs for _ in job.texts
+            ]
             audio = self.engine.synthesize(
                 texts,
                 max_frames=max_frames,
                 stop=stop,
                 profile_id=profile_id,
+                profile_ids=profile_ids,
                 on_chunk=relay,
             )
         except Exception as exc:
             self.metrics.add("failed")
+            self.metrics.add_error(str(exc))
             for job in jobs:
                 if not job.future.done():
                     job.future.set_exception(exc)
@@ -240,6 +252,19 @@ class BatchWorker:
             else:
                 job.future.set_result(part)
                 self.metrics.add("completed")
+
+
+def concat_audio(parts: list[Any]) -> Any:
+    if len(parts) == 1:
+        return parts[0]
+    import numpy as np
+
+    arrays = []
+    for part in parts:
+        if hasattr(part, "detach"):
+            part = part.detach().float().cpu().numpy()
+        arrays.append(np.asarray(part, dtype="float32"))
+    return np.concatenate(arrays)
 
 
 def pcm_bytes(samples: Any) -> bytes:
@@ -275,6 +300,8 @@ class TTSEngine:
         self.profiles: dict[str, str] = {}
         self.profile_streams: dict[str, Any] = {}
         self.fallback_streams: dict[Any, Any] = {}
+        self.mixed_stream: Any = None
+        self.profile_voices: dict[str, Any] = {}
         self.default_is_profile = False
         self.prewarm_ms = 0.0
         self.ready = False
@@ -380,6 +407,31 @@ class TTSEngine:
             self.fallback_streams[key] = stream
         return stream
 
+    def _profile_voice(self, profile_id: str) -> Any:
+        voice = self.profile_voices.get(profile_id)
+        if voice is None:
+            import torch
+
+            data = torch.load(self.profiles[profile_id], map_location="cpu")
+            voice = data["voice_emb"][0].to(self.stream.voice.device)
+            self.profile_voices[profile_id] = voice
+        return voice
+
+    def _mixed_stream(self) -> Any:
+        if self.mixed_stream is None:
+            self.mixed_stream = self._cls(
+                self.model,
+                voices=[],
+                max_first_tokens=int(os.getenv("ARSENAL_FIRST_TOKENS", "16")),
+                max_allowed_frames=int(os.getenv("ARSENAL_MAX_FRAMES", "192")),
+            )
+        return self.mixed_stream
+
+    def chunks_for(self, text: str, profile_id: str | None = None) -> list[str]:
+        if self.stream is None:
+            raise RuntimeError("engine is not loaded")
+        return self._stream_for(profile_id)._text_chunks(text)
+
     def batch_key(self, text: str, profile_id: str | None = None) -> Any:
         conditioned = profile_id is not None or self.default_is_profile
         if not conditioned:
@@ -394,10 +446,20 @@ class TTSEngine:
         max_frames: int | None = None,
         stop: Any = None,
         profile_id: str | None = None,
+        profile_ids: list[str | None] | None = None,
         on_chunk: Callable[..., None] | None = None,
     ) -> list[Any]:
         if self.stream is None:
             raise RuntimeError("engine is not loaded")
+        if profile_ids is not None and len(set(profile_ids)) > 1:
+            stream = self._mixed_stream()
+            stream.voices = [
+                self._profile_voice(pid) if pid is not None else self.stream.voice[0]
+                for pid in profile_ids
+            ]
+            return stream.stream(
+                texts, max_frames=max_frames, stop=stop, on_chunk=on_chunk
+            )
         stream = self._stream_for(profile_id)
         conditioned = profile_id is not None or self.default_is_profile
         if conditioned and len(texts) > 1:
@@ -524,25 +586,31 @@ def create_app(
     @app.post("/tts")
     async def tts(body: TTSRequest, request: Request) -> Response:
         validate([body.text], body.voice_profile, body.max_frames)
-        try:
-            job = worker.submit([body.text], body.max_frames, body.voice_profile)
-        except QueueFull as exc:
-            raise HTTPException(status_code=503, detail="queue is full") from exc
-        audio = await wait_for(job, request)
-        data = wav_bytes(audio[0], settings.sample_rate)
+        chunks = engine.chunks_for(body.text, body.voice_profile)
+        parts: list[Any] = []
+        for chunk in chunks:
+            try:
+                job = worker.submit([chunk], body.max_frames, body.voice_profile)
+            except QueueFull as exc:
+                raise HTTPException(status_code=503, detail="queue is full") from exc
+            audio = await wait_for(job, request)
+            parts.append(audio[0])
+        data = wav_bytes(concat_audio(parts), settings.sample_rate)
         return Response(content=data, media_type="audio/wav")
-
 
     @app.post("/tts/stream")
     async def tts_stream(body: TTSRequest, request: Request) -> StreamingResponse:
         validate([body.text], body.voice_profile, body.max_frames)
+        chunks = engine.chunks_for(body.text, body.voice_profile)
         loop = asyncio.get_running_loop()
-        chunks: asyncio.Queue[bytes | None] = asyncio.Queue(maxsize=64)
+        chunks_out: asyncio.Queue[bytes | None] = asyncio.Queue(maxsize=64)
         holder: dict[str, Any] = {}
+        state: dict[str, Any] = {"index": 0, "job": None, "error": None}
+        done = asyncio.Event()
 
         def put(data: bytes | None) -> None:
             try:
-                chunks.put_nowait(data)
+                chunks_out.put_nowait(data)
             except asyncio.QueueFull:
                 job = holder.get("job")
                 if job is not None:
@@ -555,63 +623,92 @@ def create_app(
             if data:
                 loop.call_soon_threadsafe(put, data)
 
-        try:
-            job = worker.submit(
-                [body.text],
-                body.max_frames,
-                body.voice_profile,
-                on_chunk=on_chunk,
-            )
-        except QueueFull as exc:
-            raise HTTPException(status_code=503, detail="queue is full") from exc
-        holder["job"] = job
-        wrapped = asyncio.wrap_future(job.future)
-        job.future.add_done_callback(lambda _: loop.call_soon_threadsafe(put, None))
-        first_task = asyncio.create_task(chunks.get())
-        done, _ = await asyncio.wait(
-            {first_task, wrapped},
+        def submit_next() -> asyncio.Future[Any]:
+            index = state["index"]
+            text = chunks[index]
+            state["index"] = index + 1
+            try:
+                job = worker.submit(
+                    [text], body.max_frames, body.voice_profile, on_chunk=on_chunk
+                )
+            except QueueFull as exc:
+                state["error"] = HTTPException(status_code=503, detail="queue is full")
+                done.set()
+                raise
+            state["job"] = job
+            holder["job"] = job
+            done.clear()
+
+            def finished(future: asyncio.Future[Any]) -> None:
+                try:
+                    future.result()
+                except BaseException as exc:
+                    state["error"] = exc
+                loop.call_soon_threadsafe(done.set)
+
+            wrapped = asyncio.wrap_future(job.future)
+            wrapped.add_done_callback(finished)
+            return wrapped
+
+        first_wait = submit_next()
+        first_task = asyncio.create_task(chunks_out.get())
+        done_first, _ = await asyncio.wait(
+            {first_task, first_wait},
             timeout=settings.timeout_s,
             return_when=asyncio.FIRST_COMPLETED,
         )
-        if not done:
-            job.cancelled = True
-            job.stop.set()
+        if not done_first:
+            job = state["job"]
+            if job is not None:
+                job.cancelled = True
+                job.stop.set()
             first_task.cancel()
             metrics.add("cancelled")
             raise HTTPException(status_code=504, detail="request timed out")
-        if wrapped in done:
-            try:
-                wrapped.result()
-            except asyncio.CancelledError as exc:
-                first_task.cancel()
-                raise HTTPException(status_code=499, detail="request cancelled") from exc
-            except ValueError as exc:
-                first_task.cancel()
+        if first_wait in done_first and state["error"] is not None:
+            first_task.cancel()
+            exc = state["error"]
+            if isinstance(exc, HTTPException):
+                raise exc
+            if isinstance(exc, ValueError):
                 raise HTTPException(status_code=413, detail=str(exc)) from exc
-            except Exception as exc:
-                first_task.cancel()
-                raise HTTPException(status_code=500, detail=str(exc)) from exc
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
         first = await first_task
         if first is None:
             raise HTTPException(status_code=500, detail="no audio")
 
         async def generate():
+            job = state["job"]
             try:
                 yield first
                 while True:
                     if await request.is_disconnected():
-                        job.cancelled = True
-                        job.stop.set()
+                        if job is not None:
+                            job.cancelled = True
+                            job.stop.set()
                         metrics.add("cancelled")
                         break
-                    item = await chunks.get()
-                    if item is None:
-                        break
-                    yield item
-                    if job.future.done() and chunks.empty():
-                        break
+                    if done.is_set():
+                        if state["error"] is not None:
+                            break
+                        if state["index"] >= len(chunks):
+                            while not chunks_out.empty():
+                                rest = chunks_out.get_nowait()
+                                if rest is not None:
+                                    yield rest
+                            break
+                        submit_next()
+                        job = state["job"]
+                    try:
+                        item = await asyncio.wait_for(chunks_out.get(), 0.05)
+                    except asyncio.TimeoutError:
+                        continue
+                    if item is not None:
+                        yield item
             finally:
-                job.stop.set()
+                job = state["job"]
+                if job is not None:
+                    job.stop.set()
 
         return StreamingResponse(
             generate(),

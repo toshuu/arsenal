@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0005
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 5
-@stageset implemented_revision: 5
+@stageset spec_revision: 6
+@stageset implemented_revision: 6
 @stageset planned_in: .stageset/sessions/coding-production-readiness-fixes.md
-@stageset last_updated_in: .stageset/sessions/coding-streaming-endpoint.md
-@stageset implemented_in: .stageset/sessions/coding-streaming-endpoint.md
+@stageset last_updated_in: .stageset/sessions/coding-http-load-optimization.md
+@stageset implemented_in: .stageset/sessions/coding-http-load-optimization.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -28,7 +28,10 @@ Report health and metrics.
 - `POST /tts/stream` takes the same body as `/tts` and returns raw 16-bit PCM (`audio/L16`) as chunks arrive.
 - `/metrics` reports p50/p95/max for queue, first chunk, and total time.
 - Without `voice_profile`, the server uses the reference voice clip on the normal path.
-- With `voice_profile`, the server loads that id from `ARSENAL_VOICE_PROFILES` and uses its conditioned state.
+- With `voice_profile`, the server loads that id from `ARSENAL_VOICE_PROFILES`.
+- Mixed profile ids in one call use the normal path with per-row voice tensors.
+- Each text is submitted one chunk at a time. First chunks batch before continuations.
+- The batch window is `ARSENAL_BATCH_WINDOW_MS` (default 100 ms).
 - `GET /health` returns readiness, queue depth, and counters.
 - The queue is bounded by `ARSENAL_MAX_QUEUE` (default 256).
 - The worker takes at most `ARSENAL_MAX_BATCH` jobs per call (default 192).
@@ -66,6 +69,13 @@ Report health and metrics.
 - Predicted output: `/health` returns 200 after load, and `POST /tts` returns 200 with `audio/wav`.
 - Pass condition: a run report shows `/health` 200, default `/tts` 200 with `audio/wav`, profile `/tts` 200 with `audio/wav`, and unknown profile 400.
 - Fail condition: readiness is false, the WAV response is empty, or the profile select fails.
+
+### CHECK-SERVER-08 - HTTP load
+
+- Command: `python Code/probes/probe_http_load.py`
+- Predicted output: `{"ok": true, ...}`
+- Pass condition: first-chunk p95 <= 350 ms, RTF < 1.0, 0 errors.
+- Fail condition: p95 above 350 ms, RTF at or above 1.0, or any non-200 response.
 
 ### CHECK-SERVER-04 - first-chunk streaming
 

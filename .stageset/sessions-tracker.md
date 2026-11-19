@@ -78,10 +78,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-203500-CODING | CODING | 2026-11-19T20:35:00+05:30 | Bound the stream queue and stop work for slow readers. Add a slow-reader probe. | .stageset/sessions/coding-stream-backpressure.md | IDEA-0005; FACT-0101 | 753ef95 |
 | 20261119-203500-PUSH | PUSH | 2026-11-19T20:35:00+05:30 | Push long-text validation probes and evidence. | .stageset/sessions/event-push-long-text-validation.md | IDEA-0005; FACT-0098; FACT-0099; FACT-0100; 3ab3fee | 3ab3fee |
 | 20261119-203600-PUSH | PUSH | 2026-11-19T20:36:00+05:30 | Push stream backpressure fix and probe. | .stageset/sessions/event-push-stream-backpressure.md | IDEA-0005; FACT-0101; 753ef95 | 753ef95 |
+| 20261119-205200-CODING | CODING | 2026-11-19T20:52:00+05:30 | Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching. | .stageset/sessions/coding-http-load-optimization.md | IDEA-0005; FACT-0102; FACT-0103; FACT-0104 | - |
 
 ## Totals
 
-- CODING: 37.
+- CODING: 38.
 - IDEATION: 9.
 - MAINTENANCE: 8.
 - PROBE: 0.
