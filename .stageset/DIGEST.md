@@ -15,14 +15,15 @@ This file is generated. Do not edit it by hand.
 ## Failing checks
 
 - `20261119-211244-RUN` — `Skeletons/Code/batch/server.py`, `CHECK-SERVER-10`, attempt 1.
+- `20261119-213050-RUN` — `Skeletons/Code/batch/server.py`, `CHECK-SERVER-11`, attempt 1.
 
 ## Last 5 sessions
 
+- 20261119-213200-CODING · CODING · Add target-driven batching. Set window to 300 ms with target 32. Recheck B224 with 40 ms.
 - 20261119-211400-PUSH · PUSH · Push batch window tuning and B224 40 ms evidence.
 - 20261119-211300-CODING · CODING · Test B=224 with a 40 ms batch window. Add first-chunk priority and set the default window to 180 ms.
 - 20261119-205500-PUSH · PUSH · Push updated chunk join evidence paths.
 - 20261119-205300-PUSH · PUSH · Push HTTP load optimization and per-row voice batching.
-- 20261119-205200-CODING · CODING · Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching.
 
 ## Verified environment facts
 
@@ -44,8 +45,8 @@ This file is generated. Do not edit it by hand.
 | FACT-0101 | 2026-11-19 | `/tts/stream` has a 64-chunk bound. A full queue sets the job stop event and counts one `slow_clients` event. A slow reader probe delivered fewer chunks than the engine produced, with queue depth 0. | Project | CURRENT | `.stageset/runs/20261119-203427-RUN.md` |
 | FACT-0102 | 2026-11-19 | B=224 with `max_frames=192` fits on T4 after stray servers are stopped. Peak allocated 12.303 GiB, reserved 12.475 GiB, free 1.952 GiB. All 224 rows produce audio. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN.md` |
 | FACT-0104 | 2026-11-19 | Mixed voice profiles can run in one normal-path GPU call with per-row voice tensors. The conditioned fast path still needs one profile id and uniform first-chunk token lengths. The server exposes `last_errors` in `/metrics`. All earlier probes pass after the scheduler change. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN-02.md`, `.stageset/runs/20261119-205020-RUN-03.md` |
-| FACT-0105 | 2026-11-19 | B=224 with a 40 ms batch window and 224-client bursts fails the TTFA gate. 448 requests: p50 2511.55 ms, p95 6047.72 ms. Queue p50 733.84 ms. RTF 0.019-0.022. A 40 ms window is too short for 224 arrivals. | Project | CURRENT | `.stageset/runs/20261119-211244-RUN.md` |
-| FACT-0106 | 2026-11-19 | A priority queue runs first text chunks before continuations. The default batch window is 180 ms. The 32-client gate passes: 160 requests, p50 254.96 ms, p95 321.32 ms, 0 errors. Server first-chunk p95 283.55 ms. | Project | CURRENT | `.stageset/runs/20261119-211244-RUN-02.md` |
+| FACT-0107 | 2026-11-19 | The batch worker waits for 32 jobs or a 300 ms cap. First chunks have priority. Three 32-client runs pass: p95 205.76 ms, 289.30 ms, 191.96 ms. Final p50 161.64 ms. | Project | CURRENT | `.stageset/runs/20261119-213049-RUN.md` |
+| FACT-0108 | 2026-11-19 | B=224 with target 224 and a 40 ms window still fails. 448 requests: p50 7854.12 ms, p95 13574.29 ms, queue p50 1630.16 ms, 0 errors. A 40 ms window is not valid for 224-client bursts. | Project | CURRENT | `.stageset/runs/20261119-213050-RUN.md` |
 
 ## Read next
 

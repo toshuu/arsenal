@@ -169,8 +169,15 @@ class BatchWorker:
             _, _, job = self.jobs.get()
             batch = [job]
             rows = len(job.texts)
-            deadline = time.monotonic() + float(os.getenv("ARSENAL_BATCH_WINDOW_MS", "180")) / 1000.0
-            while len(batch) < self.max_batch and rows < self.max_rows:
+            target = min(
+                int(os.getenv("ARSENAL_BATCH_TARGET", "32")), self.max_batch, self.max_rows
+            )
+            deadline = time.monotonic() + float(os.getenv("ARSENAL_BATCH_WINDOW_MS", "300")) / 1000.0
+            while (
+                len(batch) < self.max_batch
+                and rows < self.max_rows
+                and len(batch) < target
+            ):
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     break
@@ -590,7 +597,7 @@ def create_app(
             "max_rows": settings.max_rows,
             "max_queue": settings.max_queue,
             "max_frames": settings.max_frames,
-            "batch_window_ms": int(os.getenv("ARSENAL_BATCH_WINDOW_MS", "180")),
+            "batch_window_ms": int(os.getenv("ARSENAL_BATCH_WINDOW_MS", "300")),
         }
 
     @app.post("/tts")

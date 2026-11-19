@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0005
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 7
-@stageset implemented_revision: 7
+@stageset spec_revision: 8
+@stageset implemented_revision: 8
 @stageset planned_in: .stageset/sessions/coding-production-readiness-fixes.md
-@stageset last_updated_in: .stageset/sessions/coding-batch-window-tuning.md
-@stageset implemented_in: .stageset/sessions/coding-batch-window-tuning.md
+@stageset last_updated_in: .stageset/sessions/coding-batch-target.md
+@stageset implemented_in: .stageset/sessions/coding-batch-target.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -31,7 +31,7 @@ Report health and metrics.
 - With `voice_profile`, the server loads that id from `ARSENAL_VOICE_PROFILES`.
 - Mixed profile ids in one call use the normal path with per-row voice tensors.
 - Each text is submitted one chunk at a time. First chunks batch before continuations.
-- The batch window is `ARSENAL_BATCH_WINDOW_MS` (default 180 ms).
+- The batch window is `ARSENAL_BATCH_WINDOW_MS` (default 300 ms, target 32 jobs).
 - `GET /health` returns readiness, queue depth, and counters.
 - The queue is bounded by `ARSENAL_MAX_QUEUE` (default 256).
 - The worker takes at most `ARSENAL_MAX_BATCH` jobs per call (default 192).

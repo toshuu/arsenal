@@ -298,3 +298,9 @@ Carried state is not implemented. Keep independent chunks unless owner listening
 - A 180 ms window and first-chunk priority give p95 321.32 ms over 160 requests at 32 clients. PASS (FACT-0106).
 - Default `ARSENAL_BATCH_WINDOW_MS` is now 180 ms.
 - 224-client bursts need more work. RTF is safe, but TTFA is not.
+
+## 15. Final batch tuning (2026-11-19)
+
+- Target-driven batching is in place. The worker waits for 32 jobs or a 300 ms cap. First chunks have priority.
+- Three 32-client runs pass. Client p95: 205.76 ms, 289.30 ms, 191.96 ms (FACT-0107).
+- B=224 with a 40 ms window fails. Client p95 13574.29 ms (FACT-0108). 224-client bursts remain open.
