@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import copy
 import io
 import os
 import queue
@@ -119,11 +120,8 @@ class BatchWorker:
                 batch.append(nxt)
             self._execute(batch)
 
-    def _group_key(self, job: Job) -> tuple[Any, Any]:
-        key = getattr(self.engine, "batch_key", None)
-        if key is None:
-            return (job.profile_id, None)
-        return (job.profile_id, key(job.texts[0], job.profile_id))
+    def _group_key(self, job: Job) -> str | None:
+        return job.profile_id
 
     def _execute(self, batch: list[Job]) -> None:
         active = [job for job in batch if not job.cancelled]
@@ -133,10 +131,10 @@ class BatchWorker:
                 self.metrics.add("cancelled")
         if not active:
             return
-        groups: dict[tuple[Any, Any], list[Job]] = {}
+        groups: dict[str | None, list[Job]] = {}
         for job in active:
             groups.setdefault(self._group_key(job), []).append(job)
-        for (profile_id, _), jobs in groups.items():
+        for profile_id, jobs in groups.items():
             self._execute_group(jobs, profile_id)
 
     def _execute_group(self, jobs: list[Job], profile_id: str | None) -> None:
@@ -190,6 +188,7 @@ class TTSEngine:
         self.model = None
         self.profiles: dict[str, str] = {}
         self.profile_streams: dict[str, Any] = {}
+        self.fallback_streams: dict[Any, Any] = {}
         self.default_is_profile = False
         self.ready = False
 
@@ -278,6 +277,18 @@ class TTSEngine:
             return self.stream
         return self._profile_stream(profile_id)
 
+    def _normal_stream(self, profile_id: str | None) -> Any:
+        key = ("default",) if profile_id is None else profile_id
+        stream = self.fallback_streams.get(key)
+        if stream is None:
+            source = self._stream_for(profile_id)
+            stream = copy.copy(source)
+            stream.voice_state = None
+            stream._ids_cache = dict(source._ids_cache)
+            stream.last_truncated_rows = []
+            self.fallback_streams[key] = stream
+        return stream
+
     def batch_key(self, text: str, profile_id: str | None = None) -> Any:
         conditioned = profile_id is not None or self.default_is_profile
         if not conditioned:
@@ -295,9 +306,13 @@ class TTSEngine:
     ) -> list[Any]:
         if self.stream is None:
             raise RuntimeError("engine is not loaded")
-        return self._stream_for(profile_id).stream(
-            texts, max_frames=max_frames, stop=stop
-        )
+        stream = self._stream_for(profile_id)
+        conditioned = profile_id is not None or self.default_is_profile
+        if conditioned and len(texts) > 1:
+            keys = {self.batch_key(text, profile_id) for text in texts}
+            if len(keys) > 1:
+                stream = self._normal_stream(profile_id)
+        return stream.stream(texts, max_frames=max_frames, stop=stop)
 
 
 class TTSRequest(BaseModel):
@@ -354,12 +369,6 @@ def create_app(
         if profile_id is not None:
             if not getattr(engine, "has_profile", lambda _: False)(profile_id):
                 raise HTTPException(status_code=400, detail="unknown voice profile")
-            key = getattr(engine, "batch_key", None)
-            if key is not None and len({key(text, profile_id) for text in texts}) > 1:
-                raise HTTPException(
-                    status_code=422,
-                    detail="voice profile needs equal first-chunk token lengths",
-                )
 
     async def wait_for(job: Job, request: Request) -> list[Any]:
         wrapped = asyncio.wrap_future(job.future)

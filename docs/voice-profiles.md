@@ -69,9 +69,11 @@ Limits:
   worker splits it into one call per profile.
 - True mixed-profile GPU batches are not supported now. They need a per-row
   stacked voice state and a full audio test. Treat that as a future option.
-- Texts in one profile group must have equal first-chunk token lengths.
-- A profile request with mixed first-chunk token lengths returns 422.
-- The server groups by first-chunk token length automatically. You do not sort.
+- A conditioned call needs equal first-chunk token lengths.
+- If one profile call has mixed lengths, the server uses the normal voice path
+  for that call. The voice still comes from the same profile. No 422. No bad
+  audio. The server chooses this automatically.
+- The server groups by profile id. You do not sort texts.
 
 ## Why first-chunk token lengths must match
 
@@ -84,15 +86,18 @@ Example:
 - `"Please read this sentence."` gives 5 tokens.
 
 If these two texts share one conditioned batch, the rows differ. Bad audio can
-result. Put each text in its own group, or make the counts equal.
+result. The server detects this and uses the normal path for the call. It does
+not reject the request.
 
 Ways good engineers handle it:
-1. Group rows by token count. This is safe and keeps batching. The server does
-   this now.
-2. Pad each row to one length and use a correct attention mask and per-row
-   positions. This can allow mixed lengths in one call, but it needs model
-   changes and full audio tests. It is not done here.
-3. Run one text per call. Simple but slower.
+1. Use the normal path when lengths differ. This is safe and keeps one call. The
+   server does this now.
+2. Group rows by token count. This keeps the conditioned fast path per group. It
+   can need several calls.
+3. Pad each row to one length and use a correct attention mask and per-row
+   positions inside the conditioned state. This can allow mixed lengths in one
+   conditioned call, but it needs model changes and full audio tests. It is not
+   done here.
 
 ## Image and Modal wiring
 
@@ -120,4 +125,4 @@ Sleep and wake:
 - [ ] Default request uses the reference clip.
 - [ ] Profile request returns 200.
 - [ ] Unknown id returns 400.
-- [ ] Mixed profile batch returns 422.
+- [ ] Mixed profile batch returns 200.

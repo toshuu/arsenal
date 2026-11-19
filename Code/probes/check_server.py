@@ -85,7 +85,9 @@ def main() -> int:
         "/tts/batch",
         json={"texts": ["one two", "three four five"], "voice_profile": "v1"},
     )
-    result["mixed_profile_rejected"] = mixed.status_code == 422
+    result["mixed_profile_ok"] = (
+        mixed.status_code == 200 and len(mixed.json().get("audio", [])) == 2
+    )
 
     empty = client.post("/tts", json={"text": "   "})
     result["empty_rejected"] = empty.status_code == 422

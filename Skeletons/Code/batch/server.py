@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0005
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 2
-@stageset implemented_revision: 2
+@stageset spec_revision: 3
+@stageset implemented_revision: 3
 @stageset planned_in: .stageset/sessions/coding-production-readiness-fixes.md
-@stageset last_updated_in: .stageset/sessions/coding-voice-profile-selection.md
-@stageset implemented_in: .stageset/sessions/coding-voice-profile-selection.md
+@stageset last_updated_in: .stageset/sessions/coding-mixed-length-profiles.md
+@stageset implemented_in: .stageset/sessions/coding-mixed-length-profiles.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -34,14 +34,14 @@ Report health and metrics.
 - A request above `ARSENAL_TIMEOUT_S` returns 504.
 - A client disconnect sets the job stop event and drops queued work.
 - An unknown `voice_profile` returns 400.
-- A profile batch with mixed first-chunk token lengths returns 422.
-- The worker groups jobs by profile id and first-chunk token length before synthesis.
+- A profile call with mixed first-chunk token lengths uses the normal voice path.
+- The worker groups jobs by profile id. The engine picks the path per call.
 
 ## Edge cases
 
 - Engine not ready: `/health` returns 503.
 - One failed batch: every job in that batch gets the error. The worker stays alive.
-- More than one job in a batch: jobs with the same profile id and first-chunk token length are flattened, synthesized once, then split back by job.
+- More than one job in a batch: jobs with the same profile id are flattened, synthesized once, then split back by job.
 - Disconnect during generation: the result is discarded. The current batch is not split.
 
 ## Checks

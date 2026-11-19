@@ -93,13 +93,13 @@ Example:
 - `"Hi."` gives 2 tokens.
 - `"Please read this sentence."` gives 5 tokens.
 
-These two texts in one conditioned batch differ. The server groups them into
-separate calls, so this is safe. A 422 returns only if a single profile request
-has mixed lengths.
+These two texts in one conditioned batch differ. The server detects this and
+uses the normal voice path for that call. The voice stays the same. No 422 and
+no bad audio.
 
-Safe options: group by token count (the server does this), pad with a correct
-mask and per-row positions (needs model changes and audio tests), or run one
-text per call.
+Safe options: use the normal path for mixed lengths (the server does this),
+group by token count, or pad with a correct mask and per-row positions (needs
+model changes and audio tests).
 
 The full guide is `docs/voice-profiles.md`.
 
@@ -107,7 +107,7 @@ The full guide is `docs/voice-profiles.md`.
 
 - Save with `conditioned=True`. Without it, profile has no `voice_state`; stream runs normal path (no TTFA gain).
 - Load with `voice_profile=...` (opt-in). Passing `voice=` uses normal path.
-- Keep first-chunk text token lengths uniform for batched KV reuse. Set `max_first_tokens` (e.g. 16). Mixed lengths in one batch can produce bad/long audio (silence, overrun). If lengths differ, stream one request at a time.
+- The conditioned fast path needs uniform first-chunk text token lengths. Set `max_first_tokens` (e.g. 16). The server uses the normal path when lengths differ. Direct `BatchedStream` users must group or split.
 - Do not compare KV-reuse output bit-for-bit to normal path. Conditioning differs; validate by ear and TTFA, not waveform equality.
 - Do not use KV-reuse for quality checks without `max_first_tokens` awareness: `max_first_tokens` truncates the first chunk (used in TTFA tests). For full-text ear check, stream per request or use a cap that covers the text.
 
