@@ -291,3 +291,10 @@ Do these before L4 and Modal.
 The load probe first failed at p95 8641 ms. Fixes: one chunk per job (first chunks batch first), a 100 ms batch window, and per-row voice batching for mixed profiles in the normal path. B=224 with max_frames=192 fits with 1.95 GiB free (FACT-0102).
 
 Carried state is not implemented. Keep independent chunks unless owner listening finds a defect.
+
+## 14. Batch window tuning (2026-11-19)
+
+- A 40 ms window at B=224 gives p95 6047.72 ms over 448 requests. Queue p50 733.84 ms. FAIL (FACT-0105).
+- A 180 ms window and first-chunk priority give p95 321.32 ms over 160 requests at 32 clients. PASS (FACT-0106).
+- Default `ARSENAL_BATCH_WINDOW_MS` is now 180 ms.
+- 224-client bursts need more work. RTF is safe, but TTFA is not.

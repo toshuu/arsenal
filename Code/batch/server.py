@@ -6,6 +6,7 @@ import asyncio
 import base64
 import copy
 import io
+import itertools
 import os
 import queue
 import threading
@@ -34,6 +35,8 @@ class Job:
     stop: threading.Event = field(default_factory=threading.Event)
     cancelled: bool = False
     created_at: float = field(default_factory=time.monotonic)
+    priority: int = 0
+    seq: int = 0
     started_at: float | None = None
     first_chunk_at: float | None = None
 
@@ -123,7 +126,10 @@ class BatchWorker:
         self.max_batch = max_batch
         self.max_rows = max_rows
         self.metrics = metrics
-        self.jobs: queue.Queue[Job] = queue.Queue(maxsize=max_queue)
+        self.jobs: queue.PriorityQueue[tuple[int, int, Job]] = queue.PriorityQueue(
+            maxsize=max_queue
+        )
+        self.seq = itertools.count()
         self.thread = threading.Thread(target=self._run, daemon=True)
         self.thread.start()
 
@@ -137,18 +143,21 @@ class BatchWorker:
         max_frames: int | None,
         profile_id: str | None = None,
         on_chunk: Callable[..., None] | None = None,
+        priority: int = 0,
     ) -> Job:
         job = Job(
             texts=texts,
             max_frames=max_frames,
             profile_id=profile_id,
             on_chunk=on_chunk,
+            priority=priority,
+            seq=next(self.seq),
         )
         if len(texts) > self.max_rows:
             self.metrics.add("rejected")
             raise QueueFull("too many rows")
         try:
-            self.jobs.put_nowait(job)
+            self.jobs.put_nowait((job.priority, job.seq, job))
         except queue.Full as exc:
             self.metrics.add("rejected")
             raise QueueFull("queue is full") from exc
@@ -157,16 +166,16 @@ class BatchWorker:
 
     def _run(self) -> None:
         while True:
-            job = self.jobs.get()
+            _, _, job = self.jobs.get()
             batch = [job]
             rows = len(job.texts)
-            deadline = time.monotonic() + float(os.getenv("ARSENAL_BATCH_WINDOW_MS", "100")) / 1000.0
+            deadline = time.monotonic() + float(os.getenv("ARSENAL_BATCH_WINDOW_MS", "180")) / 1000.0
             while len(batch) < self.max_batch and rows < self.max_rows:
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     break
                 try:
-                    nxt = self.jobs.get(timeout=remaining)
+                    _, _, nxt = self.jobs.get(timeout=remaining)
                 except queue.Empty:
                     break
                 if nxt.cancelled:
@@ -174,7 +183,7 @@ class BatchWorker:
                     self.metrics.add("cancelled")
                     continue
                 if rows + len(nxt.texts) > self.max_rows:
-                    self.jobs.put_nowait(nxt)
+                    self.jobs.put_nowait((nxt.priority, nxt.seq, nxt))
                     break
                 batch.append(nxt)
                 rows += len(nxt.texts)
@@ -581,6 +590,7 @@ def create_app(
             "max_rows": settings.max_rows,
             "max_queue": settings.max_queue,
             "max_frames": settings.max_frames,
+            "batch_window_ms": int(os.getenv("ARSENAL_BATCH_WINDOW_MS", "180")),
         }
 
     @app.post("/tts")
@@ -590,7 +600,9 @@ def create_app(
         parts: list[Any] = []
         for chunk in chunks:
             try:
-                job = worker.submit([chunk], body.max_frames, body.voice_profile)
+                job = worker.submit(
+                [chunk], body.max_frames, body.voice_profile, priority=0
+            )
             except QueueFull as exc:
                 raise HTTPException(status_code=503, detail="queue is full") from exc
             audio = await wait_for(job, request)
@@ -626,10 +638,15 @@ def create_app(
         def submit_next() -> asyncio.Future[Any]:
             index = state["index"]
             text = chunks[index]
+            priority = 0 if index == 0 else 1
             state["index"] = index + 1
             try:
                 job = worker.submit(
-                    [text], body.max_frames, body.voice_profile, on_chunk=on_chunk
+                    [text],
+                    body.max_frames,
+                    body.voice_profile,
+                    on_chunk=on_chunk,
+                    priority=priority,
                 )
             except QueueFull as exc:
                 state["error"] = HTTPException(status_code=503, detail="queue is full")

@@ -81,10 +81,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-205200-CODING | CODING | 2026-11-19T20:52:00+05:30 | Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching. | .stageset/sessions/coding-http-load-optimization.md | IDEA-0005; FACT-0102; FACT-0103; FACT-0104 | 897ca11 |
 | 20261119-205300-PUSH | PUSH | 2026-11-19T20:53:00+05:30 | Push HTTP load optimization and per-row voice batching. | .stageset/sessions/event-push-http-load-optimization.md | IDEA-0005; FACT-0103; 897ca11 | 897ca11 |
 | 20261119-205500-PUSH | PUSH | 2026-11-19T20:55:00+05:30 | Push updated chunk join evidence paths. | .stageset/sessions/event-push-chunk-wav-location.md | IDEA-0005; FACT-0100; 9cc31ce | 9cc31ce |
+| 20261119-211300-CODING | CODING | 2026-11-19T21:13:00+05:30 | Test B=224 with a 40 ms batch window. Add first-chunk priority and set the default window to 180 ms. | .stageset/sessions/coding-batch-window-tuning.md | IDEA-0005; FACT-0105; FACT-0106 | - |
 
 ## Totals
 
-- CODING: 38.
+- CODING: 39.
 - IDEATION: 9.
 - MAINTENANCE: 8.
 - PROBE: 0.

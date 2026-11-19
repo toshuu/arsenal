@@ -14,19 +14,18 @@ This file is generated. Do not edit it by hand.
 
 ## Failing checks
 
-- None.
+- `20261119-211244-RUN` — `Skeletons/Code/batch/server.py`, `CHECK-SERVER-10`, attempt 1.
 
 ## Last 5 sessions
 
+- 20261119-211300-CODING · CODING · Test B=224 with a 40 ms batch window. Add first-chunk priority and set the default window to 180 ms.
 - 20261119-205500-PUSH · PUSH · Push updated chunk join evidence paths.
 - 20261119-205300-PUSH · PUSH · Push HTTP load optimization and per-row voice batching.
 - 20261119-205200-CODING · CODING · Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching.
 - 20261119-203600-PUSH · PUSH · Push stream backpressure fix and probe.
-- 20261119-203500-PUSH · PUSH · Push long-text validation probes and evidence.
 
 ## Verified environment facts
 
-| FACT-0081 | 2026-11-16 | Safe limit: keep >=1.5 GiB free at B=224 → peak_alloc <= 13.06 GiB → max_frames <= ~192 (15.36 s). Proposed `BATCH_SAFE_MAX_FRAMES_224=192`. Real soaks used auto short texts (~32–40 frames); 5–10 s covered, 15 s near limit. | Project | CURRENT | this session |
 | FACT-0082 | 2026-11-16 | `complete_kv` slices `cache[:, :, :offset_value+k.shape[1]]` (valid prefix). Attention queries the computed `k_attn/v_attn` over that prefix (no full preallocated length scanned). Flow “other” includes CPU cost of building masks/rope/copy ops but KV scan is over valid length. No big gain from slicing cache beyond current behavior. | Project | CURRENT | `pocket_tts/modules/attention.py` |
 | FACT-0085 | 2026-11-16 | Failed levers (numbers): M2 overlap steady B192 69.99 vs 70.68 ms (no gain). decode_group 2/4 steady worse 70.7→75.4/75.9 ms (B192). Prewarm +636 ms boot over 100 ms rule (accepted). Full Mimi cast broke parity corr 0.981 (fixed to decoder-only corr 0.9999991). CUDA graphs blocked by state (no replay). EOS threshold: other still 8–10 ms. Frame-growth long test OOM. Two T4 processes: 112+112 p95 119.1/134.1 RTF 0.83/0.88, 128+128 p95 139.2/118.9 RTF 0.90/0.95 (worse than single B224). B256 soak RTF 0.902>0.85. Prefetch no boot gain (5685 vs 5561 ms). CUDA cache no gain. | Project | CURRENT | `.stageset/facts.md` |
 | FACT-0086 | 2026-11-16 | Open items: long-text chunker with carried state (guard `max_frames<=192` at B224 only); Modal build not started (SSLD-017 planned); L4 re-run (B224/256/288). Voice cache prebuild script exists, not wired to image build. | Project | CURRENT | `LivingDocs/SSLD-017-modal-deployment-plan.md` |
@@ -44,8 +43,9 @@ This file is generated. Do not edit it by hand.
 | FACT-0100 | 2026-11-19 | Chunk joins have no objective click. Three joins in a 4-chunk text. Join jumps are 0.00018, 0.00107, 0.00021; global p99.9 jump is 0.035. RMS does not drop. WAVs are saved for the owner listening gate. Carried state is not implemented; keep independent chunks unless listening finds a defect. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN-03.md` |
 | FACT-0101 | 2026-11-19 | `/tts/stream` has a 64-chunk bound. A full queue sets the job stop event and counts one `slow_clients` event. A slow reader probe delivered fewer chunks than the engine produced, with queue depth 0. | Project | CURRENT | `.stageset/runs/20261119-203427-RUN.md` |
 | FACT-0102 | 2026-11-19 | B=224 with `max_frames=192` fits on T4 after stray servers are stopped. Peak allocated 12.303 GiB, reserved 12.475 GiB, free 1.952 GiB. All 224 rows produce audio. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN.md` |
-| FACT-0103 | 2026-11-19 | HTTP load now meets the gate. 160 requests in 5 bursts of 32, mixed profiles and text lengths. First-chunk p50 173.68 ms, p95 226.66 ms, 0 errors. Burst RTF 0.024-0.029. Fixes: 100 ms batch window, one text chunk per job, per-row voice batching for mixed profiles in the normal path. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN-02.md` |
 | FACT-0104 | 2026-11-19 | Mixed voice profiles can run in one normal-path GPU call with per-row voice tensors. The conditioned fast path still needs one profile id and uniform first-chunk token lengths. The server exposes `last_errors` in `/metrics`. All earlier probes pass after the scheduler change. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN-02.md`, `.stageset/runs/20261119-205020-RUN-03.md` |
+| FACT-0105 | 2026-11-19 | B=224 with a 40 ms batch window and 224-client bursts fails the TTFA gate. 448 requests: p50 2511.55 ms, p95 6047.72 ms. Queue p50 733.84 ms. RTF 0.019-0.022. A 40 ms window is too short for 224 arrivals. | Project | CURRENT | `.stageset/runs/20261119-211244-RUN.md` |
+| FACT-0106 | 2026-11-19 | A priority queue runs first text chunks before continuations. The default batch window is 180 ms. The 32-client gate passes: 160 requests, p50 254.96 ms, p95 321.32 ms, 0 errors. Server first-chunk p95 283.55 ms. | Project | CURRENT | `.stageset/runs/20261119-211244-RUN-02.md` |
 
 ## Read next
 

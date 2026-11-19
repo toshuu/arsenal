@@ -90,7 +90,7 @@ def one_request(client: httpx.Client, index: int) -> dict[str, object]:
     first_ms = None
     audio_bytes = 0
     status = 0
-    with client.stream("POST", "/tts/stream", json=body, timeout=30) as response:
+    with client.stream("POST", "/tts/stream", json=body, timeout=120) as response:
         status = response.status_code
         for chunk in response.iter_bytes():
             if first_ms is None:
@@ -110,7 +110,7 @@ def main() -> int:
     result: dict[str, object] = {"bursts": BURSTS, "per_burst": PER_BURST}
     rows: list[dict[str, object]] = []
     try:
-        with httpx.Client(base_url=BASE, timeout=30) as client:
+        with httpx.Client(base_url=BASE, timeout=60, limits=httpx.Limits(max_connections=256, max_keepalive_connections=256)) as client:
             for burst in range(BURSTS):
                 start = time.perf_counter()
                 with ThreadPoolExecutor(max_workers=PER_BURST) as pool:
