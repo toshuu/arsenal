@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-192014-PUSH · PUSH · Push production-readiness fixes: full-text chunking, frame guard, HTTP server.
 - 20261119-191120-CODING · CODING · Full-text chunking, frame guard, truncation reporting, HTTP server, sideline archive.
 - 20261116-191000-CODING · CODING · Step1 memory safety (OOM+fit, limits), admission guard, KV scan note, voice cache prebuild script, Modal plan doc.
 - 20261116-151000-CODING-02 · CODING · Plan SSLD-016. FP16 weight cache, B=256 memory profile, shared voice KV, per-component steady split.
 - 20261116-151000-CODING · CODING · Cold-start probe and prewarm budget test. Boot 5.56 s. Cold p95 575-657 ms. Prewarm 633 ms, over the 100 ms budget.
-- 20261116-134000-CODING · CODING · M2 overlap decode. Add a second CUDA stream helper and pipeline decode with the next flow step.
 
 ## Verified environment facts
 

@@ -4,7 +4,7 @@ time: 2026-11-19T19:11:20+05:30
 summary: Full-text chunking, frame guard, truncation reporting, HTTP server, sideline archive.
 paths: Code/batch/batched_stream.py; Code/batch/server.py; Code/probes/check_long_text.py; Code/probes/check_server.py; Skeletons/Code/batch/batched_stream.py; Skeletons/Code/batch/server.py; Skeletons/Code/batch/overlap.py; Skeletons/Probes/probe_levers_inproc.md; Skeletons/Probes/probe_cold_start.md; scripts/stageset-status.py; .stageset/facts.md; Code/experiments/shrink/archive/README.md
 related: IDEA-0005; FACT-0088; FACT-0089; FACT-0090; FACT-0091; FACT-0092
-commit: -
+commit: dab34cb
 remote: -
 branch: -
 ---
