@@ -25,5 +25,5 @@ branch: -
 
 ## Open items
 
-- Owner listening gate for `Code/probes/out/chunk_joins_normal.wav` and `chunk_joins_profile.wav`.
+- Owner listening gate for `/kaggle/working/chunk_joins_normal.wav` and `chunk_joins_profile.wav`.
 - Backpressure, long-frame capacity, and HTTP load probe.
