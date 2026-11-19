@@ -4,7 +4,7 @@ time: 2026-11-19T20:52:00+05:30
 summary: Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching.
 paths: Code/batch/server.py; Code/batch/batched_stream.py; Code/probes/probe_http_load.py; Code/probes/check_stream_backpressure.py; docs/voice-profiles.md; Code/batch/VOICE_PROFILES.md; Ideas/IDEA-0005-long-text-and-production-readiness.md; Skeletons/Code/batch/server.py; .stageset/facts.md
 related: IDEA-0005; FACT-0102; FACT-0103; FACT-0104
-commit: -
+commit: 897ca11
 remote: -
 branch: -
 ---

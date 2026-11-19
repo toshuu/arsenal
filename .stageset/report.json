@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T15:04:38Z",
+  "generated_at": "2026-11-19T15:21:00Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 15,
     "waiting": 0,
     "draft": 1,
-    "sessions": 72,
+    "sessions": 74,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -58,8 +58,8 @@
       "path": "Skeletons/Code/batch/server.py",
       "title": "Implementation: HTTP serving layer",
       "status": "DONE",
-      "spec_revision": 5,
-      "implemented_revision": 5,
+      "spec_revision": 6,
+      "implemented_revision": 6,
       "phase": "done"
     },
     {
@@ -1319,9 +1319,31 @@
       "date": "2026-11-19T20:36:00+05:30",
       "type": "push",
       "summary": "Push stream backpressure fix and probe."
+    },
+    {
+      "id": "20261119-205200-CODING",
+      "date": "2026-11-19T20:52:00+05:30",
+      "type": "coding",
+      "summary": "Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching."
+    },
+    {
+      "id": "20261119-205300-PUSH",
+      "date": "2026-11-19T20:53:00+05:30",
+      "type": "push",
+      "summary": "Push HTTP load optimization and per-row voice batching."
     }
   ],
   "commits": [
+    {
+      "sha": "897ca11",
+      "date": "2026-11-19T15:21:00+00:00",
+      "subject": "Fix HTTP load latency with chunk scheduling and per-row voices"
+    },
+    {
+      "sha": "19c9764",
+      "date": "2026-11-19T15:04:38+00:00",
+      "subject": "StageSet: record stream backpressure push"
+    },
     {
       "sha": "753ef95",
       "date": "2026-11-19T15:04:38+00:00",
@@ -1511,16 +1533,6 @@
       "sha": "9bc4b90",
       "date": "2026-11-15T17:04:52+00:00",
       "subject": "Add SSLD-010 for GPU-agnostic optimizations"
-    },
-    {
-      "sha": "766c2a8",
-      "date": "2026-11-15T16:59:44+00:00",
-      "subject": "StageSet: defer V8 manual graph and Gate D stability (documented)"
-    },
-    {
-      "sha": "542be0e",
-      "date": "2026-11-15T16:53:26+00:00",
-      "subject": "StageSet: document Gate D B=160 soak (76k req, TTFA unstable, RTF pass)"
     }
   ]
 }
