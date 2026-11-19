@@ -18,17 +18,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-203400-CODING · CODING · Add probes for long-text edges, long text over HTTP with a profile, and chunk joins.
 - 20261119-202200-PUSH · PUSH · Push the production validation plan and the refreshed StageSet report.
 - 20261119-202000-IDEATION · IDEATION · Plan four production-validation tasks before L4 and Modal. Update IDEA-0005 findings.
 - 20261119-201600-PUSH · PUSH · Push first-chunk streaming endpoint and latency metrics.
 - 20261119-201500-CODING · CODING · Add first-chunk PCM streaming endpoint and latency metrics.
-- 20261119-201100-PUSH · PUSH · Push T4 server defaults, prewarm, row cap, and frame admission.
 
 ## Verified environment facts
 
-| FACT-0074 | 2026-11-16 | EOS compaction threshold (compact when >=12.5% done or all done) applied in `Code/batch/batched_stream.py`; other remains 8–10 ms. Target <3 ms not reached; no easy tensor-only fix in hot path. | Project | CURRENT | `Code/batch/batched_stream.py` |
-| FACT-0075 | 2026-11-16 | Step 1 (other cut): applied compaction threshold (>=12.5% done or all). Measured "other" remains ~8–10 ms at B=160/192/224 with auto frames. Parity passes. Target <3 ms not reached by this change. | Project | CURRENT | `Code/batch/batched_stream.py` |
-| FACT-0076 | 2026-11-16 | Step 2 (Mimi CUDA graph micro-benchmark): attempted capture; blocked by Mimi state shape/init in graph path. Profiler shows CUDA kernel-dominated work (~1.15 s CUDA over 1.9 s wall for 32 frames at B=224). Replay time not measured. Integration skipped. | Project | CURRENT | `/tmp/mimi_graph2.py`, `Code/probes/out/prof_b224.txt` |
 | FACT-0077 | 2026-11-16 | Step 3 (frame-index growth): could not run cleanly at long frames due OOM on this T4. No reliable split by frame ranges reported. | Project | CURRENT | `/tmp/frame_growth.py` |
 | FACT-0078 | 2026-11-16 | Step 4 (voice cache prebuild): `Code/batch/build_voice_cache.py` writes voice cache to `ARSENAL_VOICE_CACHE`/default `Code/model/voice_cache`. Verified writes (miss 650 ms → hit 1.4 ms). Boot save about 0.65 s when prebuilt. | Project | CURRENT | `Code/batch/build_voice_cache.py` |
 | FACT-0079 | 2026-11-16 | OOM at B=224, max_frames=300, long text: OOM in `BatchedStream.stream` at `init_states(model.mimi, batch_size,(max_frames+4)*mimi_steps)` line ~311. Error: tried to allocate 2.08 GiB, free 773 MiB, using 13.8 GiB. | Project | CURRENT | `/tmp/oom_test.py` |
@@ -46,6 +43,9 @@ This file is generated. Do not edit it by hand.
 | FACT-0095 | 2026-11-19 | Mixed first-chunk token lengths in one voice profile call do not fail. The server uses the normal voice path for that call and keeps the same profile voice. Real engine test: `"Hi."` and `"Please read this sentence."` returned 13,440 and 36,480 samples at `max_frames=64`. No overrun. A uniform profile batch still uses the conditioned path. | Project | CURRENT | `.stageset/runs/20261119-195442-RUN-02.md`, `.stageset/runs/20261119-195442-RUN.md` |
 | FACT-0096 | 2026-11-19 | The server defaults match the final T4 point: `ARSENAL_MAX_BATCH=192`, `ARSENAL_MAX_ROWS=224`, `ARSENAL_MAX_QUEUE=256`, `ARSENAL_MAX_FRAMES=192`. Boot prewarm is on (B=192, 1 frame) and took 350.9 ms. Boot to readiness was 7 s. An over-limit `max_frames` returns 413, not 500. HEALTH shows `prewarm_ms`. | Project | CURRENT | `.stageset/runs/20261119-200913-RUN.md`, `.stageset/runs/20261119-200913-RUN-02.md` |
 | FACT-0097 | 2026-11-19 | `/tts/stream` returns raw `audio/L16` PCM chunk by chunk. Real engine, 96 frames: TTFB 82.9 ms, total 974.7 ms. The full `/tts` call took 896.6 ms. `/metrics` records first-chunk p50 80.74 ms. The first PCM chunk arrives well before generation ends. | Project | CURRENT | `.stageset/runs/20261119-201435-RUN.md` |
+| FACT-0098 | 2026-11-19 | Long-text chunk coverage passes on six hard text shapes: multi-sentence, one long sentence, abbreviations, mixed language, punctuation, and a 156-word repeat. Word order is exact. All frame estimates fit 192. The 156-word text gives 13 chunks, 1,038,720 samples, and 0.305 GiB peak at B=1. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN.md` |
+| FACT-0099 | 2026-11-19 | Long text through the HTTP path with a conditioned profile passes. A 4-chunk text returns a 664,364-byte WAV and a 637,440-byte PCM stream. First-chunk p95 is 110.4 ms. The profile is loaded. The default stream stays unconditioned. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN-02.md` |
+| FACT-0100 | 2026-11-19 | Chunk joins have no objective click. Three joins in a 4-chunk text. Join jumps are 0.00018, 0.00107, 0.00021; global p99.9 jump is 0.035. RMS does not drop. WAVs are saved for the owner listening gate. Carried state is not implemented; keep independent chunks unless listening finds a defect. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN-03.md` |
 
 ## Read next
 
