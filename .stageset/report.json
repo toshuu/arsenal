@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T14:51:17Z",
+  "generated_at": "2026-11-19T14:51:36Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 15,
     "waiting": 0,
     "draft": 1,
-    "sessions": 67,
+    "sessions": 68,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -1289,9 +1289,20 @@
       "date": "2026-11-19T20:20:00+05:30",
       "type": "ideation",
       "summary": "Plan four production-validation tasks before L4 and Modal. Update IDEA-0005 findings."
+    },
+    {
+      "id": "20261119-202200-PUSH",
+      "date": "2026-11-19T20:22:00+05:30",
+      "type": "push",
+      "summary": "Push the production validation plan and the refreshed StageSet report."
     }
   ],
   "commits": [
+    {
+      "sha": "304bb50",
+      "date": "2026-11-19T14:51:30+00:00",
+      "subject": "Document production validation plan and refresh StageSet report"
+    },
     {
       "sha": "264d1c9",
       "date": "2026-11-19T14:45:01+00:00",
@@ -1486,11 +1497,6 @@
       "sha": "fb44892",
       "date": "2026-11-15T15:48:56+00:00",
       "subject": "Doc: KV-reuse batching requires uniform text length"
-    },
-    {
-      "sha": "8676604",
-      "date": "2026-11-15T15:42:21+00:00",
-      "subject": "Document common voice profile mistakes"
     }
   ]
 }

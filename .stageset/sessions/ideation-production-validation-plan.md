@@ -4,7 +4,7 @@ time: 2026-11-19T20:20:00+05:30
 summary: Plan four production-validation tasks before L4 and Modal. Update IDEA-0005 findings.
 paths: Ideas/IDEA-0005-long-text-and-production-readiness.md; Ideas/_index.md
 related: IDEA-0005; FACT-0088; FACT-0089; FACT-0090; FACT-0091; FACT-0095; FACT-0096; FACT-0097
-commit: -
+commit: 304bb50
 remote: -
 branch: -
 ---
