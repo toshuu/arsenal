@@ -75,11 +75,12 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-202000-IDEATION | IDEATION | 2026-11-19T20:20:00+05:30 | Plan four production-validation tasks before L4 and Modal. Update IDEA-0005 findings. | .stageset/sessions/ideation-production-validation-plan.md | IDEA-0005; FACT-0088; FACT-0089; FACT-0090; FACT-0091; FACT-0095; FACT-0096; FACT-0097 | 304bb50 |
 | 20261119-202200-PUSH | PUSH | 2026-11-19T20:22:00+05:30 | Push the production validation plan and the refreshed StageSet report. | .stageset/sessions/event-push-production-validation-plan.md | IDEA-0005; FACT-0097; 304bb50 | 304bb50 |
 | 20261119-203400-CODING | CODING | 2026-11-19T20:34:00+05:30 | Add probes for long-text edges, long text over HTTP with a profile, and chunk joins. | .stageset/sessions/coding-long-text-validation.md | IDEA-0005; FACT-0098; FACT-0099; FACT-0100 | 3ab3fee |
+| 20261119-203500-CODING | CODING | 2026-11-19T20:35:00+05:30 | Bound the stream queue and stop work for slow readers. Add a slow-reader probe. | .stageset/sessions/coding-stream-backpressure.md | IDEA-0005; FACT-0101 | - |
 | 20261119-203500-PUSH | PUSH | 2026-11-19T20:35:00+05:30 | Push long-text validation probes and evidence. | .stageset/sessions/event-push-long-text-validation.md | IDEA-0005; FACT-0098; FACT-0099; FACT-0100; 3ab3fee | 3ab3fee |
 
 ## Totals
 
-- CODING: 36.
+- CODING: 37.
 - IDEATION: 9.
 - MAINTENANCE: 8.
 - PROBE: 0.

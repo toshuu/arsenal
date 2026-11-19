@@ -19,14 +19,13 @@ This file is generated. Do not edit it by hand.
 ## Last 5 sessions
 
 - 20261119-203500-PUSH · PUSH · Push long-text validation probes and evidence.
+- 20261119-203500-CODING · CODING · Bound the stream queue and stop work for slow readers. Add a slow-reader probe.
 - 20261119-203400-CODING · CODING · Add probes for long-text edges, long text over HTTP with a profile, and chunk joins.
 - 20261119-202200-PUSH · PUSH · Push the production validation plan and the refreshed StageSet report.
 - 20261119-202000-IDEATION · IDEATION · Plan four production-validation tasks before L4 and Modal. Update IDEA-0005 findings.
-- 20261119-201600-PUSH · PUSH · Push first-chunk streaming endpoint and latency metrics.
 
 ## Verified environment facts
 
-| FACT-0077 | 2026-11-16 | Step 3 (frame-index growth): could not run cleanly at long frames due OOM on this T4. No reliable split by frame ranges reported. | Project | CURRENT | `/tmp/frame_growth.py` |
 | FACT-0078 | 2026-11-16 | Step 4 (voice cache prebuild): `Code/batch/build_voice_cache.py` writes voice cache to `ARSENAL_VOICE_CACHE`/default `Code/model/voice_cache`. Verified writes (miss 650 ms → hit 1.4 ms). Boot save about 0.65 s when prebuilt. | Project | CURRENT | `Code/batch/build_voice_cache.py` |
 | FACT-0079 | 2026-11-16 | OOM at B=224, max_frames=300, long text: OOM in `BatchedStream.stream` at `init_states(model.mimi, batch_size,(max_frames+4)*mimi_steps)` line ~311. Error: tried to allocate 2.08 GiB, free 773 MiB, using 13.8 GiB. | Project | CURRENT | `/tmp/oom_test.py` |
 | FACT-0080 | 2026-11-16 | Memory fit at B=224 (fp16 weights+decoder): peak allocated 6.97/10.02/13.08/14.36 GiB at max_frames 100/150/200/250 (+6.71/9.76/12.82/14.10 GiB delta). Fit ~+61 MB per frame (from deltas). Mimi/flow KV allocated by `max_frames`; no sliding window. | Project | CURRENT | `/tmp/mem_model.py` |
@@ -46,6 +45,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0098 | 2026-11-19 | Long-text chunk coverage passes on six hard text shapes: multi-sentence, one long sentence, abbreviations, mixed language, punctuation, and a 156-word repeat. Word order is exact. All frame estimates fit 192. The 156-word text gives 13 chunks, 1,038,720 samples, and 0.305 GiB peak at B=1. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN.md` |
 | FACT-0099 | 2026-11-19 | Long text through the HTTP path with a conditioned profile passes. A 4-chunk text returns a 664,364-byte WAV and a 637,440-byte PCM stream. First-chunk p95 is 110.4 ms. The profile is loaded. The default stream stays unconditioned. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN-02.md` |
 | FACT-0100 | 2026-11-19 | Chunk joins have no objective click. Three joins in a 4-chunk text. Join jumps are 0.00018, 0.00107, 0.00021; global p99.9 jump is 0.035. RMS does not drop. WAVs are saved for the owner listening gate. Carried state is not implemented; keep independent chunks unless listening finds a defect. | Project | CURRENT | `.stageset/runs/20261119-203327-RUN-03.md` |
+| FACT-0101 | 2026-11-19 | `/tts/stream` has a 64-chunk bound. A full queue sets the job stop event and counts one `slow_clients` event. A slow reader probe delivered fewer chunks than the engine produced, with queue depth 0. | Project | CURRENT | `.stageset/runs/20261119-203427-RUN.md` |
 
 ## Read next
 

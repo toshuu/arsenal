@@ -58,6 +58,7 @@ class Metrics:
         self.completed = 0
         self.failed = 0
         self.cancelled = 0
+        self.slow_clients = 0
         self.queue_ms: list[float] = []
         self.first_ms: list[float] = []
         self.total_ms: list[float] = []
@@ -95,6 +96,7 @@ class Metrics:
                 "completed": self.completed,
                 "failed": self.failed,
                 "cancelled": self.cancelled,
+                "slow_clients": self.slow_clients,
                 "queue_ms": self._stats(self.queue_ms),
                 "first_chunk_ms": self._stats(self.first_ms),
                 "total_ms": self._stats(self.total_ms),
@@ -535,12 +537,23 @@ def create_app(
     async def tts_stream(body: TTSRequest, request: Request) -> StreamingResponse:
         validate([body.text], body.voice_profile, body.max_frames)
         loop = asyncio.get_running_loop()
-        chunks: asyncio.Queue[bytes | None] = asyncio.Queue()
+        chunks: asyncio.Queue[bytes | None] = asyncio.Queue(maxsize=64)
+        holder: dict[str, Any] = {}
+
+        def put(data: bytes | None) -> None:
+            try:
+                chunks.put_nowait(data)
+            except asyncio.QueueFull:
+                job = holder.get("job")
+                if job is not None:
+                    job.cancelled = True
+                    job.stop.set()
+                metrics.add("slow_clients")
 
         def on_chunk(frame: Any, elapsed: float) -> None:
             data = pcm_bytes(frame)
             if data:
-                loop.call_soon_threadsafe(chunks.put_nowait, data)
+                loop.call_soon_threadsafe(put, data)
 
         try:
             job = worker.submit(
@@ -551,10 +564,9 @@ def create_app(
             )
         except QueueFull as exc:
             raise HTTPException(status_code=503, detail="queue is full") from exc
+        holder["job"] = job
         wrapped = asyncio.wrap_future(job.future)
-        job.future.add_done_callback(
-            lambda _: loop.call_soon_threadsafe(chunks.put_nowait, None)
-        )
+        job.future.add_done_callback(lambda _: loop.call_soon_threadsafe(put, None))
         first_task = asyncio.create_task(chunks.get())
         done, _ = await asyncio.wait(
             {first_task, wrapped},
@@ -596,6 +608,8 @@ def create_app(
                     if item is None:
                         break
                     yield item
+                    if job.future.done() and chunks.empty():
+                        break
             finally:
                 job.stop.set()
 
