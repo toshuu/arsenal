@@ -4,7 +4,7 @@ time: 2026-11-19T19:55:00+05:30
 summary: Fix mixed-length voice profile calls. Use the normal voice path for that call. No 422.
 paths: Code/batch/server.py; Code/probes/check_server.py; docs/voice-profiles.md; Code/batch/VOICE_PROFILES.md; Skeletons/Code/batch/server.py; .stageset/facts.md
 related: IDEA-0005; FACT-0093; FACT-0094; FACT-0095
-commit: -
+commit: 054d5b0
 remote: -
 branch: -
 ---

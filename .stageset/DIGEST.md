@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-195600-PUSH · PUSH · Push the mixed-length voice profile fallback fix.
 - 20261119-195500-CODING · CODING · Fix mixed-length voice profile calls. Use the normal voice path for that call. No 422.
 - 20261119-193600-PUSH · PUSH · Push the voice profile guide and Modal persistence notes.
 - 20261119-193500-MAINTENANCE · MAINTENANCE · Add a long-term voice profile guide. Document Modal cache/profile persistence and mixed-profile batching.
 - 20261119-193200-PUSH · PUSH · Push per-request voice profile selection and the profile build script.
-- 20261119-193100-CODING · CODING · Add per-request voice profile selection. Default is the reference clip. Add profile build script.
 
 ## Verified environment facts
 
