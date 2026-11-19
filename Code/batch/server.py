@@ -39,6 +39,7 @@ class Job:
     seq: int = 0
     started_at: float | None = None
     first_chunk_at: float | None = None
+    t: dict[str, int] = field(default_factory=dict)
 
 
 @dataclass
@@ -67,6 +68,7 @@ class Metrics:
         self.first_ms: list[float] = []
         self.request_first_ms: list[float] = []
         self.total_ms: list[float] = []
+        self.timeline: dict[str, list[float]] = {} if os.getenv("ARSENAL_TIMELINE") == "1" else None
 
     def add(self, name: str, value: int = 1) -> None:
         with self.lock:
@@ -103,9 +105,36 @@ class Metrics:
             self.request_first_ms.append(value_ms)
             del self.request_first_ms[:-1000]
 
+    def record_timeline(self, data: dict[str, int], first_only: bool = False) -> None:
+        if self.timeline is None or not data:
+            return
+        # continuation chunks have large handler-to-submit gap and no first_byte_sent from request
+        if first_only and "submit" in data and "handler" in data:
+            if (data["submit"] - data["handler"]) / 1e6 > 500:
+                return
+        order = [
+            "handler", "chunks_done", "submit", "batch_start", "stream_start",
+            "prep_done", "cond_done", "flow0_done", "mimi0_done", "first_emit",
+            "loop_delivered", "first_byte_sent",
+        ]
+        vals: dict[str, float] = {}
+        prev = None
+        for name in order:
+            if name in data:
+                if prev is not None and prev in data:
+                    vals[f"{prev}_to_{name}_ms"] = (data[name] - data[prev]) / 1e6
+                prev = name
+        if "handler" in data and "first_byte_sent" in data:
+            vals["handler_to_first_byte_ms"] = (data["first_byte_sent"] - data["handler"]) / 1e6
+        with self.lock:
+            for k, v in vals.items():
+                arr = self.timeline.setdefault(k, [])
+                arr.append(v)
+                del arr[:-2000]
+
     def snapshot(self) -> dict[str, object]:
         with self.lock:
-            return {
+            out = {
                 "accepted": self.accepted,
                 "rejected": self.rejected,
                 "completed": self.completed,
@@ -118,6 +147,10 @@ class Metrics:
                 "request_first_chunk_ms": self._stats(self.request_first_ms),
                 "total_ms": self._stats(self.total_ms),
             }
+            if self.timeline is not None:
+                out["timeline_p95"] = {k: self._stats(v)["p95"] for k, v in self.timeline.items()}
+                out["timeline_p50"] = {k: self._stats(v)["p50"] for k, v in self.timeline.items()}
+            return out
 
 
 class BatchWorker:
@@ -227,14 +260,24 @@ class BatchWorker:
         stop = jobs[0].stop if len(jobs) == 1 else None
         for job in jobs:
             job.started_at = time.monotonic()
+            job.t["batch_start"] = time.perf_counter_ns()
 
         def relay(row: int, frame: Any, elapsed: float) -> None:
             job = owners[row]
             now = time.monotonic()
             if job.first_chunk_at is None:
                 job.first_chunk_at = now
+                job.t.setdefault("first_emit", time.perf_counter_ns())
             if job.on_chunk is not None:
                 job.on_chunk(frame, elapsed)
+
+        def on_stage(row: int, name: str, at: float) -> None:
+            ns = int(at * 1e9)
+            if row < 0:
+                for j in jobs:
+                    j.t.setdefault(name, ns)
+            else:
+                owners[row].t[name] = ns
 
         try:
             profile_ids = [
@@ -247,6 +290,7 @@ class BatchWorker:
                 profile_id=profile_id,
                 profile_ids=profile_ids,
                 on_chunk=relay,
+                on_stage=on_stage,
             )
         except Exception as exc:
             self.metrics.add("failed")
@@ -268,6 +312,7 @@ class BatchWorker:
             self.metrics.record(
                 (started - job.created_at) * 1000.0, first, (now - job.created_at) * 1000.0
             )
+            self.metrics.record_timeline(job.t, first_only=True)
             if job.cancelled:
                 job.future.set_exception(asyncio.CancelledError())
                 self.metrics.add("cancelled")
@@ -345,6 +390,9 @@ class TTSEngine:
         os.chdir(model_dir)
         logging.disable(logging.CRITICAL)
         try:
+            nt = os.getenv("ARSENAL_TORCH_THREADS")
+            if nt:
+                torch.set_num_threads(max(1, int(nt)))
             from pocket_tts import TTSModel
 
             from batch.batched_stream import BatchedStream
@@ -471,6 +519,7 @@ class TTSEngine:
         profile_id: str | None = None,
         profile_ids: list[str | None] | None = None,
         on_chunk: Callable[..., None] | None = None,
+        on_stage: Callable[..., None] | None = None,
     ) -> list[Any]:
         if self.stream is None:
             raise RuntimeError("engine is not loaded")
@@ -481,7 +530,7 @@ class TTSEngine:
                 for pid in profile_ids
             ]
             return stream.stream(
-                texts, max_frames=max_frames, stop=stop, on_chunk=on_chunk
+                texts, max_frames=max_frames, stop=stop, on_chunk=on_chunk, on_stage=on_stage
             )
         stream = self._stream_for(profile_id)
         conditioned = profile_id is not None or self.default_is_profile
@@ -490,7 +539,7 @@ class TTSEngine:
             if len(keys) > 1:
                 stream = self._normal_stream(profile_id)
         return stream.stream(
-            texts, max_frames=max_frames, stop=stop, on_chunk=on_chunk
+            texts, max_frames=max_frames, stop=stop, on_chunk=on_chunk, on_stage=on_stage
         )
 
 
@@ -610,9 +659,11 @@ def create_app(
     @app.post("/tts")
     async def tts(body: TTSRequest, request: Request) -> Response:
         validate([body.text], body.voice_profile, body.max_frames)
+        t0 = time.perf_counter_ns()
         chunks = await asyncio.to_thread(
             engine.chunks_for, body.text, body.voice_profile
         )
+        t1 = time.perf_counter_ns()
         parts: list[Any] = []
         for chunk in chunks:
             try:
@@ -621,6 +672,9 @@ def create_app(
             )
             except QueueFull as exc:
                 raise HTTPException(status_code=503, detail="queue is full") from exc
+            job.t.setdefault("handler", t0)
+            job.t.setdefault("chunks_done", t1)
+            job.t.setdefault("submit", time.perf_counter_ns())
             audio = await wait_for(job, request)
             parts.append(audio[0])
         data = wav_bytes(concat_audio(parts), settings.sample_rate)
@@ -629,10 +683,12 @@ def create_app(
     @app.post("/tts/stream")
     async def tts_stream(body: TTSRequest, request: Request) -> StreamingResponse:
         request_start = time.monotonic()
+        t_handler = time.perf_counter_ns()
         validate([body.text], body.voice_profile, body.max_frames)
         chunks = await asyncio.to_thread(
             engine.chunks_for, body.text, body.voice_profile
         )
+        t_chunks = time.perf_counter_ns()
         loop = asyncio.get_running_loop()
         chunks_out: asyncio.Queue[bytes | None] = asyncio.Queue(maxsize=64)
         holder: dict[str, Any] = {}
@@ -640,10 +696,12 @@ def create_app(
         done = asyncio.Event()
 
         def put(data: bytes | None) -> None:
+            job = holder.get("job")
+            if job is not None:
+                job.t.setdefault("loop_delivered", time.perf_counter_ns())
             try:
                 chunks_out.put_nowait(data)
             except asyncio.QueueFull:
-                job = holder.get("job")
                 if job is not None:
                     job.cancelled = True
                     job.stop.set()
@@ -671,6 +729,9 @@ def create_app(
                 state["error"] = HTTPException(status_code=503, detail="queue is full")
                 done.set()
                 raise
+            job.t.setdefault("handler", t_handler)
+            job.t.setdefault("chunks_done", t_chunks)
+            job.t.setdefault("submit", time.perf_counter_ns())
             state["job"] = job
             holder["job"] = job
             done.clear()
@@ -712,6 +773,9 @@ def create_app(
         first = await first_task
         if first is None:
             raise HTTPException(status_code=500, detail="no audio")
+        fj = state.get("job")
+        if fj is not None:
+            fj.t.setdefault("first_byte_sent", time.perf_counter_ns())
         metrics.record_request_first((time.monotonic() - request_start) * 1000.0)
 
         async def generate():

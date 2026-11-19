@@ -470,3 +470,19 @@ Evidence: `probes/out/sweep_b32_s14.json`, `probes/out/sweep_b36_s14.json`, `pro
 - **Step 2:** `uvloop` + `httptools` kept. A/B vs `asyncio` + `h11` noisy; no gain claimed.
 - **B=224:** no tested window passed. Best server 1542.1 ms (+1192 ms). Client 5627.9 ms (+5278 ms). Direct model 97.7 ms. Limit: head-of-line/ingress and 4-vCPU contention, not model compute.
 - **Step 3:** continuous batching not implemented. Plan and owner approval required before code.
+
+
+## 20. HTTP cliff diagnosis and READY next levers (2026-11-20T02:39:37+05:30)
+
+Evidence: `.stageset/runs/20261120-023937-RUN.md`, FACT-0117, `probes/out/timeline_main2.json`, `probes/out/diag_nohttp_w150_v2.json`, `probes/out/topH_b224.txt`.
+
+- **No-HTTP (BatchWorker direct, w150):** B38 req p95 95.7 ms, q 1.9 ms; B48 req 104.7 ms, q 2.3 ms (1 batch/burst). Batch/model path OK.
+- **HTTP pinned (timeline):** B38 `submit_to_batch_start` p95 2272 ms, srv 2403 ms, cli 2614 ms (q 2260 ms); jumping stage is pre-execution queue wait, model micro-stages stable. B224 range srv 1473–2138 ms, cli 4911–5679 ms.
+- **CPU/top-H:** probe ~100% CPU, server batch thread starved/contending on 4 vCPU during B=224 burst.
+- **Config checks:** unpinned + `ARSENAL_TORCH_THREADS=1|2` no safe gain (B32/37 regressed/unstable).
+- **Conclusion:** max B stays 36-37 (boundary unstable). **Step 3 continuous batching: NO-GO on this host** — evidence is host CPU starvation/ingress contention, not model compute.
+
+**Next levers (READY plan, no code):**
+1. Run probe from a separate machine so server owns all 4 vCPU; re-ramp and compare srv vs cli.
+2. Reduce per-request server CPU (fewer per-request threads/callbacks, one ingress/submit path, minimal parsing); keep timeline gated off.
+3. Re-test on host with >=8 vCPU (or isolated cores), then reassess admission and any Step 3 skeleton with evidence.

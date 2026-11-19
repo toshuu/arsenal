@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T20:21:31Z",
+  "generated_at": "2026-11-19T21:12:40Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -1422,6 +1422,11 @@
   ],
   "commits": [
     {
+      "sha": "f1d0f51",
+      "date": "2026-11-19T20:21:36+00:00",
+      "subject": "StageSet: document Steps 1,2,4 ramp (max HTTP B=37, B=224 gap)"
+    },
+    {
       "sha": "e6c8153",
       "date": "2026-11-19T20:13:09+00:00",
       "subject": "Ramp HTTP B and sweep windows (Steps 1,2,4): max pass B=37"
@@ -1615,11 +1620,6 @@
       "sha": "8499af3",
       "date": "2026-11-16T10:01:47+00:00",
       "subject": "Docs: SSLD-017 session + FACT-0084, report sync"
-    },
-    {
-      "sha": "37f2407",
-      "date": "2026-11-16T09:59:31+00:00",
-      "subject": "Step1-2: memory safety limits+guard, KV scan note, Modal plan, facts 0079-0083"
     }
   ]
 }
