@@ -4,7 +4,7 @@ time: 2026-11-19T20:35:00+05:30
 summary: Bound the stream queue and stop work for slow readers. Add a slow-reader probe.
 paths: Code/batch/server.py; Code/probes/check_stream_backpressure.py; .stageset/facts.md
 related: IDEA-0005; FACT-0101
-commit: -
+commit: 753ef95
 remote: -
 branch: -
 ---
