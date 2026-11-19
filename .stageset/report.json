@@ -1,17 +1,17 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T16:05:21Z",
+  "generated_at": "2026-11-19T16:09:30Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
     "branch": "main"
   },
   "totals": {
-    "skeletons": 16,
+    "skeletons": 17,
     "done": 15,
-    "waiting": 0,
+    "waiting": 1,
     "draft": 1,
-    "sessions": 79,
+    "sessions": 81,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -97,6 +97,15 @@
       "spec_revision": 2,
       "implemented_revision": 2,
       "phase": "done"
+    },
+    {
+      "id": "probe_http_load_224",
+      "path": "Skeletons/Probes/probe_http_load_224.md",
+      "title": "Probe: fix and recheck 224-client burst",
+      "status": "READY",
+      "spec_revision": 2,
+      "implemented_revision": 1,
+      "phase": "waiting"
     },
     {
       "id": "probe_levers_inproc",
@@ -1361,9 +1370,31 @@
       "date": "2026-11-19T21:33:00+05:30",
       "type": "push",
       "summary": "Push target-driven batching and final load evidence."
+    },
+    {
+      "id": "20261119-213900-IDEATION",
+      "date": "2026-11-19T21:39:00+05:30",
+      "type": "ideation",
+      "summary": "Handoff for the failed 224-client burst gate. Record traps, evidence, and a READY skeleton."
+    },
+    {
+      "id": "20261119-214000-PUSH",
+      "date": "2026-11-19T21:40:00+05:30",
+      "type": "push",
+      "summary": "Push the 224-client burst handoff and READY skeleton."
     }
   ],
   "commits": [
+    {
+      "sha": "3801b1d",
+      "date": "2026-11-19T16:09:29+00:00",
+      "subject": "Document 224-client burst handoff and add READY skeleton"
+    },
+    {
+      "sha": "b6faa29",
+      "date": "2026-11-19T16:05:21+00:00",
+      "subject": "StageSet: record batch target push"
+    },
     {
       "sha": "284618c",
       "date": "2026-11-19T16:05:21+00:00",
@@ -1553,16 +1584,6 @@
       "sha": "e23304f",
       "date": "2026-11-15T17:49:53+00:00",
       "subject": "StageSet: add FACT-0041 TTFA breakdown"
-    },
-    {
-      "sha": "293fe3d",
-      "date": "2026-11-15T17:49:37+00:00",
-      "subject": "StageSet: TTFA/steady breakdown and bottleneck analysis"
-    },
-    {
-      "sha": "6c820be",
-      "date": "2026-11-15T17:46:14+00:00",
-      "subject": "StageSet: sideline wrap-up, return to main path"
     }
   ]
 }

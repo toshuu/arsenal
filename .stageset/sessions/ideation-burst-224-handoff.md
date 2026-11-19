@@ -4,7 +4,7 @@ time: 2026-11-19T21:39:00+05:30
 summary: Handoff for the failed 224-client burst gate. Record traps, evidence, and a READY skeleton.
 paths: Ideas/IDEA-0005-long-text-and-production-readiness.md; Skeletons/Probes/probe_http_load_224.md
 related: IDEA-0005; FACT-0107; FACT-0108
-commit: -
+commit: 3801b1d
 remote: -
 branch: -
 ---
