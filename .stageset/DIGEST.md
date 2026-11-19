@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-202000-IDEATION · IDEATION · Plan four production-validation tasks before L4 and Modal. Update IDEA-0005 findings.
 - 20261119-201600-PUSH · PUSH · Push first-chunk streaming endpoint and latency metrics.
 - 20261119-201500-CODING · CODING · Add first-chunk PCM streaming endpoint and latency metrics.
 - 20261119-201100-PUSH · PUSH · Push T4 server defaults, prewarm, row cap, and frame admission.
 - 20261119-201000-CODING · CODING · Match server defaults to the final T4 point. Add prewarm, row cap, and 413 for over-limit frames.
-- 20261119-195600-PUSH · PUSH · Push the mixed-length voice profile fallback fix.
 
 ## Verified environment facts
 

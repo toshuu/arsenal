@@ -6,3 +6,4 @@ Add one link for each idea document.
 | --- | --- | --- | --- | --- | --- |
 | IDEA-0001 | Pocket TTS Multilingual: Baseline, Potential, Optimization | DISCOVERY | P1 | PENDING | [pocket-tts-multilingual-optimization.md](pocket-tts-multilingual-optimization.md) |
 | IDEA-0004 | TTFA and burst capacity gain plan (ranked by gain per effort) | DISCOVERY | P0 | 2026-11-16 | [IDEA-0004-ttfa-burst-gain.md](IDEA-0004-ttfa-burst-gain.md) |
+| IDEA-0005 | Long-text correctness and production readiness gaps | DISCOVERY | P0 | 2026-11-19 | [IDEA-0005-long-text-and-production-readiness.md](IDEA-0005-long-text-and-production-readiness.md) |

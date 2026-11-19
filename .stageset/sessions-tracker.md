@@ -72,11 +72,12 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-201100-PUSH | PUSH | 2026-11-19T20:11:00+05:30 | Push T4 server defaults, prewarm, row cap, and frame admission. | .stageset/sessions/event-push-server-throughput-defaults.md | IDEA-0005; FACT-0096; fcffdb4 | fcffdb4 |
 | 20261119-201500-CODING | CODING | 2026-11-19T20:15:00+05:30 | Add first-chunk PCM streaming endpoint and latency metrics. | .stageset/sessions/coding-streaming-endpoint.md | IDEA-0005; FACT-0097 | 2748839 |
 | 20261119-201600-PUSH | PUSH | 2026-11-19T20:16:00+05:30 | Push first-chunk streaming endpoint and latency metrics. | .stageset/sessions/event-push-streaming-endpoint.md | IDEA-0005; FACT-0097; 2748839 | 2748839 |
+| 20261119-202000-IDEATION | IDEATION | 2026-11-19T20:20:00+05:30 | Plan four production-validation tasks before L4 and Modal. Update IDEA-0005 findings. | .stageset/sessions/ideation-production-validation-plan.md | IDEA-0005; FACT-0088; FACT-0089; FACT-0090; FACT-0091; FACT-0095; FACT-0096; FACT-0097 | - |
 
 ## Totals
 
 - CODING: 35.
-- IDEATION: 8.
+- IDEATION: 9.
 - MAINTENANCE: 8.
 - PROBE: 0.
 - PUSH: 15.

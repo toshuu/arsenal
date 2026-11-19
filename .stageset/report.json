@@ -1,17 +1,17 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-16T10:14:42Z",
+  "generated_at": "2026-11-19T14:51:17Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
     "branch": "main"
   },
   "totals": {
-    "skeletons": 15,
-    "done": 14,
+    "skeletons": 16,
+    "done": 15,
     "waiting": 0,
     "draft": 1,
-    "sessions": 54,
+    "sessions": 67,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -22,8 +22,8 @@
       "path": "Skeletons/Code/batch/batched_stream.py",
       "title": "Implementation: batched streaming core",
       "status": "DONE",
-      "spec_revision": 6,
-      "implemented_revision": 6,
+      "spec_revision": 7,
+      "implemented_revision": 7,
       "phase": "done"
     },
     {
@@ -49,8 +49,17 @@
       "path": "Skeletons/Code/batch/overlap.py",
       "title": "Implementation: overlap decode",
       "status": "DONE",
-      "spec_revision": 1,
-      "implemented_revision": 1,
+      "spec_revision": 2,
+      "implemented_revision": 2,
+      "phase": "done"
+    },
+    {
+      "id": "server",
+      "path": "Skeletons/Code/batch/server.py",
+      "title": "Implementation: HTTP serving layer",
+      "status": "DONE",
+      "spec_revision": 5,
+      "implemented_revision": 5,
       "phase": "done"
     },
     {
@@ -85,8 +94,8 @@
       "path": "Skeletons/Probes/probe_cold_start.md",
       "title": "Probe: cold start on a fresh process",
       "status": "DONE",
-      "spec_revision": 1,
-      "implemented_revision": 1,
+      "spec_revision": 2,
+      "implemented_revision": 2,
       "phase": "done"
     },
     {
@@ -94,8 +103,8 @@
       "path": "Skeletons/Probes/probe_levers_inproc.md",
       "title": "Probe: in-process lever comparison",
       "status": "DONE",
-      "spec_revision": 1,
-      "implemented_revision": 1,
+      "spec_revision": 2,
+      "implemented_revision": 2,
       "phase": "done"
     },
     {
@@ -853,6 +862,11 @@
       "status": "DISCOVERY"
     },
     {
+      "path": "Ideas/IDEA-0005-long-text-and-production-readiness.md",
+      "title": "Long-text correctness and production readiness gaps",
+      "status": "DISCOVERY"
+    },
+    {
       "path": "Ideas/_index.md",
       "title": "Ideas index",
       "status": null
@@ -1197,9 +1211,157 @@
       "date": "2026-11-16T19:10:00+05:30",
       "type": "coding",
       "summary": "Step1 memory safety (OOM+fit, limits), admission guard, KV scan note, voice cache prebuild script, Modal plan doc."
+    },
+    {
+      "id": "20261119-191120-CODING",
+      "date": "2026-11-19T19:11:20+05:30",
+      "type": "coding",
+      "summary": "Full-text chunking, frame guard, truncation reporting, HTTP server, sideline archive."
+    },
+    {
+      "id": "20261119-192014-PUSH",
+      "date": "2026-11-19T19:20:14+05:30",
+      "type": "push",
+      "summary": "Push production-readiness fixes: full-text chunking, frame guard, HTTP server."
+    },
+    {
+      "id": "20261119-193100-CODING",
+      "date": "2026-11-19T19:31:00+05:30",
+      "type": "coding",
+      "summary": "Add per-request voice profile selection. Default is the reference clip. Add profile build script."
+    },
+    {
+      "id": "20261119-193200-PUSH",
+      "date": "2026-11-19T19:32:00+05:30",
+      "type": "push",
+      "summary": "Push per-request voice profile selection and the profile build script."
+    },
+    {
+      "id": "20261119-193500-MAINTENANCE",
+      "date": "2026-11-19T19:35:00+05:30",
+      "type": "maintenance",
+      "summary": "Add a long-term voice profile guide. Document Modal cache/profile persistence and mixed-profile batching."
+    },
+    {
+      "id": "20261119-193600-PUSH",
+      "date": "2026-11-19T19:36:00+05:30",
+      "type": "push",
+      "summary": "Push the voice profile guide and Modal persistence notes."
+    },
+    {
+      "id": "20261119-195500-CODING",
+      "date": "2026-11-19T19:55:00+05:30",
+      "type": "coding",
+      "summary": "Fix mixed-length voice profile calls. Use the normal voice path for that call. No 422."
+    },
+    {
+      "id": "20261119-195600-PUSH",
+      "date": "2026-11-19T19:56:00+05:30",
+      "type": "push",
+      "summary": "Push the mixed-length voice profile fallback fix."
+    },
+    {
+      "id": "20261119-201000-CODING",
+      "date": "2026-11-19T20:10:00+05:30",
+      "type": "coding",
+      "summary": "Match server defaults to the final T4 point. Add prewarm, row cap, and 413 for over-limit frames."
+    },
+    {
+      "id": "20261119-201100-PUSH",
+      "date": "2026-11-19T20:11:00+05:30",
+      "type": "push",
+      "summary": "Push T4 server defaults, prewarm, row cap, and frame admission."
+    },
+    {
+      "id": "20261119-201500-CODING",
+      "date": "2026-11-19T20:15:00+05:30",
+      "type": "coding",
+      "summary": "Add first-chunk PCM streaming endpoint and latency metrics."
+    },
+    {
+      "id": "20261119-201600-PUSH",
+      "date": "2026-11-19T20:16:00+05:30",
+      "type": "push",
+      "summary": "Push first-chunk streaming endpoint and latency metrics."
+    },
+    {
+      "id": "20261119-202000-IDEATION",
+      "date": "2026-11-19T20:20:00+05:30",
+      "type": "ideation",
+      "summary": "Plan four production-validation tasks before L4 and Modal. Update IDEA-0005 findings."
     }
   ],
   "commits": [
+    {
+      "sha": "264d1c9",
+      "date": "2026-11-19T14:45:01+00:00",
+      "subject": "StageSet: record streaming endpoint push"
+    },
+    {
+      "sha": "2748839",
+      "date": "2026-11-19T14:44:55+00:00",
+      "subject": "Add first-chunk PCM streaming and latency metrics"
+    },
+    {
+      "sha": "ee87665",
+      "date": "2026-11-19T14:40:38+00:00",
+      "subject": "StageSet: record server throughput defaults push"
+    },
+    {
+      "sha": "fcffdb4",
+      "date": "2026-11-19T14:40:25+00:00",
+      "subject": "Match server defaults to T4 cap, add prewarm and frame admission"
+    },
+    {
+      "sha": "f4ffa8a",
+      "date": "2026-11-19T14:25:50+00:00",
+      "subject": "StageSet: record mixed-length profile push"
+    },
+    {
+      "sha": "054d5b0",
+      "date": "2026-11-19T14:25:35+00:00",
+      "subject": "Serve mixed-length voice profile batches with normal-path fallback"
+    },
+    {
+      "sha": "2a4cb31",
+      "date": "2026-11-19T14:14:35+00:00",
+      "subject": "StageSet: record voice profile guide push"
+    },
+    {
+      "sha": "db8f449",
+      "date": "2026-11-19T14:14:27+00:00",
+      "subject": "Document voice profiles, first-chunk limits, and Modal cache persistence"
+    },
+    {
+      "sha": "2f86f4e",
+      "date": "2026-11-19T14:05:49+00:00",
+      "subject": "StageSet: record voice profile push"
+    },
+    {
+      "sha": "c61d686",
+      "date": "2026-11-19T14:05:46+00:00",
+      "subject": "Add per-request voice profile selection to server"
+    },
+    {
+      "sha": "77c6429",
+      "date": "2026-11-19T13:50:34+00:00",
+      "subject": "StageSet: record production-readiness push"
+    },
+    {
+      "sha": "dab34cb",
+      "date": "2026-11-19T13:50:24+00:00",
+      "subject": "Fix production readiness: full-text chunking, frame guard, HTTP server"
+    },
+    {
+      "sha": "2ba3526",
+      "date": "2026-11-18T19:22:31+05:30",
+      "subject": "Add independent review proposal for remaining gaps"
+    },
+    {
+      "sha": "817c969",
+      "date": "2026-11-16T10:14:53+00:00",
+      "subject": "B224 30-burst soak (5x mini): p95 119.9, RTF 0.741 (FACT-0087)"
+    },
     {
       "sha": "319abe6",
       "date": "2026-11-16T10:08:59+00:00",
@@ -1329,76 +1491,6 @@
       "sha": "8676604",
       "date": "2026-11-15T15:42:21+00:00",
       "subject": "Document common voice profile mistakes"
-    },
-    {
-      "sha": "4a66593",
-      "date": "2026-11-15T15:40:01+00:00",
-      "subject": "Use conditioned voice profile (KV reuse): B=128 under 350ms"
-    },
-    {
-      "sha": "0aadabd",
-      "date": "2026-11-15T15:23:19+00:00",
-      "subject": "SSLD-009: unbiased 4v3 probe, settle T005/T007, mark DONE"
-    },
-    {
-      "sha": "aae71ea",
-      "date": "2026-11-15T15:14:29+00:00",
-      "subject": "SSLD-009: close Phase C tasks T006-T008, record B=128 operating point"
-    },
-    {
-      "sha": "3770127",
-      "date": "2026-11-15T15:09:13+00:00",
-      "subject": "Verify encoded voice profiles; set B=128; revert unsafe KV reuse"
-    },
-    {
-      "sha": "6223ef9",
-      "date": "2026-11-15T14:57:01+00:00",
-      "subject": "Document voice profile usage and sync StageSet"
-    },
-    {
-      "sha": "10ff12e",
-      "date": "2026-11-15T14:54:42+00:00",
-      "subject": "Document conditioned voice profile TTFA and capacity probe"
-    },
-    {
-      "sha": "94276c4",
-      "date": "2026-11-15T14:41:25+00:00",
-      "subject": "WIP: refresh StageSet report"
-    },
-    {
-      "sha": "cb7cd55",
-      "date": "2026-11-15T14:39:54+00:00",
-      "subject": "WIP: add voice profiles and conditioned-state path to BatchedStream"
-    },
-    {
-      "sha": "6fff424",
-      "date": "2026-11-15T13:48:41+00:00",
-      "subject": "SSLD-009: refresh report"
-    },
-    {
-      "sha": "0e38c66",
-      "date": "2026-11-15T13:48:38+00:00",
-      "subject": "SSLD-009: fix voice cut order and document sustained lever checks"
-    },
-    {
-      "sha": "783fab2",
-      "date": "2026-11-15T13:19:43+00:00",
-      "subject": "Record push of voice gap investigation"
-    },
-    {
-      "sha": "c073d1c",
-      "date": "2026-11-15T13:19:38+00:00",
-      "subject": "Explain voice TTFA gap and refresh StageSet report"
-    },
-    {
-      "sha": "1f922c3",
-      "date": "2026-11-15T13:14:14+00:00",
-      "subject": "Record push of randomized lever probe"
-    },
-    {
-      "sha": "d15b7a5",
-      "date": "2026-11-15T13:14:09+00:00",
-      "subject": "Add randomized lever probe and pick B128 safe pair"
     }
   ]
 }

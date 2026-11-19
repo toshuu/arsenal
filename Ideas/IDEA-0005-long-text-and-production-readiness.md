@@ -5,7 +5,7 @@ status: DISCOVERY
 priority: P0
 created_in: .stageset/sessions/coding-production-readiness-fixes.md
 created_at: 2026-11-18
-updated_in: .stageset/sessions/coding-production-readiness-fixes.md
+updated_in: .stageset/sessions/ideation-production-validation-plan.md
 updated_at: 2026-11-19
 related_ideas: [IDEA-0001, IDEA-0003, IDEA-0004]
 related_skeletons: [Skeletons/Code/batch/batched_stream.py, Skeletons/Code/batch/server.py]
@@ -226,3 +226,55 @@ For each finding, report:
 - Any correction to this document.
 
 Do not implement from this idea file. First verify the findings, resolve conflicts with current StageSet facts, and ask the owner before changing scope.
+
+## 10. Current verification status (2026-11-19)
+
+| Finding | Status | Evidence |
+| --- | --- | --- |
+| A — full input text | **VERIFIED** | `stream()` splits every text and runs all chunks in order. A 69-token text gave 3 chunks, 0 missing words, 10.8 s of audio. FACT-0088. |
+| B — frame limit | **PARTLY VERIFIED** | The guard raises before state allocation. Auto budget comes from the token estimate. Explicit truncation is recorded. Chunk joins and carried state are not tested yet. FACT-0089, FACT-0090. |
+| C — Modal | **PLANNED** | No build. Voice cache and profile wiring steps are documented in `LivingDocs/SSLD-017-modal-deployment-plan.md`. |
+| D — L4 | **PLANNED** | No L4 result. T4 figures stay T4-only. |
+| E — lifecycle | **PARTLY VERIFIED** | Bounded queue, 503 overload, 504 timeout, disconnect stop, and cancel exist. Server now defaults to B=192, 224 rows, queue 256, prewarm on. A real load probe is not run. FACT-0091, FACT-0096, FACT-0097. |
+
+The server now has a first-chunk stream: `/tts/stream` sends raw PCM.
+Real engine, 96 frames: TTFB 82.9 ms, total 974.7 ms (FACT-0097).
+
+## 11. Next planned work (owner approved, 2026-11-19)
+
+Do these before L4 and Modal.
+
+### P1 — End-to-end HTTP load probe
+
+- Add `Code/probes/probe_http_load.py`.
+- Real engine through HTTP. Many bursts. Mixed profiles and text lengths.
+- Measure: queue ms, first-chunk p50/p95/max, total ms, RTF, error rate, 503 count, peak VRAM.
+- Pass: p95 first chunk <= 350 ms, sustained RTF < 1.0, zero unexpected errors, no OOM.
+
+### P2 — Long text through HTTP with a profile
+
+- Add `Code/probes/check_long_text_http.py`.
+- Use one long multi-sentence text and a profile id. Use `/tts` and `/tts/stream`.
+- Verify complete text coverage, chunk count, total audio length, and no missing or repeated words.
+- Pass: all chunks present, output order correct, no 5xx.
+
+### P3 — Chunk join and carried-state decision
+
+- Add `Code/probes/check_chunk_joins.py`.
+- Measure the join boundaries. Check silence, click, duplicated word, prosody, and voice change.
+- Compare independent chunks against one continuous generation where possible.
+- Record a decision: keep reconditioning per chunk, or carry state. Update this idea and the batched stream skeleton.
+
+### P4 — Slow-client stream backpressure
+
+- Bound the `/tts/stream` queue or add flow control.
+- A slow client must not grow memory without limit.
+- Add a probe check: stop reading, then confirm memory stays bounded and the job stops.
+- Pass: bounded memory, no worker deadlock, clear cancel behavior.
+
+## 12. Non-goals for this round
+
+- No true mixed-profile GPU batch.
+- No true conditioned mixed-length single call. Both need the risky attention change in the permission gate.
+- No L4 run.
+- No Modal build.
