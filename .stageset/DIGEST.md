@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-205500-PUSH · PUSH · Push updated chunk join evidence paths.
 - 20261119-205300-PUSH · PUSH · Push HTTP load optimization and per-row voice batching.
 - 20261119-205200-CODING · CODING · Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching.
 - 20261119-203600-PUSH · PUSH · Push stream backpressure fix and probe.
 - 20261119-203500-PUSH · PUSH · Push long-text validation probes and evidence.
-- 20261119-203500-CODING · CODING · Bound the stream queue and stop work for slow readers. Add a slow-reader probe.
 
 ## Verified environment facts
 

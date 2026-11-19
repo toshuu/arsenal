@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T15:21:00Z",
+  "generated_at": "2026-11-19T15:24:13Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 15,
     "waiting": 0,
     "draft": 1,
-    "sessions": 74,
+    "sessions": 75,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -1331,9 +1331,25 @@
       "date": "2026-11-19T20:53:00+05:30",
       "type": "push",
       "summary": "Push HTTP load optimization and per-row voice batching."
+    },
+    {
+      "id": "20261119-205500-PUSH",
+      "date": "2026-11-19T20:55:00+05:30",
+      "type": "push",
+      "summary": "Push updated chunk join evidence paths."
     }
   ],
   "commits": [
+    {
+      "sha": "9cc31ce",
+      "date": "2026-11-19T15:24:13+00:00",
+      "subject": "Point chunk join evidence to working folder"
+    },
+    {
+      "sha": "e292bed",
+      "date": "2026-11-19T15:21:00+00:00",
+      "subject": "StageSet: record HTTP load optimization push"
+    },
     {
       "sha": "897ca11",
       "date": "2026-11-19T15:21:00+00:00",
@@ -1523,16 +1539,6 @@
       "sha": "bda47d2",
       "date": "2026-11-15T17:27:05+00:00",
       "subject": "StageSet: sideline INT8/ONNX/TRT experiments"
-    },
-    {
-      "sha": "0196179",
-      "date": "2026-11-15T17:20:42+00:00",
-      "subject": "SSLD-010: V11/V12 helpers and partial B=128 soak (interrupted)"
-    },
-    {
-      "sha": "9bc4b90",
-      "date": "2026-11-15T17:04:52+00:00",
-      "subject": "Add SSLD-010 for GPU-agnostic optimizations"
     }
   ]
 }
