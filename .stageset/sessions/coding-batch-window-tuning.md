@@ -4,7 +4,7 @@ time: 2026-11-19T21:13:00+05:30
 summary: Test B=224 with a 40 ms batch window. Add first-chunk priority and set the default window to 180 ms.
 paths: Code/batch/server.py; Code/probes/probe_http_load.py; docs/voice-profiles.md; Code/batch/VOICE_PROFILES.md; Ideas/IDEA-0005-long-text-and-production-readiness.md; Skeletons/Code/batch/server.py; .stageset/facts.md
 related: IDEA-0005; FACT-0105; FACT-0106
-commit: -
+commit: 8909d78
 remote: -
 branch: -
 ---

@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T15:24:13Z",
+  "generated_at": "2026-11-19T15:44:11Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 15,
     "waiting": 0,
     "draft": 1,
-    "sessions": 75,
+    "sessions": 77,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -58,8 +58,8 @@
       "path": "Skeletons/Code/batch/server.py",
       "title": "Implementation: HTTP serving layer",
       "status": "DONE",
-      "spec_revision": 6,
-      "implemented_revision": 6,
+      "spec_revision": 7,
+      "implemented_revision": 7,
       "phase": "done"
     },
     {
@@ -1337,9 +1337,31 @@
       "date": "2026-11-19T20:55:00+05:30",
       "type": "push",
       "summary": "Push updated chunk join evidence paths."
+    },
+    {
+      "id": "20261119-211300-CODING",
+      "date": "2026-11-19T21:13:00+05:30",
+      "type": "coding",
+      "summary": "Test B=224 with a 40 ms batch window. Add first-chunk priority and set the default window to 180 ms."
+    },
+    {
+      "id": "20261119-211400-PUSH",
+      "date": "2026-11-19T21:14:00+05:30",
+      "type": "push",
+      "summary": "Push batch window tuning and B224 40 ms evidence."
     }
   ],
   "commits": [
+    {
+      "sha": "8909d78",
+      "date": "2026-11-19T15:44:11+00:00",
+      "subject": "Tune batch window and document B224 40ms result"
+    },
+    {
+      "sha": "10f1943",
+      "date": "2026-11-19T15:24:13+00:00",
+      "subject": "StageSet: record WAV location push"
+    },
     {
       "sha": "9cc31ce",
       "date": "2026-11-19T15:24:13+00:00",
@@ -1529,16 +1551,6 @@
       "sha": "8c76ee8",
       "date": "2026-11-15T17:39:22+00:00",
       "subject": "StageSet: sideline INT4 attempt (torchao, failed on T4)"
-    },
-    {
-      "sha": "0c6cba2",
-      "date": "2026-11-15T17:34:57+00:00",
-      "subject": "StageSet: ONNX sideline update, ORT install and export limits"
-    },
-    {
-      "sha": "bda47d2",
-      "date": "2026-11-15T17:27:05+00:00",
-      "subject": "StageSet: sideline INT8/ONNX/TRT experiments"
     }
   ]
 }

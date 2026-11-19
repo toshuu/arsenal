@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-211400-PUSH · PUSH · Push batch window tuning and B224 40 ms evidence.
 - 20261119-211300-CODING · CODING · Test B=224 with a 40 ms batch window. Add first-chunk priority and set the default window to 180 ms.
 - 20261119-205500-PUSH · PUSH · Push updated chunk join evidence paths.
 - 20261119-205300-PUSH · PUSH · Push HTTP load optimization and per-row voice batching.
 - 20261119-205200-CODING · CODING · Fix HTTP load latency with chunk scheduling, a wider batch window, and per-row voice batching.
-- 20261119-203600-PUSH · PUSH · Push stream backpressure fix and probe.
 
 ## Verified environment facts
 
