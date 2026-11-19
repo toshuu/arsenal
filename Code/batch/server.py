@@ -43,7 +43,7 @@ class Job:
 
 @dataclass
 class Settings:
-    max_batch: int = 192
+    max_batch: int = 224
     max_queue: int = 256
     max_rows: int = 224
     max_frames: int = 192
@@ -65,6 +65,7 @@ class Metrics:
         self.last_errors: list[str] = []
         self.queue_ms: list[float] = []
         self.first_ms: list[float] = []
+        self.request_first_ms: list[float] = []
         self.total_ms: list[float] = []
 
     def add(self, name: str, value: int = 1) -> None:
@@ -97,6 +98,11 @@ class Metrics:
             for items in (self.queue_ms, self.first_ms, self.total_ms):
                 del items[:-1000]
 
+    def record_request_first(self, value_ms: float) -> None:
+        with self.lock:
+            self.request_first_ms.append(value_ms)
+            del self.request_first_ms[:-1000]
+
     def snapshot(self) -> dict[str, object]:
         with self.lock:
             return {
@@ -109,6 +115,7 @@ class Metrics:
                 "last_errors": self.last_errors[-5:],
                 "queue_ms": self._stats(self.queue_ms),
                 "first_chunk_ms": self._stats(self.first_ms),
+                "request_first_chunk_ms": self._stats(self.request_first_ms),
                 "total_ms": self._stats(self.total_ms),
             }
 
@@ -172,19 +179,23 @@ class BatchWorker:
             target = min(
                 int(os.getenv("ARSENAL_BATCH_TARGET", "32")), self.max_batch, self.max_rows
             )
-            deadline = time.monotonic() + float(os.getenv("ARSENAL_BATCH_WINDOW_MS", "300")) / 1000.0
-            while (
-                len(batch) < self.max_batch
-                and rows < self.max_rows
-                and len(batch) < target
-            ):
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    break
+            deadline = time.monotonic() + float(
+                os.getenv("ARSENAL_BATCH_WINDOW_MS", "150")
+            ) / 1000.0
+            while len(batch) < self.max_batch and rows < self.max_rows:
+                nxt = None
                 try:
-                    _, _, nxt = self.jobs.get(timeout=remaining)
+                    _, _, nxt = self.jobs.get_nowait()
                 except queue.Empty:
-                    break
+                    if len(batch) >= target:
+                        break
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        break
+                    try:
+                        _, _, nxt = self.jobs.get(timeout=remaining)
+                    except queue.Empty:
+                        break
                 if nxt.cancelled:
                     nxt.future.set_exception(asyncio.CancelledError())
                     self.metrics.add("cancelled")
@@ -196,9 +207,6 @@ class BatchWorker:
                 rows += len(nxt.texts)
             self._execute(batch)
 
-    def _group_key(self, job: Job) -> str | None:
-        return None
-
     def _execute(self, batch: list[Job]) -> None:
         active = [job for job in batch if not job.cancelled]
         for job in batch:
@@ -207,11 +215,9 @@ class BatchWorker:
                 self.metrics.add("cancelled")
         if not active:
             return
-        groups: dict[str | None, list[Job]] = {}
-        for job in active:
-            groups.setdefault(self._group_key(job), []).append(job)
-        for profile_id, jobs in groups.items():
-            self._execute_group(jobs, profile_id)
+        keys = {job.profile_id for job in active}
+        profile_id = next(iter(keys)) if len(keys) == 1 else None
+        self._execute_group(active, profile_id)
 
     def _execute_group(self, jobs: list[Job], profile_id: str | None) -> None:
         texts = [text for job in jobs for text in job.texts]
@@ -419,6 +425,7 @@ class TTSEngine:
             stream = copy.copy(source)
             stream.voice_state = None
             stream._ids_cache = dict(source._ids_cache)
+            stream._chunk_cache = dict(getattr(source, "_chunk_cache", {}))
             stream.last_truncated_rows = []
             self.fallback_streams[key] = stream
         return stream
@@ -505,7 +512,7 @@ def create_app(
     start_engine: bool = True,
 ) -> FastAPI:
     settings = settings or Settings(
-        max_batch=int(os.getenv("ARSENAL_MAX_BATCH", "192")),
+        max_batch=int(os.getenv("ARSENAL_MAX_BATCH", "224")),
         max_queue=int(os.getenv("ARSENAL_MAX_QUEUE", "256")),
         max_rows=int(os.getenv("ARSENAL_MAX_ROWS", "224")),
         max_frames=int(os.getenv("ARSENAL_MAX_FRAMES", "192")),
@@ -597,13 +604,15 @@ def create_app(
             "max_rows": settings.max_rows,
             "max_queue": settings.max_queue,
             "max_frames": settings.max_frames,
-            "batch_window_ms": int(os.getenv("ARSENAL_BATCH_WINDOW_MS", "300")),
+            "batch_window_ms": int(os.getenv("ARSENAL_BATCH_WINDOW_MS", "150")),
         }
 
     @app.post("/tts")
     async def tts(body: TTSRequest, request: Request) -> Response:
         validate([body.text], body.voice_profile, body.max_frames)
-        chunks = engine.chunks_for(body.text, body.voice_profile)
+        chunks = await asyncio.to_thread(
+            engine.chunks_for, body.text, body.voice_profile
+        )
         parts: list[Any] = []
         for chunk in chunks:
             try:
@@ -619,8 +628,11 @@ def create_app(
 
     @app.post("/tts/stream")
     async def tts_stream(body: TTSRequest, request: Request) -> StreamingResponse:
+        request_start = time.monotonic()
         validate([body.text], body.voice_profile, body.max_frames)
-        chunks = engine.chunks_for(body.text, body.voice_profile)
+        chunks = await asyncio.to_thread(
+            engine.chunks_for, body.text, body.voice_profile
+        )
         loop = asyncio.get_running_loop()
         chunks_out: asyncio.Queue[bytes | None] = asyncio.Queue(maxsize=64)
         holder: dict[str, Any] = {}
@@ -700,6 +712,7 @@ def create_app(
         first = await first_task
         if first is None:
             raise HTTPException(status_code=500, detail="no audio")
+        metrics.record_request_first((time.monotonic() - request_start) * 1000.0)
 
         async def generate():
             job = state["job"]

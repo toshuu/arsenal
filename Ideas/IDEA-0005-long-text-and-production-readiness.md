@@ -358,3 +358,87 @@ High concurrency, low latency, good reliability. Do not move to L4 or Modal unti
 - Changes after this point include one chunk per job, priority queue, larger batch windows, per-row voice batching, and mixed-profile normal-path handling.
 - Secondary checkpoint: `2026-11-19T20:11:00+05:30`, commit `fcffdb4`, set the server default `ARSENAL_MAX_BATCH=192` instead of 224. This is also part of the drift.
 - The next session must start from the pre-dislike baseline. It must not treat post-point p95 numbers as accepted. Compare first, then revert or keep with evidence.
+
+## 18. Burst recovery after the dislike point (2026-11-20)
+
+**Scope.** Diagnose the 224-client regression. Revalidate against the pre-dislike baseline. Fix code and probe errors. Record what remains.
+
+### 18.1 Baseline (must compare)
+
+| Baseline | Path | Result | Source |
+| --- | --- | --- | --- |
+| Pre-dislike | Direct `BatchedStream`, conditioned, B=224 | p95 112.2 ms, RTF 0.824 | FACT-0064 |
+| Pre-dislike soak | Direct, conditioned, B=224 | p95 119.9 ms, RTF 0.741 | FACT-0087 |
+| This session (recheck) | Direct `probe_ttfa_stages.py`, B=224 | p95 97.7 ms, 672/672 < 350 | FACT-0111 |
+
+The model path is not the cause. It is equal or better than the baseline.
+
+### 18.2 What was wrong
+
+| # | Item | Why it was bad | Evidence |
+| --- | --- | --- | --- |
+| W1 | Metric mismatch | 112 ms is direct in-process. 6–13 s is HTTP with 224 sockets and a queue. The runs are not equal. | FACT-0108, FACT-0112 |
+| W2 | Probe client limit | `probe_http_load.py` lost `httpx.Limits` and did not read `ARSENAL_LOAD_LIMITS`. 224 clients shared a small pool. | FACT-0113, diff `284618c` |
+| W3 | Profile grouping removed | `_group_key()` returned `None`. Mixed profiles forced the normal path. The conditioned fast path was never used. | `server.py`, FACT-0113 |
+| W4 | Batch target cap | `ARSENAL_BATCH_TARGET` default 32. A 224-client burst split into 7 serial batches. | `server.py`, FACT-0113 |
+| W5 | Per-row conditioner | `_build_prefixes_with_voices()` called the conditioner once per row. 224 rows = 224 GPU calls. | `batched_stream.py`, FACT-0113 |
+| W6 | Event-loop block | `chunks_for()` tokenized in the FastAPI event loop. 224 requests delayed submission and response. | `server.py` |
+
+### 18.3 What was not wrong
+
+| Item | Reason |
+| --- | --- |
+| Model compute | Direct B=224 first emit is 97.7 ms. No regression. |
+| GPU memory at B=224, `max_frames=192` | 12.303 GiB allocated, 1.952 GiB free (FACT-0102). |
+| 32-client gate logic | The gate is valid. It passes with the fixed server and probe (FACT-0110). |
+| RTF | All HTTP runs stayed below 1.0. |
+| One chunk per job / first-chunk priority | These choices keep first chunks ahead of continuations. |
+
+### 18.4 What was fixed
+
+| Fix | Change | File |
+| --- | --- | --- |
+| F1 | Probe uses async client, start barrier, warm pool, `ARSENAL_LOAD_LIMITS`, and per-request timing. | `Code/probes/probe_http_load.py` |
+| F2 | Scheduler drains all waiting jobs first. The time window is a fallback. Default window 150 ms. | `Code/batch/server.py` |
+| F3 | One profile id in a batch → conditioned path. Mixed profile ids → one normal-path batch. | `Code/batch/server.py` |
+| F4 | Per-row voice prefill uses one batched conditioner call. | `Code/batch/batched_stream.py` |
+| F5 | Text chunk results are cached. | `Code/batch/batched_stream.py` |
+| F6 | `chunks_for()` runs in a worker thread. | `Code/batch/server.py` |
+| F7 | Default `max_batch` is 224. | `Code/batch/server.py` |
+| F8 | `/metrics` reports `request_first_chunk_ms` (first chunk per request). | `Code/batch/server.py` |
+
+### 18.5 Evidence
+
+| Check | Command (short) | Result | Key numbers | Run |
+| --- | --- | --- | --- | --- |
+| Direct B=224 | `probe_ttfa_stages --bs 224 --bursts 3` | PASS | p95 97.7 ms, 672/672 < 350 | `20261120-001821-RUN-02`, FACT-0111 |
+| 32 HTTP clients | `probe_http_load` bursts 5 x 32 | PASS | client p95 340.6 ms, server 294.0 ms, 0 err | `20261120-001820-RUN`, FACT-0110 |
+| 224 HTTP clients | `probe_http_load` bursts 2 x 224, limits 256, single profile `v1` | FAIL | client p95 7379 ms, server 3166 ms (window 700), 0 err | `20261120-001821-RUN`, FACT-0112 |
+| 224 HTTP clients (window 50) | same, `ARSENAL_BATCH_WINDOW_MS=50` | FAIL | client p95 4751 ms, server 1145 ms, queue p95 545 ms | session probe `/tmp/probe224doc.log` |
+
+All runs: RTF < 1.0, no model errors, one T4.
+
+### 18.6 What is not solved
+
+| Item | State | Reason |
+| --- | --- | --- |
+| 224-client HTTP p95 <= 350 ms | NOT SOLVED | Head-of-line blocking and ingress spread. |
+| Server `request_first_chunk_ms` p95 <= 350 ms at 224 | NOT SOLVED | Best observed p95 1145 ms (window 50). Jobs wait for a running batch. |
+| Client/server timing gap (~3 s) | NOT SOLVED | Probe and server share 4 vCPU on one host. |
+| Continuous batching | NOT IMPLEMENTED | Needs dynamic KV/Mimi state. High risk. |
+
+### 18.7 Real-life issues
+
+1. **Head-of-line blocking.** One batch runs to completion. A late first-chunk job waits 0.5–2 s. Small batches reduce wait but increase total batches.
+2. **Ingress spread.** 224 sockets arrive over time. The scheduler can wait (more rows, later start) or start (fewer rows, earlier start).
+3. **Host contention.** Load generator and server must run on separate hosts for a fair client gate.
+4. **Workload mix.** Mixed profiles, mixed lengths, and long text change the path (conditioned vs normal). Uniform-profile requests are fastest.
+5. **Tune per workload.** `ARSENAL_BATCH_WINDOW_MS`, `ARSENAL_BATCH_TARGET`, and `ARSENAL_MAX_BATCH` change the trade-off. Record env in every run.
+6. **Out of scope now.** Continuous batching, per-row RoPE, shared voice KV, L4, and Modal. These need owner permission or a new skeleton.
+
+### 18.8 Decision
+
+- Keep **32-client HTTP** as the active gate (PASS).
+- Keep **direct B=224** as the model regression gate (PASS).
+- Treat **224-client HTTP** as OPEN. Do not claim pass.
+- If 224-client HTTP is required, plan continuous batching in a new skeleton before code. Compare each run to the direct baseline.

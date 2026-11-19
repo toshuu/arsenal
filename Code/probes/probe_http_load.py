@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import statistics
 import subprocess
 import sys
 import time
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import httpx
@@ -26,6 +26,9 @@ TEXTS = [
     "नमस्ते, यह एक परीक्षण वाक्य है। This is a mixed language test for the load probe.",
 ]
 PROFILES = ["v1", "v2", None] if os.getenv("ARSENAL_LOAD_PROFILES", "1") == "1" else [None]
+LOAD_LIMITS = int(os.getenv("ARSENAL_LOAD_LIMITS", "0"))
+WARMUP = os.getenv("ARSENAL_LOAD_WARMUP", "1") == "1"
+SINGLE_PROFILE = os.getenv("ARSENAL_LOAD_SINGLE_PROFILE") or None
 
 
 def build_profiles() -> dict[str, str]:
@@ -80,56 +83,89 @@ def start_server(profiles: dict[str, str]) -> subprocess.Popen[bytes]:
     raise RuntimeError("server did not become ready")
 
 
-def one_request(client: httpx.Client, index: int) -> dict[str, object]:
+async def one_request(
+    client: httpx.AsyncClient, index: int, start_at: float
+) -> dict[str, object]:
     text = TEXTS[index % len(TEXTS)]
-    profile = PROFILES[index % len(PROFILES)]
+    profile = SINGLE_PROFILE or PROFILES[index % len(PROFILES)]
     body: dict[str, object] = {"text": text}
     if profile:
         body["voice_profile"] = profile
+    await asyncio.sleep(max(0.0, start_at - time.perf_counter()))
     start = time.perf_counter()
     first_ms = None
+    header_ms = None
     audio_bytes = 0
     status = 0
+    error = None
     try:
-        with client.stream("POST", "/tts/stream", json=body, timeout=120) as response:
+        async with client.stream("POST", "/tts/stream", json=body, timeout=120) as response:
             status = response.status_code
-            for chunk in response.iter_bytes():
+            header_ms = (time.perf_counter() - start) * 1000
+            async for chunk in response.aiter_bytes():
                 if first_ms is None:
                     first_ms = (time.perf_counter() - start) * 1000
                 audio_bytes += len(chunk)
-    except Exception:
+    except Exception as exc:
         status = 0
+        error = repr(exc)
     return {
         "status": status,
+        "error": error,
+        "header_ms": header_ms,
         "first_ms": first_ms,
         "audio_s": audio_bytes / 2 / 24000,
         "total_ms": (time.perf_counter() - start) * 1000,
     }
 
 
+async def run_bursts(client: httpx.AsyncClient, result: dict[str, object]) -> list[dict[str, object]]:
+    if WARMUP:
+        await asyncio.gather(*(client.get("/health") for _ in range(PER_BURST)))
+        result["warmup"] = PER_BURST
+    rows: list[dict[str, object]] = []
+    for burst in range(BURSTS):
+        start = time.perf_counter()
+        start_at = time.perf_counter() + 0.05
+        batch = await asyncio.gather(
+            *(
+                one_request(client, burst * PER_BURST + index, start_at)
+                for index in range(PER_BURST)
+            )
+        )
+        wall = time.perf_counter() - start
+        rows.extend(batch)
+        audio_s = sum(float(r["audio_s"]) for r in batch)
+        result[f"burst_{burst}_wall_s"] = round(wall, 3)
+        result[f"burst_{burst}_rtf"] = round(wall / audio_s, 3) if audio_s else 0
+        result[f"burst_{burst}_ok"] = all(r["status"] == 200 for r in batch)
+    return rows
+
+
 def main() -> int:
     profiles = build_profiles()
     proc = start_server(profiles)
-    result: dict[str, object] = {"bursts": BURSTS, "per_burst": PER_BURST}
-    rows: list[dict[str, object]] = []
+    result: dict[str, object] = {
+        "bursts": BURSTS,
+        "per_burst": PER_BURST,
+        "load_limits": LOAD_LIMITS or "default",
+        "warmup": WARMUP,
+        "single_profile": SINGLE_PROFILE,
+    }
+    client_kwargs: dict[str, object] = {"base_url": BASE, "timeout": 60}
+    if LOAD_LIMITS > 0:
+        client_kwargs["limits"] = httpx.Limits(
+            max_connections=LOAD_LIMITS, max_keepalive_connections=LOAD_LIMITS
+        )
+
+    async def run() -> tuple[list[dict[str, object]], dict[str, object]]:
+        async with httpx.AsyncClient(**client_kwargs) as client:
+            rows = await run_bursts(client, result)
+            metrics = (await client.get("/metrics")).json()["metrics"]
+        return rows, metrics
+
     try:
-        with httpx.Client(base_url=BASE, timeout=60) as client:
-            for burst in range(BURSTS):
-                start = time.perf_counter()
-                with ThreadPoolExecutor(max_workers=PER_BURST) as pool:
-                    batch = list(
-                        pool.map(
-                            lambda i: one_request(client, burst * PER_BURST + i),
-                            range(PER_BURST),
-                        )
-                    )
-                wall = time.perf_counter() - start
-                rows.extend(batch)
-                audio_s = sum(float(r["audio_s"]) for r in batch)
-                result[f"burst_{burst}_wall_s"] = round(wall, 3)
-                result[f"burst_{burst}_rtf"] = round(wall / audio_s, 3) if audio_s else 0
-                result[f"burst_{burst}_ok"] = all(r["status"] == 200 for r in batch)
-            metrics = client.get("/metrics").json()["metrics"]
+        rows, metrics = asyncio.run(run())
     finally:
         proc.terminate()
         try:
@@ -137,9 +173,17 @@ def main() -> int:
         except subprocess.TimeoutExpired:
             proc.kill()
     firsts = sorted(float(r["first_ms"]) for r in rows if r["first_ms"] is not None)
+    headers = sorted(float(r["header_ms"]) for r in rows if r["header_ms"] is not None)
     result["requests"] = len(rows)
+    result["header_p50_ms"] = round(statistics.median(headers), 2) if headers else 0
+    result["header_p95_ms"] = (
+        round(headers[min(len(headers) - 1, int(len(headers) * 0.95))], 2)
+        if headers
+        else 0
+    )
     result["status_200"] = sum(r["status"] == 200 for r in rows)
     result["errors"] = len(rows) - result["status_200"]
+    result["error_values"] = [r["error"] for r in rows if r.get("error")]
     result["first_p50_ms"] = round(statistics.median(firsts), 2) if firsts else 0
     result["first_p95_ms"] = (
         round(firsts[min(len(firsts) - 1, int(len(firsts) * 0.95))], 2) if firsts else 0

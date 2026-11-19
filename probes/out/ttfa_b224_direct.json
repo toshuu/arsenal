@@ -1,0 +1,98 @@
+{
+  "probe": "probe_ttfa_stages",
+  "mode": "separate-process load generator, one server child",
+  "gpu_name": "Tesla T4",
+  "bs": [
+    224
+  ],
+  "bursts": 3,
+  "rounds": 1,
+  "threshold_ms": 350.0,
+  "frames": 24,
+  "fp16_mimi": true,
+  "decode_group": 1,
+  "errors": [],
+  "stages": {
+    "224": {
+      "queue_ms": {
+        "p50": 1054.415,
+        "p95": 1082.569,
+        "mean": 1060.053,
+        "max": 1082.569
+      },
+      "prep_ms": {
+        "p50": 7.037,
+        "p95": 7.338,
+        "mean": 6.125,
+        "max": 7.338
+      },
+      "state_ms": {
+        "p50": 0.818,
+        "p95": 0.874,
+        "mean": 0.833,
+        "max": 0.874
+      },
+      "cond_ms": {
+        "p50": 82.812,
+        "p95": 84.095,
+        "mean": 82.785,
+        "max": 84.095
+      },
+      "flow0_ms": {
+        "p50": 32.319,
+        "p95": 32.367,
+        "mean": 32.075,
+        "max": 32.367
+      },
+      "mimi0_ms": {
+        "p50": 10.197,
+        "p95": 10.341,
+        "mean": 10.193,
+        "max": 10.341
+      },
+      "emit_ms": {
+        "p50": -1101.485,
+        "p95": -1087.24,
+        "mean": -1102.91,
+        "max": -1087.074
+      },
+      "ttfa_ms": {
+        "p50": 86.015,
+        "p95": 97.748,
+        "mean": 89.156,
+        "max": 98.105
+      },
+      "compute_ms": {
+        "p50": -968.401,
+        "p95": -958.279,
+        "mean": -970.899,
+        "max": -958.113
+      },
+      "gap_ms": {
+        "p50": 0.002,
+        "p95": 0.003,
+        "mean": 0.002,
+        "max": 0.003
+      },
+      "under": 672,
+      "total": 672,
+      "under_pct": 100.0,
+      "steady_ms": {
+        "p50": 43.931,
+        "p95": 44.225,
+        "mean": 43.935,
+        "max": 44.257
+      },
+      "peak_vram_mb": 2625.2763671875
+    }
+  },
+  "util": {
+    "gpu_mean": 84.85,
+    "gpu_max": 92.0,
+    "cpu_mean": 36.26,
+    "cpu_max": 69.3069306930693,
+    "samples": 26
+  },
+  "done": true,
+  "generated_at": "2026-11-19T18:37:47+0000"
+}

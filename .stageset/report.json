@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T16:13:11Z",
+  "generated_at": "2026-11-19T19:06:34Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -8,10 +8,10 @@
   },
   "totals": {
     "skeletons": 17,
-    "done": 15,
-    "waiting": 1,
+    "done": 14,
+    "waiting": 2,
     "draft": 1,
-    "sessions": 83,
+    "sessions": 84,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -57,10 +57,10 @@
       "id": "server",
       "path": "Skeletons/Code/batch/server.py",
       "title": "Implementation: HTTP serving layer",
-      "status": "DONE",
-      "spec_revision": 8,
+      "status": "IN_PROGRESS",
+      "spec_revision": 9,
       "implemented_revision": 8,
-      "phase": "done"
+      "phase": "waiting"
     },
     {
       "id": "shared_prefix",
@@ -103,7 +103,7 @@
       "path": "Skeletons/Probes/probe_http_load_224.md",
       "title": "Probe: fix and recheck 224-client burst",
       "status": "READY",
-      "spec_revision": 2,
+      "spec_revision": 3,
       "implemented_revision": 1,
       "phase": "waiting"
     },
@@ -1394,9 +1394,20 @@
       "date": "2026-11-19T21:42:00+05:30",
       "type": "push",
       "summary": "Push the owner dislike point and refreshed report JSON."
+    },
+    {
+      "id": "20261120-004000-CODING",
+      "date": "2026-11-20T00:40:00+05:30",
+      "type": "coding",
+      "summary": "Diagnose post-dislike regressions, recover the 32-client gate, and define the 224-client limit."
     }
   ],
   "commits": [
+    {
+      "sha": "e44e624",
+      "date": "2026-11-19T16:13:11+00:00",
+      "subject": "StageSet: record dislike point push"
+    },
     {
       "sha": "d47025f",
       "date": "2026-11-19T16:13:11+00:00",
@@ -1591,11 +1602,6 @@
       "sha": "e5d8514",
       "date": "2026-11-16T08:07:56+00:00",
       "subject": "Fix overlap module metadata header"
-    },
-    {
-      "sha": "34055ab",
-      "date": "2026-11-16T08:05:39+00:00",
-      "subject": "StageSet: TTFA levers E1/E2/E4, M2 negative result"
     }
   ]
 }

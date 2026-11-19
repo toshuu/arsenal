@@ -3,12 +3,12 @@
 @stageset kind: IMPLEMENTATION
 @stageset target: Code/batch/server.py
 @stageset source_idea: IDEA-0005
-@stageset status: DONE
+@stageset status: IN_PROGRESS
 @stageset priority: P0
-@stageset spec_revision: 8
+@stageset spec_revision: 9
 @stageset implemented_revision: 8
 @stageset planned_in: .stageset/sessions/coding-production-readiness-fixes.md
-@stageset last_updated_in: .stageset/sessions/coding-batch-target.md
+@stageset last_updated_in: .stageset/sessions/coding-burst-recovery.md
 @stageset implemented_in: .stageset/sessions/coding-batch-target.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
@@ -31,10 +31,11 @@ Report health and metrics.
 - With `voice_profile`, the server loads that id from `ARSENAL_VOICE_PROFILES`.
 - Mixed profile ids in one call use the normal path with per-row voice tensors.
 - Each text is submitted one chunk at a time. First chunks batch before continuations.
-- The batch window is `ARSENAL_BATCH_WINDOW_MS` (default 300 ms, target 32 jobs).
+- The worker drains all waiting jobs before it uses the time window.
+- The time window is `ARSENAL_BATCH_WINDOW_MS` (default 150 ms) and the low-load fill target is `ARSENAL_BATCH_TARGET` (default 32 jobs).
 - `GET /health` returns readiness, queue depth, and counters.
 - The queue is bounded by `ARSENAL_MAX_QUEUE` (default 256).
-- The worker takes at most `ARSENAL_MAX_BATCH` jobs per call (default 192).
+- The worker takes at most `ARSENAL_MAX_BATCH` jobs per call (default 224).
 - One call has at most `ARSENAL_MAX_ROWS` texts (default 224).
 - Boot runs prewarm B=192, 1 frame, unless `ARSENAL_PREWARM=0`.
 - A `max_frames` above `ARSENAL_MAX_FRAMES` returns 413 before submit.
@@ -45,7 +46,10 @@ Report health and metrics.
 - A client disconnect sets the job stop event and drops queued work.
 - An unknown `voice_profile` returns 400.
 - A profile call with mixed first-chunk token lengths uses the normal voice path.
-- The worker groups jobs by profile id. The engine picks the path per call.
+- A batch with one profile id uses the conditioned path. A batch with mixed profile ids uses the normal path with per-row voices.
+- Per-row voice prefill uses one batched text conditioner call, not one call per row.
+- Text chunk results are cached per text.
+- `request_first_chunk_ms` in `/metrics` counts only the first chunk of each request.
 
 ## Edge cases
 
@@ -76,6 +80,20 @@ Report health and metrics.
 - Predicted output: `{"ok": true, ...}`
 - Pass condition: first-chunk p95 <= 350 ms, RTF < 1.0, 0 errors.
 - Fail condition: p95 above 350 ms, RTF at or above 1.0, or any non-200 response.
+
+### CHECK-SERVER-10 - 32-client gate
+
+- Command: `ARSENAL_LOAD_BURSTS=5 ARSENAL_LOAD_PER_BURST=32 ARSENAL_POCKET_TTS=/kaggle/working/pocket-tts python Code/probes/probe_http_load.py`
+- Predicted output: `{"ok": true, "requests": 160, "p95": <= 350}`
+- Pass condition: client p95 <= 350 ms, 0 errors, RTF < 1.0. Use the saved JSON.
+- Fail condition: client p95 above 350 ms, any error, or RTF at or above 1.0.
+
+### CHECK-SERVER-11 - 224-client single-profile gate
+
+- Command: `ARSENAL_LOAD_LIMITS=256 ARSENAL_LOAD_SINGLE_PROFILE=v1 ARSENAL_MAX_BATCH=224 ARSENAL_MAX_ROWS=224 ARSENAL_BATCH_TARGET=224 ARSENAL_BATCH_WINDOW_MS=700 ARSENAL_LOAD_BURSTS=2 ARSENAL_LOAD_PER_BURST=224 ARSENAL_POCKET_TTS=/kaggle/working/pocket-tts python Code/probes/probe_http_load.py`
+- Predicted output: `{"ok": true, "requests": 448, "p95": <= 350}`
+- Pass condition: client p95 <= 350 ms, 0 errors, RTF < 1.0.
+- Fail condition: client p95 above 350 ms, any error, or RTF at or above 1.0.
 
 ### CHECK-SERVER-04 - first-chunk streaming
 

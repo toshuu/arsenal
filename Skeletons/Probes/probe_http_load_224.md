@@ -5,10 +5,10 @@
 @stageset source_idea: IDEA-0005
 @stageset status: READY
 @stageset priority: P0
-@stageset spec_revision: 2
+@stageset spec_revision: 3
 @stageset implemented_revision: 1
 @stageset planned_in: .stageset/sessions/ideation-burst-224-handoff.md
-@stageset last_updated_in: .stageset/sessions/ideation-burst-224-handoff.md
+@stageset last_updated_in: .stageset/sessions/coding-burst-recovery.md
 @stageset implemented_in: -
 @stageset blocker_ref: -
 @stageset resolution_of: -
@@ -28,7 +28,9 @@ Owner dislike point: `2026-11-19T20:50:20+05:30`. Start from the pre-dislike bas
 - Use `ARSENAL_LOAD_LIMITS=256` for 224 clients. Use default client limits for 32 clients.
 - Use `ARSENAL_MAX_BATCH=224`, `ARSENAL_MAX_ROWS=224`, `ARSENAL_BATCH_TARGET=224`.
 - Keep the priority queue and the 64-chunk stream bound.
-- Add a per-request first-chunk metric. Do not use the current all-chunk metric as the gate.
+- The server has `request_first_chunk_ms`. Use it with the client p95.
+- The probe reads `ARSENAL_LOAD_LIMITS`, uses one async client, a start barrier, and a warm pool.
+- Use `ARSENAL_LOAD_SINGLE_PROFILE=v1` to compare with the pre-dislike conditioned baseline.
 - Do not change probe client limits between compared runs.
 - Do not add per-row RoPE or shared voice KV without owner permission.
 - Write only to `Code/probes/out/` and StageSet files.
@@ -53,7 +55,7 @@ ASSUMPTION: A-31 - The fixed probe client limit is required for comparable numbe
 
 ### CHECK-LOAD-224-01 - 224-client gate
 
-- Command: `ARSENAL_LOAD_LIMITS=256 ARSENAL_MAX_BATCH=224 ARSENAL_MAX_ROWS=224 ARSENAL_BATCH_TARGET=224 ARSENAL_LOAD_BURSTS=2 ARSENAL_LOAD_PER_BURST=224 ARSENAL_POCKET_TTS=/kaggle/working/pocket-tts python Code/probes/probe_http_load.py`
+- Command: `ARSENAL_LOAD_LIMITS=256 ARSENAL_LOAD_SINGLE_PROFILE=v1 ARSENAL_MAX_BATCH=224 ARSENAL_MAX_ROWS=224 ARSENAL_BATCH_TARGET=224 ARSENAL_BATCH_WINDOW_MS=700 ARSENAL_LOAD_BURSTS=2 ARSENAL_LOAD_PER_BURST=224 ARSENAL_POCKET_TTS=/kaggle/working/pocket-tts python Code/probes/probe_http_load.py`
 - Predicted output: `{"ok": true, "requests": 448, "p95": <= 350}`
 - Pass condition: saved JSON has p95 <= 350, 0 errors, RTF < 1.0.
 - Fail condition: p95 above 350, any non-200 response, or RTF at or above 1.0.
@@ -65,9 +67,18 @@ ASSUMPTION: A-31 - The fixed probe client limit is required for comparable numbe
 - Pass condition: p95 <= 350 and 0 errors.
 - Fail condition: p95 above 350 or any non-200 response.
 
+## Current evidence (2026-11-20)
+
+- Direct B=224 model first emit: p95 97.7 ms (FACT-0111).
+- 32-client HTTP gate: PASS, client p95 340.6 ms (FACT-0110).
+- 224-client HTTP gate: FAIL, client p95 7379 ms, server p95 3166 ms (FACT-0112).
+- The model is not the limit. The queue tail and HTTP ingress are the limit.
+- `probes/out/probe_b224_async_single.json` holds the failing run.
+- `probes/out/probe_b32_async_final.json` holds the passing run.
+
 ## References
 
-- `Ideas/IDEA-0005-long-text-and-production-readiness.md`, sections 14 to 16.
-- `FACT-0107`, `FACT-0108`.
+- `Ideas/IDEA-0005-long-text-and-production-readiness.md`, sections 14 to 18.
+- `FACT-0110`, `FACT-0111`, `FACT-0112`, `FACT-0113`.
 - `Code/probes/probe_http_load.py`.
-- `probes/out/probe_http_load_b224_w40_final.json`.
+- `probes/out/probe_b224_async_single.json`.

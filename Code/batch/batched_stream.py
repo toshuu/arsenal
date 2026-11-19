@@ -109,6 +109,7 @@ class BatchedStream:
         self._loop_ms = 0.0
         self.last_profile = None
         self._ids_cache: dict[str, list[int]] = {}
+        self._chunk_cache: dict[str, list[str]] = {}
         self.last_truncated_rows: list[int] = []
         self._pool = ThreadPoolExecutor(max_workers=4)
         self.voice: torch.Tensor | None = None
@@ -280,6 +281,9 @@ class BatchedStream:
         return self._greedy_split(text, self._fits_frame_budget)
 
     def _text_chunks(self, text: str) -> list[str]:
+        cached = self._chunk_cache.get(text)
+        if cached is not None:
+            return list(cached)
         tokenizer = self.model.flow_lm.conditioner.tokenizer
         chunks = self._split(text, self._chunk_token_limit()) or [text]
         if self.max_first_tokens is not None and chunks:
@@ -298,7 +302,10 @@ class BatchedStream:
         fitted: list[str] = []
         for chunk in chunks:
             fitted.extend(self._fit_chunk(chunk))
-        return fitted
+        if len(self._chunk_cache) >= 4096:
+            self._chunk_cache.clear()
+        self._chunk_cache[text] = fitted
+        return list(fitted)
 
     def _text_ids(self, text: str) -> list[int]:
         cached = self._ids_cache.get(text)
@@ -335,16 +342,16 @@ class BatchedStream:
     def _build_prefixes_with_voices(
         self, texts: list[str], voices: list[torch.Tensor]
     ) -> tuple[torch.Tensor, torch.Tensor, list[int]]:
+        text_batch, text_pad, token_counts = self._encode_texts(texts)
         rows: list[torch.Tensor] = []
         lengths: list[int] = []
-        token_counts: list[int] = []
-        for text, voice in zip(texts, voices, strict=True):
-            ids = self._text_ids(text)
-            tokens = torch.tensor([ids], dtype=torch.long, device=self.device)
-            text_emb = self.model.flow_lm.conditioner(tokens)[0]
-            rows.append(torch.cat([voice, text_emb], dim=0))
-            lengths.append(voice.shape[0] + text_emb.shape[0])
-            token_counts.append(len(ids))
+        for index, (text_emb, voice) in enumerate(
+            zip(text_batch, voices, strict=True)
+        ):
+            keep = text_emb.shape[0] - int(text_pad[index])
+            text_only = text_emb[text_emb.shape[0] - keep :]
+            rows.append(torch.cat([voice, text_only], dim=0))
+            lengths.append(voice.shape[0] + keep)
         width = max(lengths)
         dim = rows[0].shape[1]
         batch = torch.zeros(len(rows), width, dim, device=self.device, dtype=rows[0].dtype)

@@ -6,7 +6,8 @@ This file is generated. Do not edit it by hand.
 
 ## Ready skeletons
 
-- [P0] `Skeletons/Probes/probe_http_load_224.md` (revision 2, implemented 1).
+- [P0] `Skeletons/Code/batch/server.py` (revision 9, implemented 8).
+- [P0] `Skeletons/Probes/probe_http_load_224.md` (revision 3, implemented 1).
 
 ## Open blockers
 
@@ -14,22 +15,18 @@ This file is generated. Do not edit it by hand.
 
 ## Failing checks
 
-- `20261119-211244-RUN` — `Skeletons/Code/batch/server.py`, `CHECK-SERVER-10`, attempt 1.
-- `20261119-213050-RUN` — `Skeletons/Code/batch/server.py`, `CHECK-SERVER-11`, attempt 1.
+- `20261120-001821-RUN` — `Skeletons/Code/batch/server.py`, `CHECK-SERVER-11`, attempt 1.
 
 ## Last 5 sessions
 
+- 20261120-004000-CODING · CODING · Diagnose post-dislike regressions, recover the 32-client gate, and define the 224-client limit.
 - 20261119-214200-PUSH · PUSH · Push the owner dislike point and refreshed report JSON.
 - 20261119-214148-MAINTENANCE · MAINTENANCE · Record the owner dislike point after the B224 under-120 ms baseline.
 - 20261119-214000-PUSH · PUSH · Push the 224-client burst handoff and READY skeleton.
 - 20261119-213900-IDEATION · IDEATION · Handoff for the failed 224-client burst gate. Record traps, evidence, and a READY skeleton.
-- 20261119-213300-PUSH · PUSH · Push target-driven batching and final load evidence.
 
 ## Verified environment facts
 
-| FACT-0085 | 2026-11-16 | Failed levers (numbers): M2 overlap steady B192 69.99 vs 70.68 ms (no gain). decode_group 2/4 steady worse 70.7→75.4/75.9 ms (B192). Prewarm +636 ms boot over 100 ms rule (accepted). Full Mimi cast broke parity corr 0.981 (fixed to decoder-only corr 0.9999991). CUDA graphs blocked by state (no replay). EOS threshold: other still 8–10 ms. Frame-growth long test OOM. Two T4 processes: 112+112 p95 119.1/134.1 RTF 0.83/0.88, 128+128 p95 139.2/118.9 RTF 0.90/0.95 (worse than single B224). B256 soak RTF 0.902>0.85. Prefetch no boot gain (5685 vs 5561 ms). CUDA cache no gain. | Project | CURRENT | `.stageset/facts.md` |
-| FACT-0086 | 2026-11-16 | Open items: long-text chunker with carried state (guard `max_frames<=192` at B224 only); Modal build not started (SSLD-017 planned); L4 re-run (B224/256/288). Voice cache prebuild script exists, not wired to image build. | Project | CURRENT | `LivingDocs/SSLD-017-modal-deployment-plan.md` |
-| FACT-0087 | 2026-11-16 | B=224 mini soak (30 bursts, conditioned profile, FP16 weights, prewarm 224): p50 108.4 ms, p95 119.9 ms, max 129.5 ms, 6720/6720 under 350, steady p50 59.3 ms, RTF 0.741. | Project | CURRENT | `Code/probes/out/probe_b224_soak5x.json` |
 | FACT-0088 | 2026-11-19 | Full text is split into all chunks and generated in order. A 69-token, 3-sentence text gives 3 chunks with 0 missing words. Full audio is 10.8 s. The first chunk alone is 2.72 s. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN.md` |
 | FACT-0089 | 2026-11-19 | The frame guard is enforced. `_stream_single` raises `ValueError` when `max_frames` is above `max_allowed_frames`, before state allocation. `_text_chunks` raises when the frame budget cannot hold one chunk. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-02.md` |
 | FACT-0090 | 2026-11-19 | Auto `max_frames` is no longer capped at 128. It comes from the token estimate. An explicit `max_frames` records `last_truncated_rows` and does not raise. An auto budget that ends before EOS raises `RuntimeError`. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-03.md` |
@@ -44,9 +41,12 @@ This file is generated. Do not edit it by hand.
 | FACT-0101 | 2026-11-19 | `/tts/stream` has a 64-chunk bound. A full queue sets the job stop event and counts one `slow_clients` event. A slow reader probe delivered fewer chunks than the engine produced, with queue depth 0. | Project | CURRENT | `.stageset/runs/20261119-203427-RUN.md` |
 | FACT-0102 | 2026-11-19 | B=224 with `max_frames=192` fits on T4 after stray servers are stopped. Peak allocated 12.303 GiB, reserved 12.475 GiB, free 1.952 GiB. All 224 rows produce audio. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN.md` |
 | FACT-0104 | 2026-11-19 | Mixed voice profiles can run in one normal-path GPU call with per-row voice tensors. The conditioned fast path still needs one profile id and uniform first-chunk token lengths. The server exposes `last_errors` in `/metrics`. All earlier probes pass after the scheduler change. | Project | CURRENT | `.stageset/runs/20261119-205020-RUN-02.md`, `.stageset/runs/20261119-205020-RUN-03.md` |
-| FACT-0107 | 2026-11-19 | The batch worker waits for 32 jobs or a 300 ms cap. First chunks have priority. Three 32-client runs pass: p95 205.76 ms, 289.30 ms, 191.96 ms. Final p50 161.64 ms. | Project | CURRENT | `.stageset/runs/20261119-213049-RUN.md` |
 | FACT-0108 | 2026-11-19 | B=224 with target 224 and a 40 ms window still fails. 448 requests: p50 7854.12 ms, p95 13574.29 ms, queue p50 1630.16 ms, 0 errors. A 40 ms window is not valid for 224-client bursts. | Project | CURRENT | `.stageset/runs/20261119-213050-RUN.md` |
 | FACT-0109 | 2026-11-19 | Owner decision: dislike point is `2026-11-19T20:50:20+05:30`. Before it, the verified T4 figure was B=224 p95 112.2 ms, max 118.6 ms, RTF 0.824, plus a 30-burst p95 119.9 ms. Everything after this point is disliked unless revalidated against that baseline. A secondary checkpoint is `2026-11-19T20:11:00+05:30`, when the server default max batch became 192. | Project | CURRENT | `.stageset/sessions/maintenance-owner-dislike-point.md`, `Ideas/IDEA-0005-long-text-and-production-readiness.md` |
+| FACT-0110 | 2026-11-20 | The 32-client HTTP gate passes after the burst recovery: 160 requests, client first p95 340.55 ms, p50 153.33 ms, server request-first p95 293.97 ms, 0 errors, RTF below 1.0. Changes: async probe with fixed `ARSENAL_LOAD_LIMITS`, drain-first batching, one conditioned group when all profiles match else one mixed group, one batched conditioner call for per-row voices, text chunk cache, and `chunks_for` off the event loop. | Project | CURRENT | `.stageset/runs/20261120-001820-RUN.md` |
+| FACT-0111 | 2026-11-20 | The direct B=224 model path did not regress. Three bursts of 224 rows give first-emit p95 97.748 ms, p50 86.015 ms, max 98.105 ms, 672/672 rows under 350 ms. This is below the pre-dislike 112.2 ms baseline. | Project | CURRENT | `.stageset/runs/20261120-001821-RUN-02.md` |
+| FACT-0112 | 2026-11-20 | The 224-client HTTP gate still fails with one conditioned profile. 448 requests: client first p50 5027.67 ms, p95 7379.23 ms, 0 errors. Server request-first p50 1730.93 ms, p95 3166.14 ms. Server queue p50 1157.38 ms. The client sees the first chunk about 3.3 s after the server sends it. The model is not the limit. The limit is HTTP ingress plus head-of-line blocking on one 4-vCPU host. | Project | CURRENT | `.stageset/runs/20261120-001821-RUN.md` |
+| FACT-0113 | 2026-11-19 | Post-dislike regressions found in the server and probe. `_group_key` returned `None`, so all profiles mixed and used the slow normal path. `ARSENAL_BATCH_TARGET` default 32 capped 224-client batches at 32 rows. The probe lost `httpx.Limits` and never read `ARSENAL_LOAD_LIMITS`. `_build_prefixes_with_voices` made one conditioner GPU call per row. | Project | CURRENT | `.stageset/runs/20261120-001820-RUN.md`, `.stageset/runs/20261120-001821-RUN.md` |
 
 ## Read next
 
