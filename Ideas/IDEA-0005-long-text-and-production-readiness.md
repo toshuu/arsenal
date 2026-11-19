@@ -304,3 +304,47 @@ Carried state is not implemented. Keep independent chunks unless owner listening
 - Target-driven batching is in place. The worker waits for 32 jobs or a 300 ms cap. First chunks have priority.
 - Three 32-client runs pass. Client p95: 205.76 ms, 289.30 ms, 191.96 ms (FACT-0107).
 - B=224 with a 40 ms window fails. Client p95 13574.29 ms (FACT-0108). 224-client bursts remain open.
+
+## 16. Handoff for next coding session (2026-11-19)
+
+### Goal
+
+High concurrency, low latency, good reliability. Do not move to L4 or Modal until the 224-client burst gate is fixed or formally descoped.
+
+### Current state
+
+- 32-client gate: PASS. Target-driven batching. Three runs: p95 205.76, 289.30, 191.96 ms. FACT-0107.
+- 224-client gate: FAIL. With 224 clients, target 224, and a 40 ms window, p50 7854.12 ms and p95 13574.29 ms. FACT-0108.
+- B=224 memory is safe. Peak 12.303 GiB, free 1.952 GiB at max_frames=192. FACT-0102.
+- All small probes pass: server, backpressure, long text, joins.
+
+### Traps already found
+
+1. Do not compare runs with different probe client limits. Adding `httpx.Limits(max_connections=256)` changed timing. Earlier 100 ms results were not comparable.
+2. A 100 ms batch window is flaky at 32 clients. Some runs passed at p95 226 ms; others failed at p95 1994 ms.
+3. A fixed 40 ms window is too short for 224 arrivals. Queue p50 is 1630 ms. Do not widen the window above 350 ms as a fix; that eats the TTFA budget.
+4. Server `/metrics` `first_chunk_ms` counts all chunks, not only the first chunk of each request. Use client TTFB as the gate.
+5. First chunks must have priority. Without it they queue behind continuation chunks.
+
+### Next work
+
+1. Fix the 224-client burst gate. Target p95 first chunk <= 350 ms. Keep RTF below 1.0 and 0 errors.
+2. Add per-request TTFA metrics that count only the first chunk of each request.
+3. Test with a fixed probe setup. For B32 use default client limits. For B224 use `ARSENAL_LOAD_LIMITS=256`. Record this in the run report.
+4. Consider an admission rule that fills a batch by rows, not by a fixed wait alone. Do not add per-row RoPE or shared voice KV without owner permission.
+5. Keep the 40 ms failure as a negative fact. Do not delete FACT-0108.
+
+### Key files
+
+- `Code/batch/server.py`: worker batching, priority queue, stream queue bound.
+- `Code/batch/batched_stream.py`: per-row voice batching.
+- `Code/probes/probe_http_load.py`: HTTP load probe.
+- `probes/out/probe_http_load_b32_w300_final.json`: passing 32-client evidence.
+- `probes/out/probe_http_load_b224_w40_final.json`: failing 224-client evidence.
+- `Skeletons/Probes/probe_http_load_224.md`: READY skeleton for the next session.
+
+### Do not reopen
+
+- True mixed-profile GPU batch with per-row RoPE or shared voice KV. Permission gate required.
+- Carried-state chunking. Objective joins pass. Owner listening gate is still pending.
+- L4 and Modal. Not in scope for this handoff.

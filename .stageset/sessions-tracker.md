@@ -85,11 +85,12 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-211400-PUSH | PUSH | 2026-11-19T21:14:00+05:30 | Push batch window tuning and B224 40 ms evidence. | .stageset/sessions/event-push-batch-window-tuning.md | IDEA-0005; FACT-0105; FACT-0106; 8909d78 | 8909d78 |
 | 20261119-213200-CODING | CODING | 2026-11-19T21:32:00+05:30 | Add target-driven batching. Set window to 300 ms with target 32. Recheck B224 with 40 ms. | .stageset/sessions/coding-batch-target.md | IDEA-0005; FACT-0107; FACT-0108 | 284618c |
 | 20261119-213300-PUSH | PUSH | 2026-11-19T21:33:00+05:30 | Push target-driven batching and final load evidence. | .stageset/sessions/event-push-batch-target.md | IDEA-0005; FACT-0107; FACT-0108; 284618c | 284618c |
+| 20261119-213900-IDEATION | IDEATION | 2026-11-19T21:39:00+05:30 | Handoff for the failed 224-client burst gate. Record traps, evidence, and a READY skeleton. | .stageset/sessions/ideation-burst-224-handoff.md | IDEA-0005; FACT-0107; FACT-0108 | - |
 
 ## Totals
 
 - CODING: 40.
-- IDEATION: 9.
+- IDEATION: 10.
 - MAINTENANCE: 8.
 - PROBE: 0.
 - PUSH: 22.

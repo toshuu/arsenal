@@ -6,7 +6,7 @@ This file is generated. Do not edit it by hand.
 
 ## Ready skeletons
 
-- None.
+- [P0] `Skeletons/Probes/probe_http_load_224.md` (revision 2, implemented 1).
 
 ## Open blockers
 
@@ -19,11 +19,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-213900-IDEATION · IDEATION · Handoff for the failed 224-client burst gate. Record traps, evidence, and a READY skeleton.
 - 20261119-213300-PUSH · PUSH · Push target-driven batching and final load evidence.
 - 20261119-213200-CODING · CODING · Add target-driven batching. Set window to 300 ms with target 32. Recheck B224 with 40 ms.
 - 20261119-211400-PUSH · PUSH · Push batch window tuning and B224 40 ms evidence.
 - 20261119-211300-CODING · CODING · Test B=224 with a 40 ms batch window. Add first-chunk priority and set the default window to 180 ms.
-- 20261119-205500-PUSH · PUSH · Push updated chunk join evidence paths.
 
 ## Verified environment facts
 
