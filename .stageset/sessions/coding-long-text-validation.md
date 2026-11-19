@@ -4,7 +4,7 @@ time: 2026-11-19T20:34:00+05:30
 summary: Add probes for long-text edges, long text over HTTP with a profile, and chunk joins.
 paths: Code/probes/check_long_text_edges.py; Code/probes/check_long_text_http.py; Code/probes/check_chunk_joins.py; .stageset/facts.md
 related: IDEA-0005; FACT-0098; FACT-0099; FACT-0100
-commit: -
+commit: 3ab3fee
 remote: -
 branch: -
 ---

@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T14:51:36Z",
+  "generated_at": "2026-11-19T15:03:47Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 15,
     "waiting": 0,
     "draft": 1,
-    "sessions": 68,
+    "sessions": 70,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -1295,9 +1295,31 @@
       "date": "2026-11-19T20:22:00+05:30",
       "type": "push",
       "summary": "Push the production validation plan and the refreshed StageSet report."
+    },
+    {
+      "id": "20261119-203400-CODING",
+      "date": "2026-11-19T20:34:00+05:30",
+      "type": "coding",
+      "summary": "Add probes for long-text edges, long text over HTTP with a profile, and chunk joins."
+    },
+    {
+      "id": "20261119-203500-PUSH",
+      "date": "2026-11-19T20:35:00+05:30",
+      "type": "push",
+      "summary": "Push long-text validation probes and evidence."
     }
   ],
   "commits": [
+    {
+      "sha": "3ab3fee",
+      "date": "2026-11-19T15:03:47+00:00",
+      "subject": "Probe long-text edges, HTTP profile path, and chunk joins"
+    },
+    {
+      "sha": "687cc6e",
+      "date": "2026-11-19T14:51:36+00:00",
+      "subject": "StageSet: record production validation plan push"
+    },
     {
       "sha": "304bb50",
       "date": "2026-11-19T14:51:30+00:00",
@@ -1487,16 +1509,6 @@
       "sha": "a5653f1",
       "date": "2026-11-15T16:07:33+00:00",
       "subject": "StageSet: document Phase D status and current B"
-    },
-    {
-      "sha": "34ee00e",
-      "date": "2026-11-15T16:02:40+00:00",
-      "subject": "Phase D V9: add decode_group to BatchedStream (default 1)"
-    },
-    {
-      "sha": "fb44892",
-      "date": "2026-11-15T15:48:56+00:00",
-      "subject": "Doc: KV-reuse batching requires uniform text length"
     }
   ]
 }
