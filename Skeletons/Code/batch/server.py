@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0005
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 4
-@stageset implemented_revision: 4
+@stageset spec_revision: 5
+@stageset implemented_revision: 5
 @stageset planned_in: .stageset/sessions/coding-production-readiness-fixes.md
-@stageset last_updated_in: .stageset/sessions/coding-server-throughput-defaults.md
-@stageset implemented_in: .stageset/sessions/coding-server-throughput-defaults.md
+@stageset last_updated_in: .stageset/sessions/coding-streaming-endpoint.md
+@stageset implemented_in: .stageset/sessions/coding-streaming-endpoint.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -25,6 +25,8 @@ Report health and metrics.
 
 - `POST /tts` takes `{text, max_frames?, voice_profile?}` and returns `audio/wav`.
 - `POST /tts/batch` takes `{texts, max_frames?, voice_profile?}` and returns a JSON list of base64 WAV items.
+- `POST /tts/stream` takes the same body as `/tts` and returns raw 16-bit PCM (`audio/L16`) as chunks arrive.
+- `/metrics` reports p50/p95/max for queue, first chunk, and total time.
 - Without `voice_profile`, the server uses the reference voice clip on the normal path.
 - With `voice_profile`, the server loads that id from `ARSENAL_VOICE_PROFILES` and uses its conditioned state.
 - `GET /health` returns readiness, queue depth, and counters.
@@ -35,6 +37,7 @@ Report health and metrics.
 - A `max_frames` above `ARSENAL_MAX_FRAMES` returns 413 before submit.
 - A full queue returns 503. An empty text returns 422. A long text returns 413.
 - A request above `ARSENAL_TIMEOUT_S` returns 504.
+- A stream sends the first PCM chunk before generation ends. A client disconnect stops the job.
 - Frames over the safe limit return 413. A long text that cannot fit the frame budget returns 413.
 - A client disconnect sets the job stop event and drops queued work.
 - An unknown `voice_profile` returns 400.
@@ -63,6 +66,13 @@ Report health and metrics.
 - Predicted output: `/health` returns 200 after load, and `POST /tts` returns 200 with `audio/wav`.
 - Pass condition: a run report shows `/health` 200, default `/tts` 200 with `audio/wav`, profile `/tts` 200 with `audio/wav`, and unknown profile 400.
 - Fail condition: readiness is false, the WAV response is empty, or the profile select fails.
+
+### CHECK-SERVER-04 - first-chunk streaming
+
+- Command: `curl /tts/stream` with a long text, then `curl /metrics`.
+- Predicted output: status 200, TTFB far below total time, and `first_chunk_ms.count` above zero.
+- Pass condition: a run report shows TTFB below 350 ms and full time above TTFB.
+- Fail condition: the stream waits for the full audio, or metrics have no first-chunk samples.
 
 ### CHECK-SERVER-03 - profile image wiring
 

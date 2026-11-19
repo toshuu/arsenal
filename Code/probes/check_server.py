@@ -28,8 +28,11 @@ class FakeEngine:
     def batch_key(self, text, profile_id=None):
         return len(text.split())
 
-    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, on_chunk=None):
         type(self).last_profile = profile_id
+        if on_chunk is not None:
+            for row, _ in enumerate(texts):
+                on_chunk(row, np.zeros(2400, dtype=np.float32), 0.0)
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
 
 
@@ -40,7 +43,7 @@ class BlockingEngine:
         self.started = threading.Event()
         self.release = threading.Event()
 
-    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, on_chunk=None):
         self.started.set()
         self.release.wait(5)
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
@@ -49,7 +52,7 @@ class BlockingEngine:
 class SlowEngine:
     ready = True
 
-    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None):
+    def synthesize(self, texts, max_frames=None, stop=None, profile_id=None, on_chunk=None):
         time.sleep(0.3)
         return [np.zeros(2400, dtype=np.float32) for _ in texts]
 
@@ -87,6 +90,16 @@ def main() -> int:
     )
     result["mixed_profile_ok"] = (
         mixed.status_code == 200 and len(mixed.json().get("audio", [])) == 2
+    )
+
+    stream = client.post("/tts/stream", json={"text": "Hi."})
+    result["stream_ok"] = (
+        stream.status_code == 200
+        and len(stream.content) > 0
+        and stream.headers.get("content-type", "").startswith("audio/L16")
+    )
+    result["first_chunk_metrics"] = (
+        client.get("/metrics").json()["metrics"]["first_chunk_ms"]["count"] > 0
     )
 
     empty = client.post("/tts", json={"text": "   "})
@@ -136,6 +149,8 @@ def main() -> int:
         and result["frames_rejected"]
         and result["timeout_status"] == 504
         and result["queue_full_ok"]
+        and result["stream_ok"]
+        and result["first_chunk_metrics"]
         and result["cancel_ok"]
     )
     out = Path(__file__).resolve().parent / "out" / "check_server.json"

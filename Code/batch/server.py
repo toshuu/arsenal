@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from typing import Any, Callable
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel, Field
 
 
@@ -29,10 +29,13 @@ class Job:
     texts: list[str]
     max_frames: int | None
     profile_id: str | None = None
+    on_chunk: Callable[..., None] | None = None
     future: Future = field(default_factory=Future)
     stop: threading.Event = field(default_factory=threading.Event)
     cancelled: bool = False
     created_at: float = field(default_factory=time.monotonic)
+    started_at: float | None = None
+    first_chunk_at: float | None = None
 
 
 @dataclass
@@ -55,12 +58,36 @@ class Metrics:
         self.completed = 0
         self.failed = 0
         self.cancelled = 0
+        self.queue_ms: list[float] = []
+        self.first_ms: list[float] = []
+        self.total_ms: list[float] = []
 
     def add(self, name: str, value: int = 1) -> None:
         with self.lock:
             setattr(self, name, getattr(self, name) + value)
 
-    def snapshot(self) -> dict[str, int]:
+    @staticmethod
+    def _stats(values: list[float]) -> dict[str, float]:
+        if not values:
+            return {"count": 0, "p50": 0.0, "p95": 0.0, "max": 0.0}
+        data = sorted(values)
+        return {
+            "count": len(data),
+            "p50": round(data[len(data) // 2], 2),
+            "p95": round(data[min(len(data) - 1, int(len(data) * 0.95))], 2),
+            "max": round(data[-1], 2),
+        }
+
+    def record(self, queue_ms: float, first_ms: float | None, total_ms: float) -> None:
+        with self.lock:
+            self.queue_ms.append(queue_ms)
+            if first_ms is not None:
+                self.first_ms.append(first_ms)
+            self.total_ms.append(total_ms)
+            for items in (self.queue_ms, self.first_ms, self.total_ms):
+                del items[:-1000]
+
+    def snapshot(self) -> dict[str, object]:
         with self.lock:
             return {
                 "accepted": self.accepted,
@@ -68,6 +95,9 @@ class Metrics:
                 "completed": self.completed,
                 "failed": self.failed,
                 "cancelled": self.cancelled,
+                "queue_ms": self._stats(self.queue_ms),
+                "first_chunk_ms": self._stats(self.first_ms),
+                "total_ms": self._stats(self.total_ms),
             }
 
 
@@ -93,9 +123,18 @@ class BatchWorker:
         return self.jobs.qsize()
 
     def submit(
-        self, texts: list[str], max_frames: int | None, profile_id: str | None = None
+        self,
+        texts: list[str],
+        max_frames: int | None,
+        profile_id: str | None = None,
+        on_chunk: Callable[..., None] | None = None,
     ) -> Job:
-        job = Job(texts=texts, max_frames=max_frames, profile_id=profile_id)
+        job = Job(
+            texts=texts,
+            max_frames=max_frames,
+            profile_id=profile_id,
+            on_chunk=on_chunk,
+        )
         if len(texts) > self.max_rows:
             self.metrics.add("rejected")
             raise QueueFull("too many rows")
@@ -151,12 +190,28 @@ class BatchWorker:
 
     def _execute_group(self, jobs: list[Job], profile_id: str | None) -> None:
         texts = [text for job in jobs for text in job.texts]
+        owners = [job for job in jobs for _ in job.texts]
         frames = [job.max_frames for job in jobs]
         max_frames = None if any(f is None for f in frames) else max(frames)
         stop = jobs[0].stop if len(jobs) == 1 else None
+        for job in jobs:
+            job.started_at = time.monotonic()
+
+        def relay(row: int, frame: Any, elapsed: float) -> None:
+            job = owners[row]
+            now = time.monotonic()
+            if job.first_chunk_at is None:
+                job.first_chunk_at = now
+            if job.on_chunk is not None:
+                job.on_chunk(frame, elapsed)
+
         try:
             audio = self.engine.synthesize(
-                texts, max_frames=max_frames, stop=stop, profile_id=profile_id
+                texts,
+                max_frames=max_frames,
+                stop=stop,
+                profile_id=profile_id,
+                on_chunk=relay,
             )
         except Exception as exc:
             self.metrics.add("failed")
@@ -169,12 +224,29 @@ class BatchWorker:
             count = len(job.texts)
             part = audio[offset : offset + count]
             offset += count
+            now = time.monotonic()
+            started = job.started_at or now
+            first = None
+            if job.first_chunk_at is not None:
+                first = (job.first_chunk_at - job.created_at) * 1000.0
+            self.metrics.record(
+                (started - job.created_at) * 1000.0, first, (now - job.created_at) * 1000.0
+            )
             if job.cancelled:
                 job.future.set_exception(asyncio.CancelledError())
                 self.metrics.add("cancelled")
             else:
                 job.future.set_result(part)
                 self.metrics.add("completed")
+
+
+def pcm_bytes(samples: Any) -> bytes:
+    if hasattr(samples, "detach"):
+        samples = samples.detach().float().cpu().numpy()
+    import numpy as np
+
+    data = np.clip(np.asarray(samples, dtype="float32"), -1.0, 1.0)
+    return (data * 32767.0).astype("<i2").tobytes()
 
 
 def wav_bytes(samples: Any, sample_rate: int) -> bytes:
@@ -320,6 +392,7 @@ class TTSEngine:
         max_frames: int | None = None,
         stop: Any = None,
         profile_id: str | None = None,
+        on_chunk: Callable[..., None] | None = None,
     ) -> list[Any]:
         if self.stream is None:
             raise RuntimeError("engine is not loaded")
@@ -329,7 +402,9 @@ class TTSEngine:
             keys = {self.batch_key(text, profile_id) for text in texts}
             if len(keys) > 1:
                 stream = self._normal_stream(profile_id)
-        return stream.stream(texts, max_frames=max_frames, stop=stop)
+        return stream.stream(
+            texts, max_frames=max_frames, stop=stop, on_chunk=on_chunk
+        )
 
 
 class TTSRequest(BaseModel):
@@ -454,6 +529,86 @@ def create_app(
         audio = await wait_for(job, request)
         data = wav_bytes(audio[0], settings.sample_rate)
         return Response(content=data, media_type="audio/wav")
+
+
+    @app.post("/tts/stream")
+    async def tts_stream(body: TTSRequest, request: Request) -> StreamingResponse:
+        validate([body.text], body.voice_profile, body.max_frames)
+        loop = asyncio.get_running_loop()
+        chunks: asyncio.Queue[bytes | None] = asyncio.Queue()
+
+        def on_chunk(frame: Any, elapsed: float) -> None:
+            data = pcm_bytes(frame)
+            if data:
+                loop.call_soon_threadsafe(chunks.put_nowait, data)
+
+        try:
+            job = worker.submit(
+                [body.text],
+                body.max_frames,
+                body.voice_profile,
+                on_chunk=on_chunk,
+            )
+        except QueueFull as exc:
+            raise HTTPException(status_code=503, detail="queue is full") from exc
+        wrapped = asyncio.wrap_future(job.future)
+        job.future.add_done_callback(
+            lambda _: loop.call_soon_threadsafe(chunks.put_nowait, None)
+        )
+        first_task = asyncio.create_task(chunks.get())
+        done, _ = await asyncio.wait(
+            {first_task, wrapped},
+            timeout=settings.timeout_s,
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+        if not done:
+            job.cancelled = True
+            job.stop.set()
+            first_task.cancel()
+            metrics.add("cancelled")
+            raise HTTPException(status_code=504, detail="request timed out")
+        if wrapped in done:
+            try:
+                wrapped.result()
+            except asyncio.CancelledError as exc:
+                first_task.cancel()
+                raise HTTPException(status_code=499, detail="request cancelled") from exc
+            except ValueError as exc:
+                first_task.cancel()
+                raise HTTPException(status_code=413, detail=str(exc)) from exc
+            except Exception as exc:
+                first_task.cancel()
+                raise HTTPException(status_code=500, detail=str(exc)) from exc
+        first = await first_task
+        if first is None:
+            raise HTTPException(status_code=500, detail="no audio")
+
+        async def generate():
+            try:
+                yield first
+                while True:
+                    if await request.is_disconnected():
+                        job.cancelled = True
+                        job.stop.set()
+                        metrics.add("cancelled")
+                        break
+                    item = await chunks.get()
+                    if item is None:
+                        break
+                    yield item
+            finally:
+                job.stop.set()
+
+        return StreamingResponse(
+            generate(),
+            media_type="audio/L16",
+            headers={
+                "X-Sample-Rate": str(settings.sample_rate),
+                "X-Channels": "1",
+                "Cache-Control": "no-store",
+                "X-Accel-Buffering": "no",
+            },
+        )
 
     @app.post("/tts/batch")
     async def tts_batch(body: BatchRequest, request: Request) -> JSONResponse:

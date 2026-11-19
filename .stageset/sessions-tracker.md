@@ -70,10 +70,11 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-195600-PUSH | PUSH | 2026-11-19T19:56:00+05:30 | Push the mixed-length voice profile fallback fix. | .stageset/sessions/event-push-mixed-length-profiles.md | IDEA-0005; FACT-0095; 054d5b0 | 054d5b0 |
 | 20261119-201000-CODING | CODING | 2026-11-19T20:10:00+05:30 | Match server defaults to the final T4 point. Add prewarm, row cap, and 413 for over-limit frames. | .stageset/sessions/coding-server-throughput-defaults.md | IDEA-0005; FACT-0056; FACT-0064; FACT-0087; FACT-0096 | fcffdb4 |
 | 20261119-201100-PUSH | PUSH | 2026-11-19T20:11:00+05:30 | Push T4 server defaults, prewarm, row cap, and frame admission. | .stageset/sessions/event-push-server-throughput-defaults.md | IDEA-0005; FACT-0096; fcffdb4 | fcffdb4 |
+| 20261119-201500-CODING | CODING | 2026-11-19T20:15:00+05:30 | Add first-chunk PCM streaming endpoint and latency metrics. | .stageset/sessions/coding-streaming-endpoint.md | IDEA-0005; FACT-0097 | - |
 
 ## Totals
 
-- CODING: 34.
+- CODING: 35.
 - IDEATION: 8.
 - MAINTENANCE: 8.
 - PROBE: 0.

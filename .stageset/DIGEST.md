@@ -18,15 +18,14 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-201500-CODING · CODING · Add first-chunk PCM streaming endpoint and latency metrics.
 - 20261119-201100-PUSH · PUSH · Push T4 server defaults, prewarm, row cap, and frame admission.
 - 20261119-201000-CODING · CODING · Match server defaults to the final T4 point. Add prewarm, row cap, and 413 for over-limit frames.
 - 20261119-195600-PUSH · PUSH · Push the mixed-length voice profile fallback fix.
 - 20261119-195500-CODING · CODING · Fix mixed-length voice profile calls. Use the normal voice path for that call. No 422.
-- 20261119-193600-PUSH · PUSH · Push the voice profile guide and Modal persistence notes.
 
 ## Verified environment facts
 
-| FACT-0073 | 2026-11-16 | Two-process concurrent on one T4: B=112+112 → p95 119.1/134.1 ms, RTF 0.83/0.88 (no OOM). B=128+128 → p95 139.2/118.9 ms, RTF 0.90/0.95 (no OOM). Worse than one process B=224 (p95 112 ms). Two model copies fit but GPU sharing hurts latency. | Project | CURRENT | `/tmp/two/c1.json`, `/tmp/two/c2.json`, `/tmp/two/d1.json`, `/tmp/two/d2.json` |
 | FACT-0074 | 2026-11-16 | EOS compaction threshold (compact when >=12.5% done or all done) applied in `Code/batch/batched_stream.py`; other remains 8–10 ms. Target <3 ms not reached; no easy tensor-only fix in hot path. | Project | CURRENT | `Code/batch/batched_stream.py` |
 | FACT-0075 | 2026-11-16 | Step 1 (other cut): applied compaction threshold (>=12.5% done or all). Measured "other" remains ~8–10 ms at B=160/192/224 with auto frames. Parity passes. Target <3 ms not reached by this change. | Project | CURRENT | `Code/batch/batched_stream.py` |
 | FACT-0076 | 2026-11-16 | Step 2 (Mimi CUDA graph micro-benchmark): attempted capture; blocked by Mimi state shape/init in graph path. Profiler shows CUDA kernel-dominated work (~1.15 s CUDA over 1.9 s wall for 32 frames at B=224). Replay time not measured. Integration skipped. | Project | CURRENT | `/tmp/mimi_graph2.py`, `Code/probes/out/prof_b224.txt` |
@@ -46,6 +45,7 @@ This file is generated. Do not edit it by hand.
 | FACT-0092 | 2026-11-19 | The Mimi-swap shrink experiment is archived as a negative result. Both attempts fail on a dtype mismatch between the FP16 backbone and the FP32 Mimi module. | Project | CURRENT | `.stageset/runs/20261119-191120-RUN-02.md` |
 | FACT-0095 | 2026-11-19 | Mixed first-chunk token lengths in one voice profile call do not fail. The server uses the normal voice path for that call and keeps the same profile voice. Real engine test: `"Hi."` and `"Please read this sentence."` returned 13,440 and 36,480 samples at `max_frames=64`. No overrun. A uniform profile batch still uses the conditioned path. | Project | CURRENT | `.stageset/runs/20261119-195442-RUN-02.md`, `.stageset/runs/20261119-195442-RUN.md` |
 | FACT-0096 | 2026-11-19 | The server defaults match the final T4 point: `ARSENAL_MAX_BATCH=192`, `ARSENAL_MAX_ROWS=224`, `ARSENAL_MAX_QUEUE=256`, `ARSENAL_MAX_FRAMES=192`. Boot prewarm is on (B=192, 1 frame) and took 350.9 ms. Boot to readiness was 7 s. An over-limit `max_frames` returns 413, not 500. HEALTH shows `prewarm_ms`. | Project | CURRENT | `.stageset/runs/20261119-200913-RUN.md`, `.stageset/runs/20261119-200913-RUN-02.md` |
+| FACT-0097 | 2026-11-19 | `/tts/stream` returns raw `audio/L16` PCM chunk by chunk. Real engine, 96 frames: TTFB 82.9 ms, total 974.7 ms. The full `/tts` call took 896.6 ms. `/metrics` records first-chunk p50 80.74 ms. The first PCM chunk arrives well before generation ends. | Project | CURRENT | `.stageset/runs/20261119-201435-RUN.md` |
 
 ## Read next
 
