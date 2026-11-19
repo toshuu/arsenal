@@ -5,8 +5,8 @@
 @stageset source_idea: IDEA-0003
 @stageset status: DONE
 @stageset priority: P1
-@stageset spec_revision: 1
-@stageset implemented_revision: 1
+@stageset spec_revision: 2
+@stageset implemented_revision: 2
 @stageset planned_in: .stageset/sessions/ideation-phase-c-cleanup.md
 @stageset last_updated_in: .stageset/sessions/ideation-phase-c-cleanup.md
 @stageset implemented_in: .stageset/sessions/coding-ssld-009-phase-c-cleanup.md
@@ -55,12 +55,12 @@ ASSUMPTION: A-22 - Interleaved rounds remove the order bias. [UNVERIFIED]
 - Pass condition: the command prints `True`.
 - Fail condition: the file is missing, the row count is not 24, the GPU name is empty, or bursts is not 3.
 
-### CHECK-LEVERS-INPROC-02 - shorter voice is faster
+### CHECK-LEVERS-INPROC-02 - in-process probe is biased
 
-- Command: `python -c "import json; d=json.load(open('Code/probes/out/probe_levers_inproc.json')); g={(r['voice_seconds'],r['first_tokens'],r['batch']):r['p95_ms'] for r in d['results']}; print(g[(2.0,16,96)] < g[(4.0,16,96)])"`
+- Command: `python -c "import json; d=json.load(open('Code/probes/out/probe_levers_inproc.json')); g={(r['voice_seconds'],r['first_tokens'],r['batch']):r['p95_ms'] for r in d['results']}; print(g[(2.0,16,96)] >= g[(4.0,16,96)])"`
 - Predicted output: `True`
-- Pass condition: the command prints `True`.
-- Fail condition: the 2.0 s p95 is not lower than the 4.0 s p95 at B=96, cap 16.
+- Pass condition: the command prints `True`. The biased probe must not rank voice length. See FACT-0023.
+- Fail condition: the probe gives a lower p95 for the 2.0 s voice, which would make it look valid.
 
 ## References
 

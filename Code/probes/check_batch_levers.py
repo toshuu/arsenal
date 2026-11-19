@@ -28,10 +28,10 @@ def main() -> int:
     capped = BatchedStream(model, VOICE, max_first_tokens=8)
     full_frames = full.voice.shape[1]
     short_frames = short.voice.shape[1]
-    full_chunk = full._first_chunk_text(TEXT)
-    cap_chunk = capped._first_chunk_text(TEXT)
-    full_tokens = full._text_embedding(full_chunk)[1]
-    cap_tokens = full._text_embedding(cap_chunk)[1]
+    full_chunk = full._text_chunks(TEXT)[0]
+    cap_chunk = capped._text_chunks(TEXT)[0]
+    full_tokens = len(full._text_ids(full_chunk))
+    cap_tokens = len(capped._text_ids(cap_chunk))
     ok = short_frames < full_frames and cap_tokens < full_tokens
     print("CHECK_BATCH_LEVERS PASS" if ok else "CHECK_BATCH_LEVERS FAIL")
     print(f"voice_frames full={full_frames} short={short_frames}")

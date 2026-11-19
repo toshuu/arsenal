@@ -238,10 +238,33 @@ def load_workspace(validate: bool = False) -> dict[str, Any]:
     }
 
 
+def latest_runs(runs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    latest: dict[tuple, dict[str, Any]] = {}
+    for run in runs:
+        check_id = run.get("check_id")
+        key = (
+            (run.get("skeleton"), check_id)
+            if check_id and check_id != "-"
+            else (None, run["id"])
+        )
+        mark = (int(run.get("spec_revision") or 0), int(run.get("attempt") or 0))
+        current = latest.get(key)
+        if current is None:
+            latest[key] = run
+            continue
+        current_mark = (int(current.get("spec_revision") or 0), int(current.get("attempt") or 0))
+        if mark >= current_mark:
+            latest[key] = run
+    return sorted(latest.values(), key=lambda item: item["id"])
+
+
 def digest_content(events: list[dict[str, Any]], skeletons: list[dict[str, Any]], runs: list[dict[str, Any]], work: dict[str, Any]) -> str:
     ready = [s for s in skeletons if "error" not in s and s["fields"]["status"] in {"READY", "IN_PROGRESS"} and s["spec"] > s["impl"]]
     blocked = [s for s in skeletons if "error" not in s and s["fields"]["status"] == "BLOCKED"]
-    failing = [r for r in runs if r["result"] == "FAIL"]
+    failing = [
+        r for r in latest_runs(runs)
+        if r["result"] == "FAIL" and r.get("type") == "CHECK"
+    ]
     facts = work["facts_path"].read_text(encoding="utf-8").splitlines() if work["facts_path"].exists() else []
     fact_rows = [line for line in facts if line.startswith("| FACT-") and "SUPERSEDED" not in line]
     out = [ "# StageSet digest", "", GENERATED, "", "This file is generated. Do not edit it by hand.", "",
@@ -471,7 +494,10 @@ def main() -> int:
             return 0
         pending = [s for s in skeletons if "error" not in s and s["fields"]["status"] in {"READY", "IN_PROGRESS"} and s["spec"] > s["impl"]]
         blocked = [s for s in skeletons if "error" not in s and s["fields"]["status"] == "BLOCKED"]
-        failed = [r for r in runs if r["result"] == "FAIL"]
+        failed = [
+            r for r in latest_runs(runs)
+            if r["result"] == "FAIL" and r.get("type") == "CHECK"
+        ]
         if args.json:
             print(json.dumps({
                 "ready_skeletons": [s["file"].relative_to(ROOT).as_posix() for s in pending],

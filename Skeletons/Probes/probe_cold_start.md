@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0004
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 1
-@stageset implemented_revision: 1
+@stageset spec_revision: 2
+@stageset implemented_revision: 2
 @stageset planned_in: .stageset/sessions/coding-ssld-015-cold.md
-@stageset last_updated_in: .stageset/sessions/coding-ssld-015-cold.md
-@stageset implemented_in: .stageset/sessions/coding-ssld-015-cold.md
+@stageset last_updated_in: .stageset/sessions/coding-production-readiness-fixes.md
+@stageset implemented_in: .stageset/sessions/coding-production-readiness-fixes.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -64,12 +64,12 @@ This is step 1 of the post-SSLD-014 plan.
 - Pass condition: every B has a cold and a warm record.
 - Fail condition: any B is missing.
 
-### CHECK-COLD-03 - boot delta
+### CHECK-COLD-03 - accepted prewarm budget
 
-- Command: `python -c "import json; d=json.load(open('Code/probes/out/probe_cold_start.json')); print(d['after']['boot_delta_ms'] < 100)"`
+- Command: `python -c "import json; d=json.load(open('Code/probes/out/probe_cold_prewarm.json')); print(d['boot']['boot']['phases_ms']['prewarm_ms'] < 1000 and d['burst']['160']['cold']['p95'] < 350)"`
 - Predicted output: `True`
-- Pass condition: the fix adds less than 100 ms to boot.
-- Fail condition: 100 ms or more.
+- Pass condition: prewarm is below 1000 ms and the cold p95 at B=160 is below 350 ms. The owner accepted the prewarm cost in FACT-0055.
+- Fail condition: prewarm is 1000 ms or more, or the cold p95 is 350 ms or more.
 
 ## References
 

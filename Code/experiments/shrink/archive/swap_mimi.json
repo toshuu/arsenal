@@ -1,0 +1,35 @@
+{
+  "attempts": [
+    {
+      "variant": "english_2m_2026-10",
+      "mimi_params": 10790733,
+      "decode_ok": true,
+      "ok": false,
+      "err": "Input type (torch.cuda.HalfTensor) and weight type (torch.cuda.FloatTensor) should be the same",
+      "tb": "Traceback (most recent call last):\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi.py\", line 47, in <module>\n    rec['measure']=run_test(v,m,f'swap_{v}.wav')\n                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi.py\", line 21, in run_test\n    s.stream(texts[:2],max_frames=4); torch.cuda.synchronize()\n    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Input type (torch.cuda.HalfTensor) and weight type (torch.cuda.FloatTensor) should be the same\n"
+    },
+    {
+      "variant": "english_7m_2026-10",
+      "mimi_params": 12366257,
+      "decode_ok": true,
+      "ok": false,
+      "err": "Input type (torch.cuda.HalfTensor) and weight type (torch.cuda.FloatTensor) should be the same",
+      "tb": "Traceback (most recent call last):\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi.py\", line 47, in <module>\n    rec['measure']=run_test(v,m,f'swap_{v}.wav')\n                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi.py\", line 21, in run_test\n    s.stream(texts[:2],max_frames=4); torch.cuda.synchronize()\n    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Input type (torch.cuda.HalfTensor) and weight type (torch.cuda.FloatTensor) should be the same\n"
+    },
+    {
+      "variant": "english_18m_2026-10",
+      "mimi_params": 12366257,
+      "decode_ok": true,
+      "ok": false,
+      "err": "Input type (torch.cuda.HalfTensor) and weight type (torch.cuda.FloatTensor) should be the same",
+      "tb": "Traceback (most recent call last):\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi.py\", line 47, in <module>\n    rec['measure']=run_test(v,m,f'swap_{v}.wav')\n                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi.py\", line 21, in run_test\n    s.stream(texts[:2],max_frames=4); torch.cuda.synchronize()\n    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Input type (torch.cuda.HalfTensor) and weight type (torch.cuda.FloatTensor) should be the same\n"
+    }
+  ],
+  "baseline": {
+    "p50": 54.78,
+    "p95": 81.38,
+    "wall": 0.904,
+    "n": 8,
+    "wav": "swap_baseline.wav"
+  }
+}

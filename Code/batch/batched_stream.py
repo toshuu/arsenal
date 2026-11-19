@@ -6,6 +6,7 @@ This is Phase B of Ideas/optimization-strategy.md.
 
 from __future__ import annotations
 
+import math
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -107,6 +108,7 @@ class BatchedStream:
         self._loop_ms = 0.0
         self.last_profile = None
         self._ids_cache: dict[str, list[int]] = {}
+        self.last_truncated_rows: list[int] = []
         self._pool = ThreadPoolExecutor(max_workers=4)
         self.voice: torch.Tensor | None = None
         self.voice_state: ModelState | None = None
@@ -191,33 +193,43 @@ class BatchedStream:
                 return int(offset.view(-1)[0].item())
         return self.voice.shape[1] if self.voice is not None else 0
 
-    def _first_chunk_text(self, text: str) -> str:
-        chunks = split_into_best_sentences(
+    def _split(self, text: str, max_tokens: int) -> list[str]:
+        return split_into_best_sentences(
             self.model.flow_lm.conditioner.tokenizer,
             text,
-            self.max_first_tokens or self.max_tokens,
+            max_tokens,
             self.model.pad_with_spaces_for_short_inputs,
             self.model.remove_semicolons,
             self.model.append_terminal_punctuation,
             self.model.capitalize_first_letter,
             self.model.replace_characters,
         )
-        first = chunks[0] if chunks else text
-        if self.max_first_tokens is None:
-            return first
-        tokenizer = self.model.flow_lm.conditioner.tokenizer
-        ids = tokenizer(first)[0].tolist()
-        if len(ids) <= self.max_first_tokens:
-            return first
-        return tokenizer.decode(ids[: self.max_first_tokens])
 
-    def _text_ids(self, text: str) -> list[int]:
-        cached = self._ids_cache.get(text)
-        if cached is not None:
-            return cached
-        first = self._first_chunk_text(text)
+    def _chunk_token_limit(self) -> int:
+        limit = self.max_tokens
+        if self.max_allowed_frames is None:
+            return limit
+        tokenizer = self.model.flow_lm.conditioner.tokenizer
+        frame_rate = self.model.config.mimi.frame_rate
+        tokens_per_second = getattr(self.model, "_TOKENS_PER_SECOND_ESTIMATE", 3.0)
+        padding = getattr(self.model, "_GEN_SECONDS_PADDING", 2.0)
+
+        def estimate(n: int) -> int:
+            return math.ceil((n / tokens_per_second + padding) * frame_rate) + 8
+
+        while limit > 1 and estimate(limit) > self.max_allowed_frames:
+            limit -= 1
+        if estimate(limit) > self.max_allowed_frames:
+            raise ValueError(
+                f"max_allowed_frames {self.max_allowed_frames} is too small for one text chunk"
+            )
+        return limit
+
+    def _fits_frame_budget(self, text: str) -> bool:
+        if self.max_allowed_frames is None:
+            return True
         prepared, _ = prepare_text_prompt(
-            first,
+            text,
             self.model.pad_with_spaces_for_short_inputs,
             self.model.remove_semicolons,
             self.model.append_terminal_punctuation,
@@ -225,8 +237,80 @@ class BatchedStream:
             self.model.replace_characters,
         )
         ids = self.model.flow_lm.conditioner.tokenizer.encode(prepared)
-        if self.max_first_tokens is not None:
-            ids = ids[: self.max_first_tokens]
+        return self.model._estimate_max_gen_len(len(ids)) + 8 <= self.max_allowed_frames
+
+    def _greedy_split(self, text: str, fits) -> list[str]:
+        import re
+
+        units = [u.strip() for u in re.split(r"(?<=[.!?\u2026])\s+", text.strip()) if u.strip()]
+        parts: list[str] = []
+        for unit in units:
+            if fits(unit) and parts and fits(parts[-1] + " " + unit):
+                parts[-1] = parts[-1] + " " + unit
+                continue
+            if fits(unit):
+                parts.append(unit)
+                continue
+            current: list[str] = []
+            for word in unit.split():
+                candidate = " ".join(current + [word]) if current else word
+                if current and not fits(candidate):
+                    parts.append(" ".join(current))
+                    current = [word]
+                else:
+                    current.append(word)
+            if current:
+                parts.append(" ".join(current))
+        for part in parts:
+            if not fits(part):
+                raise ValueError("one word exceeds the text limit")
+        return parts
+
+    def _hard_split(self, text: str, token_limit: int) -> list[str]:
+        tokenizer = self.model.flow_lm.conditioner.tokenizer
+        return self._greedy_split(
+            text, lambda part: len(tokenizer(part)[0].tolist()) <= token_limit
+        )
+
+    def _fit_chunk(self, text: str) -> list[str]:
+        if self._fits_frame_budget(text):
+            return [text]
+        return self._greedy_split(text, self._fits_frame_budget)
+
+    def _text_chunks(self, text: str) -> list[str]:
+        tokenizer = self.model.flow_lm.conditioner.tokenizer
+        chunks = self._split(text, self._chunk_token_limit()) or [text]
+        if self.max_first_tokens is not None and chunks:
+            first_ids = tokenizer(chunks[0])[0].tolist()
+            if len(first_ids) > self.max_first_tokens:
+                sub = self._split(chunks[0], self.max_first_tokens)
+                if sub:
+                    sub_ids = tokenizer(sub[0])[0].tolist()
+                    if len(sub_ids) <= self.max_first_tokens:
+                        chunks = sub + chunks[1:]
+                    else:
+                        parts = self._hard_split(chunks[0], self.max_first_tokens)
+                        rest_text = " ".join(parts[1:] + chunks[1:]).strip()
+                        rest = self._split(rest_text, self._chunk_token_limit()) if rest_text else []
+                        chunks = [parts[0]] + rest
+        fitted: list[str] = []
+        for chunk in chunks:
+            fitted.extend(self._fit_chunk(chunk))
+        return fitted
+
+    def _text_ids(self, text: str) -> list[int]:
+        cached = self._ids_cache.get(text)
+        if cached is not None:
+            return cached
+        prepared, _ = prepare_text_prompt(
+            text,
+            self.model.pad_with_spaces_for_short_inputs,
+            self.model.remove_semicolons,
+            self.model.append_terminal_punctuation,
+            self.model.capitalize_first_letter,
+            self.model.replace_characters,
+        )
+        ids = self.model.flow_lm.conditioner.tokenizer.encode(prepared)
         if len(self._ids_cache) >= 8192:
             self._ids_cache.clear()
         self._ids_cache[text] = ids
@@ -267,12 +351,66 @@ class BatchedStream:
         max_frames: int | None = None,
         frames_after_eos: int = 2,
         on_stage: StageCallback | None = None,
+        stop=None,
+    ) -> list[torch.Tensor]:
+        """Synthesize all text segments in order. One text can have many chunks."""
+        if not texts:
+            return []
+        chunks_per_text = [self._text_chunks(text) for text in texts]
+        outputs: list[list[torch.Tensor]] = [[] for _ in texts]
+        rounds = max(len(chunks) for chunks in chunks_per_text)
+        for index in range(rounds):
+            if stop is not None and stop.is_set():
+                break
+            active = [row for row, chunks in enumerate(chunks_per_text) if index < len(chunks)]
+            if not active:
+                continue
+            active_texts = [chunks_per_text[row][index] for row in active]
+
+            def map_chunk(local: int, frame: torch.Tensor, elapsed: float) -> None:
+                if on_chunk is not None:
+                    on_chunk(active[local], frame, elapsed)
+
+            def map_stage(local: int, name: str, at: float) -> None:
+                if on_stage is not None:
+                    on_stage(-1 if local < 0 else active[local], name, at)
+
+            audios = self._stream_single(
+                active_texts,
+                on_chunk=map_chunk,
+                max_frames=max_frames,
+                frames_after_eos=frames_after_eos,
+                on_stage=map_stage,
+                stop=stop,
+            )
+            for local, row in enumerate(active):
+                audio = audios[local]
+                if audio.numel() > 0:
+                    outputs[row].append(audio)
+        result: list[torch.Tensor] = []
+        for pieces in outputs:
+            if pieces:
+                result.append(torch.cat(pieces))
+            else:
+                result.append(torch.zeros(0, dtype=torch.float32, device=self.device))
+        return result
+
+    @torch.no_grad()
+    def _stream_single(
+        self,
+        texts: list[str],
+        on_chunk: ChunkCallback | None = None,
+        max_frames: int | None = None,
+        frames_after_eos: int = 2,
+        on_stage: StageCallback | None = None,
+        stop=None,
     ) -> list[torch.Tensor]:
         model = self.model
         flow_lm = model.flow_lm
         batch_size = len(texts)
         device = self.device
         dim = flow_lm.dim
+        max_frames_was_explicit = max_frames is not None
 
         def mark(row: int, name: str) -> None:
             if on_stage is not None:
@@ -283,9 +421,19 @@ class BatchedStream:
         use_profile_state = self.voice_state is not None
         if use_profile_state:
             text_batch, text_pad, token_counts = self._build_text_batch(texts)
-            mark(-1, "prep_done")
-            if max_frames is None:
-                max_frames = min(128, max(model._estimate_max_gen_len(c) for c in token_counts) + 8)
+        else:
+            prefix, pad, token_counts = self._build_prefixes(texts)
+        mark(-1, "prep_done")
+        if max_frames is None:
+            max_frames = max(model._estimate_max_gen_len(c) for c in token_counts) + 8
+        if max_frames < 1:
+            raise ValueError("max_frames must be at least 1")
+        if self.max_allowed_frames is not None and max_frames > self.max_allowed_frames:
+            raise ValueError(
+                f"max_frames {max_frames} exceeds max_allowed_frames "
+                f"{self.max_allowed_frames}"
+            )
+        if use_profile_state:
             vlen = self._voice_state_len()
             seq_len = vlen + text_batch.shape[1] + max_frames + 4
             state = _clone_state_to_batch(self.voice_state, batch_size, seq_len, device)
@@ -301,12 +449,7 @@ class BatchedStream:
                 audio_conditioning=text_batch,
             )
             mark(-1, "cond_done")
-            prefix = None
         else:
-            prefix, pad, token_counts = self._build_prefixes(texts)
-            mark(-1, "prep_done")
-            if max_frames is None:
-                max_frames = min(128, max(model._estimate_max_gen_len(c) for c in token_counts) + 8)
             state = init_states(flow_lm, batch_size, prefix.shape[1] + max_frames + 2)
             set_state_padding(state, pad)
             mark(-1, "state_done")
@@ -437,6 +580,8 @@ class BatchedStream:
             return False
 
         for step in range(max_frames):
+            if stop is not None and stop.is_set():
+                break
             _st = time.perf_counter() if self._pe is not None else 0.0
             if step == 0:
                 conditioning = step0_cond if "step0_cond" in locals() else (empty_audio if use_profile_state else prefix)
@@ -495,6 +640,14 @@ class BatchedStream:
                         batch_size = len(keep)
 
         flush_pending(force=True)
+
+        unfinished = [row_ids[i] for i, done in enumerate(done_cpu) if not done]
+        self.last_truncated_rows = unfinished
+        if unfinished and not max_frames_was_explicit and stop is None:
+            raise RuntimeError(
+                "generation reached max_frames before EOS for rows "
+                f"{unfinished}; raise max_frames or lower the text chunk size"
+            )
 
         if self._pe is not None:
             torch.cuda.synchronize()

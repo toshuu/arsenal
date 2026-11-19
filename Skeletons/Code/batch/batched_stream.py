@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0003
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 6
-@stageset implemented_revision: 6
+@stageset spec_revision: 7
+@stageset implemented_revision: 7
 @stageset planned_in: .stageset/sessions/coding-ssld-013-ttfa-levers.md
-@stageset last_updated_in: .stageset/sessions/coding-ssld-013-ttfa-levers.md
-@stageset implemented_in: .stageset/sessions/coding-ssld-013-ttfa-levers.md
+@stageset last_updated_in: .stageset/sessions/coding-production-readiness-fixes.md
+@stageset implemented_in: .stageset/sessions/coding-production-readiness-fixes.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -30,7 +30,7 @@ Inputs:
 
 - `model`: a loaded `TTSModel` on CUDA in eval mode.
 - `voice_path`: path to one voice wav.
-- `texts`: list of strings. Each text is one first chunk of at most 50 tokens.
+- `texts`: list of strings. Each text is split into chunks of at most `max_tokens`.
 - `voice_seconds`: optional float. Truncate the voice prompt to this many
   seconds before encoding. Default `None` keeps the full voice.
 - `max_first_tokens`: optional int. Cap the first text chunk at this token
@@ -131,9 +131,11 @@ ASSUMPTION: A-12 - `split_into_best_sentences` returns one chunk for a text of a
 
 - B=1: `pad` is zero. Output must match a B=3 batch row within 1e-3 at temperature 0.
 - Empty text: raise `ValueError` before the first step.
-- Text longer than one chunk: only the first chunk is generated. Log a warning.
+- Text longer than one chunk: every chunk is generated in order. No word is dropped.
 - Early EOS: a row stops after `frames_after_eos`. Other rows continue.
 - High B: raise a clear `RuntimeError` when CUDA runs out of memory.
+- Over-limit frames: raise `ValueError` before state allocation.
+- Frame budget reached before EOS: raise `RuntimeError` when `max_frames` was not set. Set `last_truncated_rows`.
 - Different text lengths: the padding must not change any row output.
 
 ## Checks
@@ -202,6 +204,27 @@ ASSUMPTION: A-12 - `split_into_best_sentences` returns one chunk for a text of a
 - Predicted output: `CHECK_BATCH_STREAM PASS`
 - Pass condition: exit code 0 and the exact line `CHECK_BATCH_STREAM PASS`.
 - Fail condition: any other output or a non-zero exit code.
+
+### CHECK-BATCH-STREAM-10 - full text coverage
+
+- Command: `PYTHONPATH=/kaggle/working/pocket-tts python Code/probes/check_long_text.py`
+- Predicted output: `{"ok": true, "chunks": 2}`
+- Pass condition: exit code 0 and `coverage_ok` is true. No word is missing.
+- Fail condition: any missing word, or any other output.
+
+### CHECK-BATCH-STREAM-11 - frame guard
+
+- Command: `PYTHONPATH=/kaggle/working/pocket-tts python Code/probes/check_long_text.py`
+- Predicted output: `{"ok": true, "chunks": 2}`
+- Pass condition: exit code 0 and `guard_ok` and `chunk_guard_ok` are true.
+- Fail condition: the guard does not raise `ValueError` before allocation.
+
+### CHECK-BATCH-STREAM-12 - no silent truncation
+
+- Command: `PYTHONPATH=/kaggle/working/pocket-tts python Code/probes/check_long_text.py`
+- Predicted output: `{"ok": true, "chunks": 2}`
+- Pass condition: exit code 0, `longer_than_first` is true, and `explicit_truncation_rows` is not empty.
+- Fail condition: the full text is not longer than the first chunk, or the truncation rows are not recorded.
 
 ## References
 

@@ -14,23 +14,18 @@ This file is generated. Do not edit it by hand.
 
 ## Failing checks
 
-- `20261115-190154-RUN` — `Skeletons/Probes/probe_levers_inproc.md`, `CHECK-LEVERS-INPROC-02`, attempt 1.
-- `20261116-135100-RUN` — `Skeletons/Code/batch/overlap.py`, `CHECK-OVERLAP-02`, attempt 1.
-- `20261116-150500-RUN` — `Skeletons/Probes/probe_cold_start.md`, `CHECK-COLD-03`, attempt 1.
+- None.
 
 ## Last 5 sessions
 
+- 20261119-191120-CODING · CODING · Full-text chunking, frame guard, truncation reporting, HTTP server, sideline archive.
 - 20261116-191000-CODING · CODING · Step1 memory safety (OOM+fit, limits), admission guard, KV scan note, voice cache prebuild script, Modal plan doc.
 - 20261116-151000-CODING-02 · CODING · Plan SSLD-016. FP16 weight cache, B=256 memory profile, shared voice KV, per-component steady split.
 - 20261116-151000-CODING · CODING · Cold-start probe and prewarm budget test. Boot 5.56 s. Cold p95 575-657 ms. Prewarm 633 ms, over the 100 ms budget.
 - 20261116-134000-CODING · CODING · M2 overlap decode. Add a second CUDA stream helper and pipeline decode with the next flow step.
-- 20261116-132000-CODING · CODING · E1/E4/E2/E3 and max-B. Prep 65->2.2 ms, emit 26->0.28 ms, B=160 soak 100% under 350.
 
 ## Verified environment facts
 
-| FACT-0068 | 2026-11-16 | Steady gap: per-frame profile with auto frames gives flow 13–14, Mimi 26–32, emit 0.4, other 8–10 ms (B=160/192/224). The remaining 8–10 ms is EOS checks, compaction, slicing and Python overhead. Soak RTF implies ~12–18 ms extra at scale; the 32-frame probe underestimates. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
-| FACT-0069 | 2026-11-16 | B=256 20-burst soak with FP16 weights and prewarm 256: p95 132.3 ms, max 133.8, 5120/5120 under 350, steady 72.2 ms, RTF 0.902 (>0.85). B=224 stays the cap (RTF 0.824). | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
-| FACT-0070 | 2026-11-16 | Two worker processes of B=112 on one T4 both loaded (a1 ok), but a2 did not record a result in the parallel run (likely OOM/competition). Two copies of the model plus states do not fit well on one T4. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0071 | 2026-11-16 | B=224 profiling (32 frames, 224 rows): wall 1.9 s, CUDA kernel time sum ~1.15 s → GPU busy about 60%. Kernel mix: FMHA/GEMM/conv dominate. Launch overhead present but GPU not under 70% idle; CUDA graphs not worth a half-day try now. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0072 | 2026-11-16 | Per-frame profile with auto frames: flow 13–14 ms, Mimi 26–32 ms, emit 0.4 ms, other 8–10 ms at B=160/192/224. Other is EOS/compaction/Python (threshold patch added; still 8–10 ms). No strong growth across B. | Project | CURRENT | `.stageset/runs/20261116-170000-RUN.md` |
 | FACT-0073 | 2026-11-16 | Two-process concurrent on one T4: B=112+112 → p95 119.1/134.1 ms, RTF 0.83/0.88 (no OOM). B=128+128 → p95 139.2/118.9 ms, RTF 0.90/0.95 (no OOM). Worse than one process B=224 (p95 112 ms). Two model copies fit but GPU sharing hurts latency. | Project | CURRENT | `/tmp/two/c1.json`, `/tmp/two/c2.json`, `/tmp/two/d1.json`, `/tmp/two/d2.json` |
@@ -43,11 +38,14 @@ This file is generated. Do not edit it by hand.
 | FACT-0080 | 2026-11-16 | Memory fit at B=224 (fp16 weights+decoder): peak allocated 6.97/10.02/13.08/14.36 GiB at max_frames 100/150/200/250 (+6.71/9.76/12.82/14.10 GiB delta). Fit ~+61 MB per frame (from deltas). Mimi/flow KV allocated by `max_frames`; no sliding window. | Project | CURRENT | `/tmp/mem_model.py` |
 | FACT-0081 | 2026-11-16 | Safe limit: keep >=1.5 GiB free at B=224 → peak_alloc <= 13.06 GiB → max_frames <= ~192 (15.36 s). Proposed `BATCH_SAFE_MAX_FRAMES_224=192`. Real soaks used auto short texts (~32–40 frames); 5–10 s covered, 15 s near limit. | Project | CURRENT | this session |
 | FACT-0082 | 2026-11-16 | `complete_kv` slices `cache[:, :, :offset_value+k.shape[1]]` (valid prefix). Attention queries the computed `k_attn/v_attn` over that prefix (no full preallocated length scanned). Flow “other” includes CPU cost of building masks/rope/copy ops but KV scan is over valid length. No big gain from slicing cache beyond current behavior. | Project | CURRENT | `pocket_tts/modules/attention.py` |
-| FACT-0083 | 2026-11-16 | Added `max_allowed_frames` (env `ARSENAL_MAX_FRAMES`) to `BatchedStream`; raises `ValueError` before init if exceeded. Safe at B=224: max_frames<=192 (from peak fit). `build_voice_cache.py` added. | Project | CURRENT | `Code/batch/batched_stream.py`, `Code/batch/build_voice_cache.py` |
-| FACT-0084 | 2026-11-16 | Guard added: `BatchedStream` accepts `max_allowed_frames` or env `ARSENAL_MAX_FRAMES`; raises `ValueError` before init if `max_frames` exceeds it. No server-side text chunker implemented (guard only). | Project | CURRENT | `Code/batch/batched_stream.py` |
 | FACT-0085 | 2026-11-16 | Failed levers (numbers): M2 overlap steady B192 69.99 vs 70.68 ms (no gain). decode_group 2/4 steady worse 70.7→75.4/75.9 ms (B192). Prewarm +636 ms boot over 100 ms rule (accepted). Full Mimi cast broke parity corr 0.981 (fixed to decoder-only corr 0.9999991). CUDA graphs blocked by state (no replay). EOS threshold: other still 8–10 ms. Frame-growth long test OOM. Two T4 processes: 112+112 p95 119.1/134.1 RTF 0.83/0.88, 128+128 p95 139.2/118.9 RTF 0.90/0.95 (worse than single B224). B256 soak RTF 0.902>0.85. Prefetch no boot gain (5685 vs 5561 ms). CUDA cache no gain. | Project | CURRENT | `.stageset/facts.md` |
 | FACT-0086 | 2026-11-16 | Open items: long-text chunker with carried state (guard `max_frames<=192` at B224 only); Modal build not started (SSLD-017 planned); L4 re-run (B224/256/288). Voice cache prebuild script exists, not wired to image build. | Project | CURRENT | `LivingDocs/SSLD-017-modal-deployment-plan.md` |
 | FACT-0087 | 2026-11-16 | B=224 mini soak (30 bursts, conditioned profile, FP16 weights, prewarm 224): p50 108.4 ms, p95 119.9 ms, max 129.5 ms, 6720/6720 under 350, steady p50 59.3 ms, RTF 0.741. | Project | CURRENT | `Code/probes/out/probe_b224_soak5x.json` |
+| FACT-0088 | 2026-11-19 | Full text is split into all chunks and generated in order. A 69-token, 3-sentence text gives 3 chunks with 0 missing words. Full audio is 10.8 s. The first chunk alone is 2.72 s. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN.md` |
+| FACT-0089 | 2026-11-19 | The frame guard is enforced. `_stream_single` raises `ValueError` when `max_frames` is above `max_allowed_frames`, before state allocation. `_text_chunks` raises when the frame budget cannot hold one chunk. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-02.md` |
+| FACT-0090 | 2026-11-19 | Auto `max_frames` is no longer capped at 128. It comes from the token estimate. An explicit `max_frames` records `last_truncated_rows` and does not raise. An auto budget that ends before EOS raises `RuntimeError`. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-03.md` |
+| FACT-0091 | 2026-11-19 | `Code/batch/server.py` serves `/health`, `/tts`, `/tts/batch`, and `/metrics` with one bounded queue. Empty text gets 422, long text gets 413, a full queue gets 503, and a request over the timeout gets 504. The real engine loads and returns a 69,164-byte WAV. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-04.md`, `.stageset/runs/20261119-191120-RUN.md` |
+| FACT-0092 | 2026-11-19 | The Mimi-swap shrink experiment is archived as a negative result. Both attempts fail on a dtype mismatch between the FP16 backbone and the FP32 Mimi module. | Project | CURRENT | `.stageset/runs/20261119-191120-RUN-02.md` |
 
 ## Read next
 

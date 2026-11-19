@@ -3,10 +3,12 @@ id: IDEA-0005
 title: Long-text correctness and production readiness gaps
 status: DISCOVERY
 priority: P0
+created_in: .stageset/sessions/coding-production-readiness-fixes.md
 created_at: 2026-11-18
-updated_at: 2026-11-18
+updated_in: .stageset/sessions/coding-production-readiness-fixes.md
+updated_at: 2026-11-19
 related_ideas: [IDEA-0001, IDEA-0003, IDEA-0004]
-related_skeletons: []
+related_skeletons: [Skeletons/Code/batch/batched_stream.py, Skeletons/Code/batch/server.py]
 related_reports: []
 ---
 

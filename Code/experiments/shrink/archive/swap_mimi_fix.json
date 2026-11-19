@@ -1,0 +1,32 @@
+{
+  "attempts": [
+    {
+      "variant": "english_2m_2026-10",
+      "mimi_params": 10790733,
+      "ok": false,
+      "err": "Input type (float) and bias type (c10::Half) should be the same",
+      "tb": "Traceback (most recent call last):\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi_fix.py\", line 44, in <module>\n    rec['measure']=run_test(v,m,f'swapfix_{v}.wav')\n                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi_fix.py\", line 17, in run_test\n    sp=BatchedStream(model,voice=VOICE,voice_seconds=4.0,max_first_tokens=16)\n  File \"/kaggle/working/arsenal/Code/batch/batched_stream.py\", line 98, in __init__\n    self.voice = self._load_voice(voice)\n                 ~~~~~~~~~~~~~~~~^^^^^^^\nRuntimeError: Input type (float) and bias type (c10::Half) should be the same\n"
+    },
+    {
+      "variant": "english_7m_2026-10",
+      "mimi_params": 12366257,
+      "ok": false,
+      "err": "Input type (float) and bias type (c10::Half) should be the same",
+      "tb": "Traceback (most recent call last):\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi_fix.py\", line 44, in <module>\n    rec['measure']=run_test(v,m,f'swapfix_{v}.wav')\n                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi_fix.py\", line 17, in run_test\n    sp=BatchedStream(model,voice=VOICE,voice_seconds=4.0,max_first_tokens=16)\n  File \"/kaggle/working/arsenal/Code/batch/batched_stream.py\", line 98, in __init__\n    self.voice = self._load_voice(voice)\n                 ~~~~~~~~~~~~~~~~^^^^^^^\nRuntimeError: Input type (float) and bias type (c10::Half) should be the same\n"
+    },
+    {
+      "variant": "english_18m_2026-10",
+      "mimi_params": 12366257,
+      "ok": false,
+      "err": "Input type (float) and bias type (c10::Half) should be the same",
+      "tb": "Traceback (most recent call last):\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi_fix.py\", line 44, in <module>\n    rec['measure']=run_test(v,m,f'swapfix_{v}.wav')\n                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/kaggle/working/arsenal/Code/experiments/shrink/try_swap_mimi_fix.py\", line 17, in run_test\n    sp=BatchedStream(model,voice=VOICE,voice_seconds=4.0,max_first_tokens=16)\n  File \"/kaggle/working/arsenal/Code/batch/batched_stream.py\", line 98, in __init__\n    self.voice = self._load_voice(voice)\n                 ~~~~~~~~~~~~~~~~^^^^^^^\nRuntimeError: Input type (float) and bias type (c10::Half) should be the same\n"
+    }
+  ],
+  "baseline": {
+    "p50": 57.42,
+    "p95": 92.16,
+    "wall": 0.91,
+    "n": 8,
+    "wav": "swapfix_baseline.wav"
+  }
+}
