@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T16:09:30Z",
+  "generated_at": "2026-11-19T16:12:52Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 15,
     "waiting": 1,
     "draft": 1,
-    "sessions": 81,
+    "sessions": 82,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -1382,9 +1382,20 @@
       "date": "2026-11-19T21:40:00+05:30",
       "type": "push",
       "summary": "Push the 224-client burst handoff and READY skeleton."
+    },
+    {
+      "id": "20261119-214148-MAINTENANCE",
+      "date": "2026-11-19T21:41:48+05:30",
+      "type": "maintenance",
+      "summary": "Record the owner dislike point after the B224 under-120 ms baseline."
     }
   ],
   "commits": [
+    {
+      "sha": "011695c",
+      "date": "2026-11-19T16:09:30+00:00",
+      "subject": "StageSet: record burst handoff push"
+    },
     {
       "sha": "3801b1d",
       "date": "2026-11-19T16:09:29+00:00",
@@ -1579,11 +1590,6 @@
       "sha": "3b6b2c6",
       "date": "2026-11-15T18:03:14+00:00",
       "subject": "StageSet: SSLD-011 shrink-model sideline tests"
-    },
-    {
-      "sha": "e23304f",
-      "date": "2026-11-15T17:49:53+00:00",
-      "subject": "StageSet: add FACT-0041 TTFA breakdown"
     }
   ]
 }

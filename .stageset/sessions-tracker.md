@@ -87,11 +87,12 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-213300-PUSH | PUSH | 2026-11-19T21:33:00+05:30 | Push target-driven batching and final load evidence. | .stageset/sessions/event-push-batch-target.md | IDEA-0005; FACT-0107; FACT-0108; 284618c | 284618c |
 | 20261119-213900-IDEATION | IDEATION | 2026-11-19T21:39:00+05:30 | Handoff for the failed 224-client burst gate. Record traps, evidence, and a READY skeleton. | .stageset/sessions/ideation-burst-224-handoff.md | IDEA-0005; FACT-0107; FACT-0108 | 3801b1d |
 | 20261119-214000-PUSH | PUSH | 2026-11-19T21:40:00+05:30 | Push the 224-client burst handoff and READY skeleton. | .stageset/sessions/event-push-burst-224-handoff.md | IDEA-0005; FACT-0108; 3801b1d | 3801b1d |
+| 20261119-214148-MAINTENANCE | MAINTENANCE | 2026-11-19T21:41:48+05:30 | Record the owner dislike point after the B224 under-120 ms baseline. | .stageset/sessions/maintenance-owner-dislike-point.md | IDEA-0005; FACT-0064; FACT-0087; FACT-0109 | - |
 
 ## Totals
 
 - CODING: 40.
 - IDEATION: 10.
-- MAINTENANCE: 8.
+- MAINTENANCE: 9.
 - PROBE: 0.
 - PUSH: 23.

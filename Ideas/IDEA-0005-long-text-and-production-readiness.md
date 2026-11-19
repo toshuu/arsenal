@@ -348,3 +348,13 @@ High concurrency, low latency, good reliability. Do not move to L4 or Modal unti
 - True mixed-profile GPU batch with per-row RoPE or shared voice KV. Permission gate required.
 - Carried-state chunking. Objective joins pass. Owner listening gate is still pending.
 - L4 and Modal. Not in scope for this handoff.
+
+## 17. Owner dislike point (2026-11-19)
+
+- **Dislike point:** `2026-11-19T20:50:20+05:30`.
+- This is the start of the HTTP load optimization run `20261119-205020-RUN-02` and commit `e292bed` work.
+- Before this point, the verified T4 figure was B=224, p95 112.2 ms, max 118.6 ms, RTF 0.824 (FACT-0064). A 30-burst soak gave p95 119.9 ms (FACT-0087).
+- The owner dislikes every change made after this point unless it is revalidated against that earlier B=224 result.
+- Changes after this point include one chunk per job, priority queue, larger batch windows, per-row voice batching, and mixed-profile normal-path handling.
+- Secondary checkpoint: `2026-11-19T20:11:00+05:30`, commit `fcffdb4`, set the server default `ARSENAL_MAX_BATCH=192` instead of 224. This is also part of the drift.
+- The next session must start from the pre-dislike baseline. It must not treat post-point p95 numbers as accepted. Compare first, then revert or keep with evidence.

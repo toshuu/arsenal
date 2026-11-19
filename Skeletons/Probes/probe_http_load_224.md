@@ -20,6 +20,8 @@
 
 Reach p95 first chunk <= 350 ms at 224 concurrent HTTP clients on one T4. Keep RTF below 1.0 and 0 errors.
 
+Owner dislike point: `2026-11-19T20:50:20+05:30`. Start from the pre-dislike baseline. Do not treat post-point scheduler changes as accepted without revalidation. See IDEA-0005 section 17.
+
 ## Probe instructions
 
 - Run from the repository root.
