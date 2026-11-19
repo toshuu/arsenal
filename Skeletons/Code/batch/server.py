@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0005
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 3
-@stageset implemented_revision: 3
+@stageset spec_revision: 4
+@stageset implemented_revision: 4
 @stageset planned_in: .stageset/sessions/coding-production-readiness-fixes.md
-@stageset last_updated_in: .stageset/sessions/coding-mixed-length-profiles.md
-@stageset implemented_in: .stageset/sessions/coding-mixed-length-profiles.md
+@stageset last_updated_in: .stageset/sessions/coding-server-throughput-defaults.md
+@stageset implemented_in: .stageset/sessions/coding-server-throughput-defaults.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -28,10 +28,14 @@ Report health and metrics.
 - Without `voice_profile`, the server uses the reference voice clip on the normal path.
 - With `voice_profile`, the server loads that id from `ARSENAL_VOICE_PROFILES` and uses its conditioned state.
 - `GET /health` returns readiness, queue depth, and counters.
-- The queue is bounded by `ARSENAL_MAX_QUEUE`.
-- The worker takes at most `ARSENAL_MAX_BATCH` jobs per call.
+- The queue is bounded by `ARSENAL_MAX_QUEUE` (default 256).
+- The worker takes at most `ARSENAL_MAX_BATCH` jobs per call (default 192).
+- One call has at most `ARSENAL_MAX_ROWS` texts (default 224).
+- Boot runs prewarm B=192, 1 frame, unless `ARSENAL_PREWARM=0`.
+- A `max_frames` above `ARSENAL_MAX_FRAMES` returns 413 before submit.
 - A full queue returns 503. An empty text returns 422. A long text returns 413.
 - A request above `ARSENAL_TIMEOUT_S` returns 504.
+- Frames over the safe limit return 413. A long text that cannot fit the frame budget returns 413.
 - A client disconnect sets the job stop event and drops queued work.
 - An unknown `voice_profile` returns 400.
 - A profile call with mixed first-chunk token lengths uses the normal voice path.

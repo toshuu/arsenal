@@ -95,6 +95,8 @@ def main() -> int:
     long_text = "x" * (settings.max_chars + 1)
     too_long = client.post("/tts", json={"text": long_text})
     result["long_rejected"] = too_long.status_code == 413
+    too_many_frames = client.post("/tts", json={"text": "Hi.", "max_frames": 1000})
+    result["frames_rejected"] = too_many_frames.status_code == 413
 
     timeout_settings = Settings(max_batch=1, max_queue=2, timeout_s=0.1)
     timeout_app = create_app(engine=SlowEngine(), settings=timeout_settings, start_engine=False)
@@ -131,6 +133,7 @@ def main() -> int:
         and result["batch_ok"]
         and result["empty_rejected"]
         and result["long_rejected"]
+        and result["frames_rejected"]
         and result["timeout_status"] == 504
         and result["queue_full_ok"]
         and result["cancel_ok"]

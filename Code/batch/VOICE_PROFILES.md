@@ -48,9 +48,11 @@ audio = stream.stream(texts, on_chunk=callback)
 
 `voice_seconds` comes from profile. Keep many pre-made profiles and select by request.
 
-## Selected operating point (user)
+## Selected operating point (final T4)
 
-- T4, FP16, 4.0 s, cap 16, **B=128** target (may increase). With conditioned profile KV reuse: B=128 p95 281–331 ms, 128/128 <350 ms (5 bursts, FACT-0029). Normal path B=128: 372–400 ms 94.4% (FACT-0028).
+- T4, FP16, 4.0 s, cap 16, **B=224 cap** (FACT-0064, FACT-0087). Conditioned profile: p95 112.2 ms, RTF 0.824, 30-burst soak p95 119.9 ms. Normal path B=192: p95 204.8 ms (FACT-0062).
+- The server defaults: `ARSENAL_MAX_BATCH=192`, `ARSENAL_MAX_ROWS=224`, `ARSENAL_MAX_QUEUE=256`, `ARSENAL_MAX_FRAMES=192`.
+- Boot runs prewarm (B=192, 1 frame) by default. Measured 350.9 ms in this environment.
 
 ## Server: default clip, opt-in profile
 

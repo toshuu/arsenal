@@ -37,8 +37,10 @@ class Job:
 
 @dataclass
 class Settings:
-    max_batch: int = 8
-    max_queue: int = 16
+    max_batch: int = 192
+    max_queue: int = 256
+    max_rows: int = 224
+    max_frames: int = 192
     timeout_s: float = 30.0
     max_texts: int = 32
     max_chars: int = 4000
@@ -75,10 +77,12 @@ class BatchWorker:
         engine: Any,
         max_batch: int,
         max_queue: int,
+        max_rows: int,
         metrics: Metrics,
     ) -> None:
         self.engine = engine
         self.max_batch = max_batch
+        self.max_rows = max_rows
         self.metrics = metrics
         self.jobs: queue.Queue[Job] = queue.Queue(maxsize=max_queue)
         self.thread = threading.Thread(target=self._run, daemon=True)
@@ -92,6 +96,9 @@ class BatchWorker:
         self, texts: list[str], max_frames: int | None, profile_id: str | None = None
     ) -> Job:
         job = Job(texts=texts, max_frames=max_frames, profile_id=profile_id)
+        if len(texts) > self.max_rows:
+            self.metrics.add("rejected")
+            raise QueueFull("too many rows")
         try:
             self.jobs.put_nowait(job)
         except queue.Full as exc:
@@ -104,8 +111,9 @@ class BatchWorker:
         while True:
             job = self.jobs.get()
             batch = [job]
+            rows = len(job.texts)
             deadline = time.monotonic() + 0.008
-            while len(batch) < self.max_batch:
+            while len(batch) < self.max_batch and rows < self.max_rows:
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
                     break
@@ -117,7 +125,11 @@ class BatchWorker:
                     nxt.future.set_exception(asyncio.CancelledError())
                     self.metrics.add("cancelled")
                     continue
+                if rows + len(nxt.texts) > self.max_rows:
+                    self.jobs.put_nowait(nxt)
+                    break
                 batch.append(nxt)
+                rows += len(nxt.texts)
             self._execute(batch)
 
     def _group_key(self, job: Job) -> str | None:
@@ -190,6 +202,7 @@ class TTSEngine:
         self.profile_streams: dict[str, Any] = {}
         self.fallback_streams: dict[Any, Any] = {}
         self.default_is_profile = False
+        self.prewarm_ms = 0.0
         self.ready = False
 
     def load(self) -> None:
@@ -247,6 +260,10 @@ class TTSEngine:
                 name, path = part.split("=", 1)
                 if name.strip() and path.strip():
                     self.profiles[name.strip()] = path.strip()
+            from batch.boot import maybe_prewarm
+
+            n = int(os.getenv("ARSENAL_PREWARM_B", "192"))
+            self.prewarm_ms = maybe_prewarm(self.stream, ["Ready."] * max(1, n))
             torch.cuda.synchronize()
             self.ready = True
         finally:
@@ -333,8 +350,10 @@ def create_app(
     start_engine: bool = True,
 ) -> FastAPI:
     settings = settings or Settings(
-        max_batch=int(os.getenv("ARSENAL_MAX_BATCH", "8")),
-        max_queue=int(os.getenv("ARSENAL_MAX_QUEUE", "16")),
+        max_batch=int(os.getenv("ARSENAL_MAX_BATCH", "192")),
+        max_queue=int(os.getenv("ARSENAL_MAX_QUEUE", "256")),
+        max_rows=int(os.getenv("ARSENAL_MAX_ROWS", "224")),
+        max_frames=int(os.getenv("ARSENAL_MAX_FRAMES", "192")),
         timeout_s=float(os.getenv("ARSENAL_TIMEOUT_S", "30")),
         max_texts=int(os.getenv("ARSENAL_MAX_TEXTS", "32")),
         max_chars=int(os.getenv("ARSENAL_MAX_CHARS", "4000")),
@@ -342,7 +361,9 @@ def create_app(
     )
     metrics = Metrics()
     engine = engine or TTSEngine(settings)
-    worker = BatchWorker(engine, settings.max_batch, settings.max_queue, metrics)
+    worker = BatchWorker(
+        engine, settings.max_batch, settings.max_queue, settings.max_rows, metrics
+    )
     app = FastAPI(title="arsenal-tts")
     app.state.engine = engine
     app.state.worker = worker
@@ -358,7 +379,9 @@ def create_app(
             except Exception:
                 engine.ready = False
 
-    def validate(texts: list[str], profile_id: str | None = None) -> None:
+    def validate(
+        texts: list[str], profile_id: str | None = None, max_frames: int | None = None
+    ) -> None:
         if len(texts) > settings.max_texts:
             raise HTTPException(status_code=413, detail="too many texts")
         for text in texts:
@@ -366,6 +389,8 @@ def create_app(
                 raise HTTPException(status_code=422, detail="empty text")
             if len(text) > settings.max_chars:
                 raise HTTPException(status_code=413, detail="text is too long")
+        if max_frames is not None and max_frames > settings.max_frames:
+            raise HTTPException(status_code=413, detail="max_frames is too large")
         if profile_id is not None:
             if not getattr(engine, "has_profile", lambda _: False)(profile_id):
                 raise HTTPException(status_code=400, detail="unknown voice profile")
@@ -391,6 +416,8 @@ def create_app(
                     return wrapped.result()
                 except asyncio.CancelledError as exc:
                     raise HTTPException(status_code=499, detail="request cancelled") from exc
+                except ValueError as exc:
+                    raise HTTPException(status_code=413, detail=str(exc)) from exc
                 except Exception as exc:
                     raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -401,6 +428,7 @@ def create_app(
             "ready": ready,
             "queue_depth": worker.depth,
             "max_queue": settings.max_queue,
+            "prewarm_ms": round(float(getattr(engine, "prewarm_ms", 0.0)), 1),
             "metrics": metrics.snapshot(),
         }
         return JSONResponse(payload, status_code=200 if ready else 503)
@@ -411,12 +439,14 @@ def create_app(
             "metrics": metrics.snapshot(),
             "queue_depth": worker.depth,
             "max_batch": settings.max_batch,
+            "max_rows": settings.max_rows,
             "max_queue": settings.max_queue,
+            "max_frames": settings.max_frames,
         }
 
     @app.post("/tts")
     async def tts(body: TTSRequest, request: Request) -> Response:
-        validate([body.text], body.voice_profile)
+        validate([body.text], body.voice_profile, body.max_frames)
         try:
             job = worker.submit([body.text], body.max_frames, body.voice_profile)
         except QueueFull as exc:
@@ -427,7 +457,7 @@ def create_app(
 
     @app.post("/tts/batch")
     async def tts_batch(body: BatchRequest, request: Request) -> JSONResponse:
-        validate(body.texts, body.voice_profile)
+        validate(body.texts, body.voice_profile, body.max_frames)
         try:
             job = worker.submit(body.texts, body.max_frames, body.voice_profile)
         except QueueFull as exc:
