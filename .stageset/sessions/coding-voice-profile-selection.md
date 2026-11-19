@@ -4,7 +4,7 @@ time: 2026-11-19T19:31:00+05:30
 summary: Add per-request voice profile selection. Default is the reference clip. Add profile build script.
 paths: Code/batch/server.py; Code/batch/build_voice_profiles.py; Code/probes/check_server.py; Code/batch/VOICE_PROFILES.md; Skeletons/Code/batch/server.py; .stageset/facts.md
 related: IDEA-0005; FACT-0066; FACT-0093; FACT-0091
-commit: -
+commit: c61d686
 remote: -
 branch: -
 ---
