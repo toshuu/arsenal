@@ -16,19 +16,18 @@ This file is generated. Do not edit it by hand.
 ## Failing checks
 
 - `20261120-001821-RUN` — `Skeletons/Code/batch/server.py`, `CHECK-SERVER-11`, attempt 1.
+- `20261120-013315-RUN-02` — `Skeletons/Probes/probe_http_load_224.md`, `CHECK-LOAD-224-01`, attempt 2.
 
 ## Last 5 sessions
 
+- 20261120-013315-CODING · CODING · Ramp HTTP B and sweep windows (Steps 1,2,4). Find max passing B and 224 gap.
 - 20261120-005500-PUSH · PUSH · Push burst recovery fixes, StageSet evidence, and report JSON.
 - 20261120-004532-MAINTENANCE · MAINTENANCE · Record current standing: B and time, reverted regressions, delusion, and next steps.
 - 20261120-004000-CODING · CODING · Diagnose post-dislike regressions, recover the 32-client gate, and define the 224-client limit.
 - 20261119-214200-PUSH · PUSH · Push the owner dislike point and refreshed report JSON.
-- 20261119-214148-MAINTENANCE · MAINTENANCE · Record the owner dislike point after the B224 under-120 ms baseline.
 
 ## Verified environment facts
 
-| FACT-0089 | 2026-11-19 | The frame guard is enforced. `_stream_single` raises `ValueError` when `max_frames` is above `max_allowed_frames`, before state allocation. `_text_chunks` raises when the frame budget cannot hold one chunk. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-02.md` |
-| FACT-0090 | 2026-11-19 | Auto `max_frames` is no longer capped at 128. It comes from the token estimate. An explicit `max_frames` records `last_truncated_rows` and does not raise. An auto budget that ends before EOS raises `RuntimeError`. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-03.md` |
 | FACT-0091 | 2026-11-19 | `Code/batch/server.py` serves `/health`, `/tts`, `/tts/batch`, and `/metrics` with one bounded queue. Empty text gets 422, long text gets 413, a full queue gets 503, and a request over the timeout gets 504. The real engine loads and returns a 69,164-byte WAV. | Project | CURRENT | `.stageset/runs/20261119-191119-RUN-04.md`, `.stageset/runs/20261119-191120-RUN.md` |
 | FACT-0092 | 2026-11-19 | The Mimi-swap shrink experiment is archived as a negative result. Both attempts fail on a dtype mismatch between the FP16 backbone and the FP32 Mimi module. | Project | CURRENT | `.stageset/runs/20261119-191120-RUN-02.md` |
 | FACT-0095 | 2026-11-19 | Mixed first-chunk token lengths in one voice profile call do not fail. The server uses the normal voice path for that call and keeps the same profile voice. Real engine test: `"Hi."` and `"Please read this sentence."` returned 13,440 and 36,480 samples at `max_frames=64`. No overrun. A uniform profile batch still uses the conditioned path. | Project | CURRENT | `.stageset/runs/20261119-195442-RUN-02.md`, `.stageset/runs/20261119-195442-RUN.md` |
@@ -47,6 +46,8 @@ This file is generated. Do not edit it by hand.
 | FACT-0112 | 2026-11-20 | The 224-client HTTP gate still fails with one conditioned profile. 448 requests: client first p50 5027.67 ms, p95 7379.23 ms, 0 errors. Server request-first p50 1730.93 ms, p95 3166.14 ms. Server queue p50 1157.38 ms. The client sees the first chunk about 3.3 s after the server sends it. The model is not the limit. The limit is HTTP ingress plus head-of-line blocking on one 4-vCPU host. | Project | CURRENT | `.stageset/runs/20261120-001821-RUN.md` |
 | FACT-0113 | 2026-11-19 | Post-dislike regressions found in the server and probe. `_group_key` returned `None`, so all profiles mixed and used the slow normal path. `ARSENAL_BATCH_TARGET` default 32 capped 224-client batches at 32 rows. The probe lost `httpx.Limits` and never read `ARSENAL_LOAD_LIMITS`. `_build_prefixes_with_voices` made one conditioner GPU call per row. | Project | CURRENT | `.stageset/runs/20261120-001820-RUN.md`, `.stageset/runs/20261120-001821-RUN.md` |
 | FACT-0114 | 2026-11-20 | Status snapshot at 2026-11-20T00:45:32+05:30. Direct B=224: p95 97.7 ms PASS (FACT-0111). HTTP 32 clients: p95 340.6 ms client, 294.0 ms server PASS (FACT-0110). HTTP 224 clients: FAIL, client p95 7379 ms and server p95 3166 ms window 700, best server p95 1145 ms window 50 (FACT-0112). Post-dislike regressions reverted (FACT-0113). Model compute did not regress. 224 HTTP remains blocked by head-of-line and ingress on 4 vCPU. | Project | CURRENT | `.stageset/sessions/maintenance-status-2026-11-20.md` |
+| FACT-0115 | 2026-11-20 | Steps 1,2,4 ramp (1 uvicorn worker, uvloop, httptools, backlog 1024, no access log, server cores 0,1, probe cores 2,3, 1 conditioned profile, warm keep-alive, barrier, 2 bursts): B<=37 passed with window 150 ms. B=32 srv p95 279.9 cli 327.2 q 150.5; B=36 srv 253.8 cli 310.5 q 150.3; B=37 srv 241.0 cli 315.0 q 148.7 (0 err, RTF<=0.038). B=38 failed: srv 1802.3 cli 1979.3. Max B with server and client p95 <= 350 ms is 37 on this 4-vCPU T4 host. | Project | CURRENT | `.stageset/runs/20261120-013315-RUN.md` |
+| FACT-0116 | 2026-11-20 | Step 4 window sweep at B=224 (same host): best server p95 1542.1 ms at window 10 ms (client 5627.9, queue 3692.7, 0 err, RTF 0.028); window 50 gave server 2364.0/client 6408.3/2 errors. No tested window met 350 ms. Step 2 uvloop/httptools A/B was noisy. Step 3 (continuous batching) not coded; go/no-go requires skeleton plan and owner approval. | Project | CURRENT | `.stageset/runs/20261120-013315-RUN-02.md` |
 
 ## Read next
 

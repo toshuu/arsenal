@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T19:16:35Z",
+  "generated_at": "2026-11-19T20:12:40Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 14,
     "waiting": 2,
     "draft": 1,
-    "sessions": 86,
+    "sessions": 87,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -1412,9 +1412,20 @@
       "date": "2026-11-20T00:55:00+05:30",
       "type": "push",
       "summary": "Push burst recovery fixes, StageSet evidence, and report JSON."
+    },
+    {
+      "id": "20261120-013315-CODING",
+      "date": "2026-11-20T01:33:15+05:30",
+      "type": "coding",
+      "summary": "Ramp HTTP B and sweep windows (Steps 1,2,4). Find max passing B and 224 gap."
     }
   ],
   "commits": [
+    {
+      "sha": "f7e2b70",
+      "date": "2026-11-19T19:16:39+00:00",
+      "subject": "StageSet: record status snapshot 2026-11-20T00:45:32+05:30"
+    },
     {
       "sha": "6752ec5",
       "date": "2026-11-19T19:07:15+00:00",
@@ -1609,11 +1620,6 @@
       "sha": "e00af4a",
       "date": "2026-11-16T09:40:31+00:00",
       "subject": "Steps 1-4: other threshold, mimi graph attempt, build_voice_cache, facts"
-    },
-    {
-      "sha": "0cfa1e5",
-      "date": "2026-11-16T09:31:41+00:00",
-      "subject": "Step1-4: gap measure, EOS threshold, B256/B224 results, two-process test, prof"
     }
   ]
 }

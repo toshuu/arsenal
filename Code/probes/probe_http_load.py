@@ -53,19 +53,34 @@ def start_server(profiles: dict[str, str]) -> subprocess.Popen[bytes]:
     env["ARSENAL_VOICE_PROFILES"] = ";".join(f"{k}={v}" for k, v in profiles.items())
     if os.getenv("ARSENAL_POCKET_TTS"):
         env["ARSENAL_POCKET_TTS"] = os.environ["ARSENAL_POCKET_TTS"]
+    cmd = [
+        sys.executable,
+        "-m",
+        "uvicorn",
+        "batch.server:app",
+        "--app-dir",
+        str(ROOT / "Code"),
+        "--port",
+        str(PORT),
+        "--log-level",
+        "warning",
+    ]
+    loop = os.getenv("ARSENAL_UVICORN_LOOP")
+    http = os.getenv("ARSENAL_UVICORN_HTTP")
+    backlog = os.getenv("ARSENAL_UVICORN_BACKLOG")
+    if loop:
+        cmd += ["--loop", loop]
+    if http:
+        cmd += ["--http", http]
+    if backlog:
+        cmd += ["--backlog", backlog]
+    if os.getenv("ARSENAL_UVICORN_ACCESS_LOG", "1") == "0":
+        cmd.append("--no-access-log")
+    server_cores = os.getenv("ARSENAL_SERVER_CORES")
+    if server_cores:
+        cmd = ["taskset", "-c", server_cores] + cmd
     proc = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "uvicorn",
-            "batch.server:app",
-            "--app-dir",
-            str(ROOT / "Code"),
-            "--port",
-            str(PORT),
-            "--log-level",
-            "warning",
-        ],
+        cmd,
         cwd=ROOT,
         env=env,
         stdout=subprocess.DEVNULL,
@@ -151,6 +166,13 @@ def main() -> int:
         "load_limits": LOAD_LIMITS or "default",
         "warmup": WARMUP,
         "single_profile": SINGLE_PROFILE,
+        "server_cores": os.getenv("ARSENAL_SERVER_CORES"),
+        "uvicorn": {
+            "loop": os.getenv("ARSENAL_UVICORN_LOOP"),
+            "http": os.getenv("ARSENAL_UVICORN_HTTP"),
+            "backlog": os.getenv("ARSENAL_UVICORN_BACKLOG"),
+            "access_log": os.getenv("ARSENAL_UVICORN_ACCESS_LOG", "1"),
+        },
     }
     client_kwargs: dict[str, object] = {"base_url": BASE, "timeout": 60}
     if LOAD_LIMITS > 0:
