@@ -68,7 +68,8 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-193600-PUSH | PUSH | 2026-11-19T19:36:00+05:30 | Push the voice profile guide and Modal persistence notes. | .stageset/sessions/event-push-voice-profile-guide.md | IDEA-0005; FACT-0094; db8f449 | db8f449 |
 | 20261119-195500-CODING | CODING | 2026-11-19T19:55:00+05:30 | Fix mixed-length voice profile calls. Use the normal voice path for that call. No 422. | .stageset/sessions/coding-mixed-length-profiles.md | IDEA-0005; FACT-0093; FACT-0094; FACT-0095 | 054d5b0 |
 | 20261119-195600-PUSH | PUSH | 2026-11-19T19:56:00+05:30 | Push the mixed-length voice profile fallback fix. | .stageset/sessions/event-push-mixed-length-profiles.md | IDEA-0005; FACT-0095; 054d5b0 | 054d5b0 |
-| 20261119-201000-CODING | CODING | 2026-11-19T20:10:00+05:30 | Match server defaults to the final T4 point. Add prewarm, row cap, and 413 for over-limit frames. | .stageset/sessions/coding-server-throughput-defaults.md | IDEA-0005; FACT-0056; FACT-0064; FACT-0087; FACT-0096 | - |
+| 20261119-201000-CODING | CODING | 2026-11-19T20:10:00+05:30 | Match server defaults to the final T4 point. Add prewarm, row cap, and 413 for over-limit frames. | .stageset/sessions/coding-server-throughput-defaults.md | IDEA-0005; FACT-0056; FACT-0064; FACT-0087; FACT-0096 | fcffdb4 |
+| 20261119-201100-PUSH | PUSH | 2026-11-19T20:11:00+05:30 | Push T4 server defaults, prewarm, row cap, and frame admission. | .stageset/sessions/event-push-server-throughput-defaults.md | IDEA-0005; FACT-0096; fcffdb4 | fcffdb4 |
 
 ## Totals
 
@@ -76,4 +77,4 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 - IDEATION: 8.
 - MAINTENANCE: 8.
 - PROBE: 0.
-- PUSH: 13.
+- PUSH: 14.

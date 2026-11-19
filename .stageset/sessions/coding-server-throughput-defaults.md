@@ -4,7 +4,7 @@ time: 2026-11-19T20:10:00+05:30
 summary: Match server defaults to the final T4 point. Add prewarm, row cap, and 413 for over-limit frames.
 paths: Code/batch/server.py; Code/probes/check_server.py; Code/batch/VOICE_PROFILES.md; Skeletons/Code/batch/server.py; .stageset/facts.md
 related: IDEA-0005; FACT-0056; FACT-0064; FACT-0087; FACT-0096
-commit: -
+commit: fcffdb4
 remote: -
 branch: -
 ---
