@@ -18,11 +18,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261119-193600-PUSH · PUSH · Push the voice profile guide and Modal persistence notes.
 - 20261119-193500-MAINTENANCE · MAINTENANCE · Add a long-term voice profile guide. Document Modal cache/profile persistence and mixed-profile batching.
 - 20261119-193200-PUSH · PUSH · Push per-request voice profile selection and the profile build script.
 - 20261119-193100-CODING · CODING · Add per-request voice profile selection. Default is the reference clip. Add profile build script.
 - 20261119-192014-PUSH · PUSH · Push production-readiness fixes: full-text chunking, frame guard, HTTP server.
-- 20261119-191120-CODING · CODING · Full-text chunking, frame guard, truncation reporting, HTTP server, sideline archive.
 
 ## Verified environment facts
 

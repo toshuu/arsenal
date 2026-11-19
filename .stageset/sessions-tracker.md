@@ -64,7 +64,8 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261119-192014-PUSH | PUSH | 2026-11-19T19:20:14+05:30 | Push production-readiness fixes: full-text chunking, frame guard, HTTP server. | .stageset/sessions/event-push-production-readiness.md | IDEA-0005; FACT-0088; FACT-0089; FACT-0090; FACT-0091; FACT-0092; dab34cb | dab34cb |
 | 20261119-193100-CODING | CODING | 2026-11-19T19:31:00+05:30 | Add per-request voice profile selection. Default is the reference clip. Add profile build script. | .stageset/sessions/coding-voice-profile-selection.md | IDEA-0005; FACT-0066; FACT-0093; FACT-0091 | c61d686 |
 | 20261119-193200-PUSH | PUSH | 2026-11-19T19:32:00+05:30 | Push per-request voice profile selection and the profile build script. | .stageset/sessions/event-push-voice-profile-selection.md | IDEA-0005; FACT-0093; c61d686 | c61d686 |
-| 20261119-193500-MAINTENANCE | MAINTENANCE | 2026-11-19T19:35:00+05:30 | Add a long-term voice profile guide. Document Modal cache/profile persistence and mixed-profile batching. | .stageset/sessions/maintenance-voice-profile-guide.md | IDEA-0005; FACT-0066; FACT-0093; FACT-0094 | - |
+| 20261119-193500-MAINTENANCE | MAINTENANCE | 2026-11-19T19:35:00+05:30 | Add a long-term voice profile guide. Document Modal cache/profile persistence and mixed-profile batching. | .stageset/sessions/maintenance-voice-profile-guide.md | IDEA-0005; FACT-0066; FACT-0093; FACT-0094 | db8f449 |
+| 20261119-193600-PUSH | PUSH | 2026-11-19T19:36:00+05:30 | Push the voice profile guide and Modal persistence notes. | .stageset/sessions/event-push-voice-profile-guide.md | IDEA-0005; FACT-0094; db8f449 | db8f449 |
 
 ## Totals
 
@@ -72,4 +73,4 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 - IDEATION: 8.
 - MAINTENANCE: 8.
 - PROBE: 0.
-- PUSH: 11.
+- PUSH: 12.
