@@ -1,4 +1,8 @@
-"""Build voice embedding cache at image time."""
+"""Build voice embedding cache at image time.
+
+Run before the server starts. Set ARSENAL_VOICE_CACHE to the output directory.
+Keep the output in the image or on a persistent volume. Do not rebuild on wake.
+"""
 
 from __future__ import annotations
 

@@ -23,6 +23,7 @@ This repository uses the StageSet planning and implementation workflow.
 - `LivingDocs/` — ss-living-doc files for weak coding models.
 - `viewer/` — static status viewer.
 - `.stageset/` — configuration, evidence, facts, reports, and session history.
+- `docs/` — long-term guides. Start with `docs/voice-profiles.md`.
 - `scripts/` — StageSet status, report, and ss-living-doc tools.
 
 The default code directory is `Code/`. Change it in `.stageset/config.yml` if required.

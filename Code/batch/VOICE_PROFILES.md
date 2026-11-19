@@ -83,6 +83,26 @@ This is separate from the voice-embedding cache (`build_voice_cache.py`). The
 cache saves the 650 ms voice encode at boot. A conditioned profile also saves
 the per-burst voice conditioning, so it is the TTFA lever.
 
+## First-chunk token length (why a batch can fail)
+
+The conditioned KV state has one fixed prefix. Each row then adds its text
+tokens. Rows with different token counts have different KV positions. Bad audio
+can result.
+
+Example:
+- `"Hi."` gives 2 tokens.
+- `"Please read this sentence."` gives 5 tokens.
+
+These two texts in one conditioned batch differ. The server groups them into
+separate calls, so this is safe. A 422 returns only if a single profile request
+has mixed lengths.
+
+Safe options: group by token count (the server does this), pad with a correct
+mask and per-row positions (needs model changes and audio tests), or run one
+text per call.
+
+The full guide is `docs/voice-profiles.md`.
+
 ## Common mistakes
 
 - Save with `conditioned=True`. Without it, profile has no `voice_state`; stream runs normal path (no TTFA gain).
@@ -93,5 +113,6 @@ the per-burst voice conditioning, so it is the TTFA lever.
 
 ## Notes
 
+- Long-term guide: `docs/voice-profiles.md`.
 - Impl: `Code/batch/batched_stream.py`.
 - `max_first_tokens` truncates first text chunk; stream later chunks in production.
