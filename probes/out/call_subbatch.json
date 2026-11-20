@@ -1,0 +1,42 @@
+[
+  {
+    "test": "sub_batch",
+    "B": 224,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 32,
+    "first_byte_p50": 621.27,
+    "first_byte_p95": 1184.32,
+    "errors": 0
+  },
+  {
+    "test": "sub_batch",
+    "B": 224,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 64,
+    "first_byte_p50": 254.11,
+    "first_byte_p95": 638.01,
+    "errors": 0
+  },
+  {
+    "test": "sub_batch",
+    "B": 224,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 112,
+    "first_byte_p50": 360.04,
+    "first_byte_p95": 366.69,
+    "errors": 0
+  },
+  {
+    "test": "sub_batch",
+    "B": 224,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 224,
+    "first_byte_p50": 145.84,
+    "first_byte_p95": 146.62,
+    "errors": 0
+  }
+]

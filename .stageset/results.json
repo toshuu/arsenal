@@ -94,6 +94,40 @@
         }
       ],
       "source": ".stageset/runs/20261115-131244-RUN.md"
+    },
+    {
+      "id": "RES-004",
+      "date": "2026-11-20",
+      "title": "Call-mode formation and Modal T4 diagnostics (incomplete gate)",
+      "status": "FAIL",
+      "summary": "Local: B=256 grace10 stable 197/199 ms p50/p95; Poisson <350 up to 224/s (324 ms), 288/s 367 ms. Modal callramp server first-byte ~177-259 ms steady for B=256-384 but WS e2e 1383-2029 ms median p95 (diagnostic, contaminated by cont backlog/connect). Poisson/mixed/B=448/mf WAVs pending clean rerun.",
+      "metrics": [
+        {
+          "label": "Local burst B=256 grace10 p50/p95",
+          "value": "197.4/199.1 ms (10/10 1-batch)"
+        },
+        {
+          "label": "Local Poisson 224/s p50/p95",
+          "value": "186.0/324.1 ms (~219 rows/s)"
+        },
+        {
+          "label": "Local Poisson 288/s p50/p95",
+          "value": "214.5/367.0 ms (fail 350)"
+        },
+        {
+          "label": "Modal callramp B=320 median p95",
+          "value": "~213 ms server, steady"
+        },
+        {
+          "label": "Modal WS burst B=320 median p95",
+          "value": "~1730-1742 ms client (diag)"
+        },
+        {
+          "label": "Modal WS connect/start",
+          "value": "~142-431 / 189-488 ms p50"
+        }
+      ],
+      "source": ".stageset/reports/20261120-call-mode-complete/summary.json"
     }
   ]
 }

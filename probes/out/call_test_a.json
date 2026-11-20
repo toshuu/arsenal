@@ -1,0 +1,68 @@
+[
+  {
+    "test": "a_first_only",
+    "B": 64,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 64,
+    "first_byte_p95": 322.51,
+    "first_chunk_p95": 480.08,
+    "errors": 0,
+    "vram": 291.5
+  },
+  {
+    "test": "a_first_only",
+    "B": 128,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 128,
+    "first_byte_p95": 331.04,
+    "first_chunk_p95": 527.74,
+    "errors": 0,
+    "vram": 295.1
+  },
+  {
+    "test": "a_first_only",
+    "B": 224,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 224,
+    "first_byte_p95": 381.53,
+    "first_chunk_p95": 652.76,
+    "errors": 0,
+    "vram": 300.3
+  },
+  {
+    "test": "a_first_only",
+    "B": 288,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 288,
+    "first_byte_p95": 697.72,
+    "first_chunk_p95": 851.73,
+    "errors": 0,
+    "vram": 291.7
+  },
+  {
+    "test": "a_first_only",
+    "B": 384,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 384,
+    "first_byte_p95": 788.0,
+    "first_chunk_p95": 1012.74,
+    "errors": 0,
+    "vram": 296.9
+  },
+  {
+    "test": "a_first_only",
+    "B": 512,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 512,
+    "first_byte_p95": 1170.86,
+    "first_chunk_p95": 1329.43,
+    "errors": 0,
+    "vram": 291.8
+  }
+]

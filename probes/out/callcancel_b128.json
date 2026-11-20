@@ -1,0 +1,15 @@
+{
+  "active_call_sessions": 0,
+  "queue_depth": 0,
+  "vram_mb": {
+    "before": {
+      "alloc": 291.7,
+      "reserved": 8812.2
+    },
+    "after": {
+      "alloc": 304.6,
+      "reserved": 8812.2
+    }
+  },
+  "ok": true
+}

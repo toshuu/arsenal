@@ -1,0 +1,83 @@
+[
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 12,
+    "window": 0,
+    "sub_batch": "224",
+    "first_byte_p95": 625.84,
+    "errors": 0
+  },
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 12,
+    "window": 5,
+    "sub_batch": "224",
+    "first_byte_p95": 138.66,
+    "errors": 0
+  },
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 12,
+    "window": 25,
+    "sub_batch": "224",
+    "first_byte_p95": 144.01,
+    "errors": 0
+  },
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 16,
+    "window": 0,
+    "sub_batch": "224",
+    "first_byte_p95": 510.95,
+    "errors": 0
+  },
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": "224",
+    "first_byte_p95": 147.6,
+    "errors": 0
+  },
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 16,
+    "window": 25,
+    "sub_batch": "224",
+    "first_byte_p95": 145.84,
+    "errors": 0
+  },
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 24,
+    "window": 0,
+    "sub_batch": "224",
+    "first_byte_p95": 137.74,
+    "errors": 0
+  },
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 24,
+    "window": 5,
+    "sub_batch": "224",
+    "first_byte_p95": 150.0,
+    "errors": 0
+  },
+  {
+    "test": "sweep",
+    "B": 224,
+    "mf": 24,
+    "window": 25,
+    "sub_batch": "224",
+    "first_byte_p95": 152.26,
+    "errors": 0
+  }
+]

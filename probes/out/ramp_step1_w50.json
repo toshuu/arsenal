@@ -1,0 +1,24 @@
+{
+  "mode": "ramp",
+  "window": 50,
+  "rows": [
+    {
+      "label": "ramp_b48_w50",
+      "b": 48,
+      "window_ms": 50,
+      "server_p50": 1210.87,
+      "server_p95": 1545.81,
+      "queue_p95": 1398.47,
+      "client_p50": 1402.87,
+      "client_p95": 1718.18,
+      "errors": 0,
+      "requests": 96,
+      "ok": false,
+      "rtf_max": 0.03,
+      "wall_s": 27.15,
+      "stdout": "{\"ok\": false, \"requests\": 96, \"p95\": 1718.18}",
+      "stderr_tail": "",
+      "returncode": 1
+    }
+  ]
+}

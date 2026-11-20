@@ -1,0 +1,217 @@
+[
+  {
+    "file": "call_seam_1.wav",
+    "bytes": 203520,
+    "chunks": 3,
+    "events": [
+      {
+        "event": "started"
+      },
+      {
+        "event": "chunk_start",
+        "index": 0,
+        "frames": 32
+      },
+      {
+        "event": "chunk_done",
+        "index": 0,
+        "samples": 13440
+      },
+      {
+        "event": "chunk_start",
+        "index": 1,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 1,
+        "samples": 44160
+      },
+      {
+        "event": "chunk_start",
+        "index": 2,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 2,
+        "samples": 44160
+      },
+      {
+        "event": "flushed"
+      }
+    ]
+  },
+  {
+    "file": "call_seam_2.wav",
+    "bytes": 199680,
+    "chunks": 3,
+    "events": [
+      {
+        "event": "started"
+      },
+      {
+        "event": "chunk_start",
+        "index": 0,
+        "frames": 32
+      },
+      {
+        "event": "chunk_done",
+        "index": 0,
+        "samples": 13440
+      },
+      {
+        "event": "chunk_start",
+        "index": 1,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 1,
+        "samples": 42240
+      },
+      {
+        "event": "chunk_start",
+        "index": 2,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 2,
+        "samples": 44160
+      },
+      {
+        "event": "flushed"
+      }
+    ]
+  },
+  {
+    "file": "call_seam_3.wav",
+    "bytes": 215040,
+    "chunks": 3,
+    "events": [
+      {
+        "event": "started"
+      },
+      {
+        "event": "chunk_start",
+        "index": 0,
+        "frames": 32
+      },
+      {
+        "event": "chunk_done",
+        "index": 0,
+        "samples": 13440
+      },
+      {
+        "event": "chunk_start",
+        "index": 1,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 1,
+        "samples": 44160
+      },
+      {
+        "event": "chunk_start",
+        "index": 2,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 2,
+        "samples": 49920
+      },
+      {
+        "event": "flushed"
+      }
+    ]
+  },
+  {
+    "file": "call_seam_4.wav",
+    "bytes": 195840,
+    "chunks": 3,
+    "events": [
+      {
+        "event": "started"
+      },
+      {
+        "event": "chunk_start",
+        "index": 0,
+        "frames": 32
+      },
+      {
+        "event": "chunk_done",
+        "index": 0,
+        "samples": 13440
+      },
+      {
+        "event": "chunk_start",
+        "index": 1,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 1,
+        "samples": 40320
+      },
+      {
+        "event": "chunk_start",
+        "index": 2,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 2,
+        "samples": 44160
+      },
+      {
+        "event": "flushed"
+      }
+    ]
+  },
+  {
+    "file": "call_seam_5.wav",
+    "bytes": 195840,
+    "chunks": 3,
+    "events": [
+      {
+        "event": "started"
+      },
+      {
+        "event": "chunk_start",
+        "index": 0,
+        "frames": 32
+      },
+      {
+        "event": "chunk_done",
+        "index": 0,
+        "samples": 13440
+      },
+      {
+        "event": "chunk_start",
+        "index": 1,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 1,
+        "samples": 40320
+      },
+      {
+        "event": "chunk_start",
+        "index": 2,
+        "frames": 192
+      },
+      {
+        "event": "chunk_done",
+        "index": 2,
+        "samples": 44160
+      },
+      {
+        "event": "flushed"
+      }
+    ]
+  }
+]

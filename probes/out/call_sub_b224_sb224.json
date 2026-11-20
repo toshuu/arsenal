@@ -1,0 +1,31 @@
+{
+  "b": 224,
+  "runs": [
+    {
+      "first_chunk_ms": {
+        "count": 224,
+        "p50": 432.96,
+        "p95": 433.9,
+        "max": 434.03
+      },
+      "first_byte_ms": {
+        "count": 224,
+        "p50": 145.84,
+        "p95": 146.62,
+        "max": 147.07
+      },
+      "errors": 0,
+      "vram_mb": {
+        "before": {
+          "alloc": 294.5,
+          "reserved": 12262.0
+        },
+        "after": {
+          "alloc": 300.5,
+          "reserved": 12262.0
+        }
+      }
+    }
+  ],
+  "ok": true
+}

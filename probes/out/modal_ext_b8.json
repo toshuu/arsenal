@@ -1,0 +1,163 @@
+{
+  "base": "https://tushar-ps2--arsenal-tts-t4-serve.us-east.modal.run",
+  "bursts": 3,
+  "per_burst": 8,
+  "load_limits": "default",
+  "warmup": false,
+  "single_profile": null,
+  "server_cores": null,
+  "uvicorn": {
+    "loop": null,
+    "http": null,
+    "backlog": null,
+    "access_log": "1"
+  },
+  "burst_0_wall_s": 4.547,
+  "burst_0_rtf": 0.15,
+  "burst_0_ok": true,
+  "burst_0_first_p50_ms": 1170.72,
+  "burst_0_first_p95_ms": 1210.44,
+  "burst_1_wall_s": 3.887,
+  "burst_1_rtf": 0.132,
+  "burst_1_ok": true,
+  "burst_1_first_p50_ms": 666.03,
+  "burst_1_first_p95_ms": 679.11,
+  "burst_2_wall_s": 3.95,
+  "burst_2_rtf": 0.132,
+  "burst_2_ok": true,
+  "burst_2_first_p50_ms": 668.73,
+  "burst_2_first_p95_ms": 682.28,
+  "requests": 24,
+  "header_p50_ms": 667.48,
+  "header_p95_ms": 1172.07,
+  "status_200": 24,
+  "errors": 0,
+  "error_values": [],
+  "first_p50_ms": 673.21,
+  "first_p95_ms": 1173.58,
+  "first_max_ms": 1210.44,
+  "first_values_ms": [
+    651.8,
+    659.3,
+    661.2,
+    663.0,
+    665.3,
+    665.6,
+    666.4,
+    666.7,
+    668.5,
+    668.9,
+    672.7,
+    672.8,
+    673.6,
+    679.1,
+    681.1,
+    682.3,
+    1152.8,
+    1157.7,
+    1162.6,
+    1169.2,
+    1172.3,
+    1172.7,
+    1173.6,
+    1210.4
+  ],
+  "server_metrics": {
+    "accepted": 210,
+    "rejected": 0,
+    "completed": 210,
+    "failed": 0,
+    "cancelled": 0,
+    "slow_clients": 0,
+    "last_errors": [],
+    "queue_ms": {
+      "count": 210,
+      "p50": 500.77,
+      "p95": 503.27,
+      "max": 503.99
+    },
+    "first_chunk_ms": {
+      "count": 210,
+      "p50": 552.03,
+      "p95": 583.73,
+      "max": 586.74
+    },
+    "request_first_chunk_ms": {
+      "count": 120,
+      "p50": 590.12,
+      "p95": 591.96,
+      "max": 840.13
+    },
+    "total_ms": {
+      "count": 210,
+      "p50": 1966.91,
+      "p95": 2218.81,
+      "max": 2229.27
+    },
+    "chunk_ms": {
+      "count": 120,
+      "p50": 14.03,
+      "p95": 70.72,
+      "max": 329.37
+    },
+    "batch_size": {
+      "count": 12,
+      "p50": 24.0,
+      "p95": 32.0,
+      "max": 32.0
+    },
+    "batch_spread_ms": {
+      "count": 12,
+      "p50": 38.56,
+      "p95": 55.56,
+      "max": 55.56
+    },
+    "batch_wait_ms": {
+      "count": 12,
+      "p50": 501.15,
+      "p95": 503.95,
+      "max": 503.95
+    },
+    "arrival_ms": {
+      "count": 24,
+      "p50": 114.18,
+      "p95": 562.1,
+      "max": 598.34
+    },
+    "burst_spread_ms": {
+      "count": 3,
+      "p50": 55.08,
+      "p95": 293.48,
+      "max": 293.48
+    },
+    "timeline_p95": {
+      "handler_to_chunks_done_ms": 70.72,
+      "chunks_done_to_submit_ms": 0.09,
+      "submit_to_batch_start_ms": 503.53,
+      "batch_start_to_stream_start_ms": 12.2,
+      "stream_start_to_prep_done_ms": 3.3,
+      "prep_done_to_cond_done_ms": 0.79,
+      "cond_done_to_flow0_done_ms": 48.03,
+      "flow0_done_to_mimi0_done_ms": 8.29,
+      "mimi0_done_to_first_emit_ms": 1224.64,
+      "first_emit_to_loop_delivered_ms": 2.8,
+      "loop_delivered_to_first_byte_sent_ms": 0.48,
+      "handler_to_first_byte_ms": 591.95
+    },
+    "timeline_p50": {
+      "handler_to_chunks_done_ms": 14.03,
+      "chunks_done_to_submit_ms": 0.02,
+      "submit_to_batch_start_ms": 501.9,
+      "batch_start_to_stream_start_ms": 0.43,
+      "stream_start_to_prep_done_ms": 2.01,
+      "prep_done_to_cond_done_ms": 0.72,
+      "cond_done_to_flow0_done_ms": 47.4,
+      "flow0_done_to_mimi0_done_ms": 7.1,
+      "mimi0_done_to_first_emit_ms": 19.37,
+      "first_emit_to_loop_delivered_ms": 0.8,
+      "loop_delivered_to_first_byte_sent_ms": 0.16,
+      "handler_to_first_byte_ms": 590.12
+    }
+  },
+  "ok": false
+}

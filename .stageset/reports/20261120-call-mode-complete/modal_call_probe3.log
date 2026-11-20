@@ -1,0 +1,2874 @@
+✓ Initialized. View run at 
+https://modal.com/apps/tushar-ps2/main/ap-8zLVeO6YBDjocOkAUkNb4d
+✓ Created objects.
+├── ✓ Uploaded /kaggle/working/arsenal/Code/deploy/modal_app.py
+├── ✓ Uploaded /kaggle/working/arsenal/Code/probes/ref
+├── ✓ Uploaded /kaggle/working/arsenal/Code/batch
+├── ✓ Uploaded /kaggle/working/arsenal/Code/model
+├── ✓ Uploaded /kaggle/working/arsenal/Code/probes
+├── ✓ Created Function build_assets.
+├── ✓ Created Function probe.
+├── ✓ Created Function direct_bench.
+└── ✓ Created Function call_probe.
+READY
+CLIENT_RC 0
+{
+  "mode": "burst",
+  "b": 256,
+  "repeats": 5,
+  "warmups": 2,
+  "runs": [
+    {
+      "repeat": 0,
+      "connect": {
+        "count": 256,
+        "p50": 157.784705500001,
+        "p95": 167.61082700000074,
+        "max": 169.242251,
+        "min": 133.68982000000074
+      },
+      "started": {
+        "count": 256,
+        "p50": 188.70150000000052,
+        "p95": 209.8955690000004,
+        "max": 212.02065199999964,
+        "min": 173.17278800000224
+      },
+      "first_byte": {
+        "count": 256,
+        "p50": 964.4700509999993,
+        "p95": 1169.7613279999998,
+        "max": 1183.7858820000022,
+        "min": 767.8794909999987
+      },
+      "errors": 0,
+      "n": 256
+    },
+    {
+      "repeat": 1,
+      "connect": {
+        "count": 256,
+        "p50": 375.1715299999994,
+        "p95": 394.03099400000133,
+        "max": 395.6163379999999,
+        "min": 130.99422800000227
+      },
+      "started": {
+        "count": 256,
+        "p50": 444.60502000000093,
+        "p95": 491.7623370000008,
+        "max": 494.82326000000046,
+        "min": 408.52561799999876
+      },
+      "first_byte": {
+        "count": 256,
+        "p50": 1233.8440960000003,
+        "p95": 1570.3205370000005,
+        "max": 1593.5576240000025,
+        "min": 735.0161370000023
+      },
+      "errors": 0,
+      "n": 256
+    },
+    {
+      "repeat": 2,
+      "connect": {
+        "count": 256,
+        "p50": 148.8351460000015,
+        "p95": 160.5160089999984,
+        "max": 169.43313599999854,
+        "min": 136.71234799999965
+      },
+      "started": {
+        "count": 256,
+        "p50": 195.68344350000012,
+        "p95": 243.72166600000256,
+        "max": 247.1981819999982,
+        "min": 159.8066530000004
+      },
+      "first_byte": {
+        "count": 256,
+        "p50": 1128.8823874999991,
+        "p95": 1382.6672690000023,
+        "max": 1397.0901190000013,
+        "min": 952.7327589999999
+      },
+      "errors": 0,
+      "n": 256
+    },
+    {
+      "repeat": 3,
+      "connect": {
+        "count": 256,
+        "p50": 159.7628449999995,
+        "p95": 171.1730760000023,
+        "max": 172.5732370000017,
+        "min": 142.13816999999906
+      },
+      "started": {
+        "count": 256,
+        "p50": 194.42473650000204,
+        "p95": 214.8800059999978,
+        "max": 217.8469750000005,
+        "min": 174.25324199999892
+      },
+      "first_byte": {
+        "count": 256,
+        "p50": 964.6230150000026,
+        "p95": 1167.7980549999986,
+        "max": 1177.2317169999978,
+        "min": 759.2824090000008
+      },
+      "errors": 0,
+      "n": 256
+    },
+    {
+      "repeat": 4,
+      "connect": {
+        "count": 256,
+        "p50": 142.06758799999974,
+        "p95": 400.3540680000057,
+        "max": 402.16900899999786,
+        "min": 123.69365800000054
+      },
+      "started": {
+        "count": 256,
+        "p50": 428.162587500001,
+        "p95": 476.35244599999993,
+        "max": 479.7732490000044,
+        "min": 177.7214489999963
+      },
+      "first_byte": {
+        "count": 256,
+        "p50": 1227.9616520000013,
+        "p95": 1472.139845000001,
+        "max": 1488.7899909999974,
+        "min": 1024.1222249999992
+      },
+      "errors": 0,
+      "n": 256
+    }
+  ],
+  "p50_of_p50": 1128.8823874999991,
+  "median_p95": 1382.6672690000023,
+  "p95_of_p95": 1570.3205370000005,
+  "spread_p95": 402.5224820000019,
+  "errors": 0,
+  "url": "http://127.0.0.1:8081",
+  "text": "Hello, can you hear me now?",
+  "max_frames": 8,
+  "first_only": true
+}
+
+CLIENT_RC 0
+{
+  "mode": "burst",
+  "b": 320,
+  "repeats": 5,
+  "warmups": 2,
+  "runs": [
+    {
+      "repeat": 0,
+      "connect": {
+        "count": 320,
+        "p50": 159.38439200000332,
+        "p95": 449.27507799999944,
+        "max": 451.3876649999986,
+        "min": 137.09546100000125
+      },
+      "started": {
+        "count": 320,
+        "p50": 477.5107545000026,
+        "p95": 544.0399760000005,
+        "max": 547.9019570000005,
+        "min": 458.77848699999646
+      },
+      "first_byte": {
+        "count": 320,
+        "p50": 1383.8759110000005,
+        "p95": 1730.2684590000013,
+        "max": 1766.6706340000005,
+        "min": 915.2083600000012
+      },
+      "errors": 0,
+      "n": 320
+    },
+    {
+      "repeat": 1,
+      "connect": {
+        "count": 320,
+        "p50": 183.4540374999989,
+        "p95": 218.34401699999972,
+        "max": 219.70747199999607,
+        "min": 164.17553200000157
+      },
+      "started": {
+        "count": 320,
+        "p50": 251.62083799999735,
+        "p95": 311.7823429999973,
+        "max": 315.55702300000377,
+        "min": 213.02070300000508
+      },
+      "first_byte": {
+        "count": 320,
+        "p50": 1475.9398664999958,
+        "p95": 1796.571587999999,
+        "max": 1914.0613759999994,
+        "min": 1222.5889349999975
+      },
+      "errors": 0,
+      "n": 320
+    },
+    {
+      "repeat": 2,
+      "connect": {
+        "count": 320,
+        "p50": 179.1842804999959,
+        "p95": 198.57162999999645,
+        "max": 260.9593760000024,
+        "min": 152.9836919999994
+      },
+      "started": {
+        "count": 320,
+        "p50": 233.623699999999,
+        "p95": 296.1930589999966,
+        "max": 299.8172739999987,
+        "min": 207.56002800000317
+      },
+      "first_byte": {
+        "count": 320,
+        "p50": 1297.057534500002,
+        "p95": 1612.4868690000014,
+        "max": 1655.0065989999964,
+        "min": 1030.3851249999952
+      },
+      "errors": 0,
+      "n": 320
+    },
+    {
+      "repeat": 3,
+      "connect": {
+        "count": 320,
+        "p50": 396.8865884999992,
+        "p95": 421.1126239999956,
+        "max": 425.0681619999952,
+        "min": 169.50614999999658
+      },
+      "started": {
+        "count": 320,
+        "p50": 444.56665099999526,
+        "p95": 497.90734500000156,
+        "max": 502.03977700000024,
+        "min": 427.3768249999961
+      },
+      "first_byte": {
+        "count": 320,
+        "p50": 1446.7613499999993,
+        "p95": 1717.9890990000004,
+        "max": 1738.6689379999964,
+        "min": 1199.267492000004
+      },
+      "errors": 0,
+      "n": 320
+    },
+    {
+      "repeat": 4,
+      "connect": {
+        "count": 320,
+        "p50": 172.72293250000104,
+        "p95": 464.07819599999556,
+        "max": 475.25687799999616,
+        "min": 154.38802799999962
+      },
+      "started": {
+        "count": 320,
+        "p50": 405.19044800000256,
+        "p95": 465.6791679999941,
+        "max": 476.3963139999987,
+        "min": 381.8557009999992
+      },
+      "first_byte": {
+        "count": 320,
+        "p50": 1494.4054959999987,
+        "p95": 1739.2611670000022,
+        "max": 1842.9740579999957,
+        "min": 1228.9329919999973
+      },
+      "errors": 0,
+      "n": 320
+    }
+  ],
+  "p50_of_p50": 1446.7613499999993,
+  "median_p95": 1730.2684590000013,
+  "p95_of_p95": 1796.571587999999,
+  "spread_p95": 184.08471899999768,
+  "errors": 0,
+  "url": "http://127.0.0.1:8081",
+  "text": "Hello, can you hear me now?",
+  "max_frames": 8,
+  "first_only": true
+}
+
+CLIENT_RC 0
+{
+  "mode": "burst",
+  "b": 384,
+  "repeats": 5,
+  "warmups": 2,
+  "runs": [
+    {
+      "repeat": 0,
+      "connect": {
+        "count": 384,
+        "p50": 200.23830650000107,
+        "p95": 228.0301580000028,
+        "max": 232.01939899999502,
+        "min": 176.877324000003
+      },
+      "started": {
+        "count": 384,
+        "p50": 264.3709749999985,
+        "p95": 345.4840029999957,
+        "max": 350.66496100000677,
+        "min": 240.08424699999864
+      },
+      "first_byte": {
+        "count": 384,
+        "p50": 1385.2641274999974,
+        "p95": 1843.4449659999998,
+        "max": 1919.1591869999982,
+        "min": 1071.1108030000034
+      },
+      "errors": 0,
+      "n": 384
+    },
+    {
+      "repeat": 1,
+      "connect": {
+        "count": 384,
+        "p50": 340.8356885000039,
+        "p95": 494.93623699999745,
+        "max": 510.8895629999992,
+        "min": 309.1245049999998
+      },
+      "started": {
+        "count": 384,
+        "p50": 376.550338499996,
+        "p95": 496.7921089999976,
+        "max": 511.65364499999555,
+        "min": 336.9121659999976
+      },
+      "first_byte": {
+        "count": 384,
+        "p50": 1692.107526000001,
+        "p95": 2080.254060999998,
+        "max": 2124.3968930000037,
+        "min": 1369.5435079999995
+      },
+      "errors": 0,
+      "n": 384
+    },
+    {
+      "repeat": 2,
+      "connect": {
+        "count": 384,
+        "p50": 431.0708854999987,
+        "p95": 461.6391679999978,
+        "max": 465.49701,
+        "min": 206.76385399999475
+      },
+      "started": {
+        "count": 384,
+        "p50": 488.4668400000045,
+        "p95": 557.4745329999971,
+        "max": 562.4482420000021,
+        "min": 459.8200619999986
+      },
+      "first_byte": {
+        "count": 384,
+        "p50": 1615.0926739999995,
+        "p95": 2029.3604720000005,
+        "max": 2093.3399410000034,
+        "min": 825.9709629999961
+      },
+      "errors": 0,
+      "n": 384
+    },
+    {
+      "repeat": 3,
+      "connect": {
+        "count": 384,
+        "p50": 396.6637355000024,
+        "p95": 422.3747009999954,
+        "max": 425.8416589999996,
+        "min": 185.62950999999828
+      },
+      "started": {
+        "count": 384,
+        "p50": 451.207028999999,
+        "p95": 488.89344399999857,
+        "max": 516.4139369999958,
+        "min": 427.355845000001
+      },
+      "first_byte": {
+        "count": 384,
+        "p50": 1673.5268465,
+        "p95": 2072.209249999993,
+        "max": 2196.1927759999967,
+        "min": 1363.9172170000008
+      },
+      "errors": 0,
+      "n": 384
+    },
+    {
+      "repeat": 4,
+      "connect": {
+        "count": 384,
+        "p50": 378.84480449999813,
+        "p95": 423.7497130000065,
+        "max": 426.1590739999974,
+        "min": 195.08826199999874
+      },
+      "started": {
+        "count": 384,
+        "p50": 450.7666169999993,
+        "p95": 515.6662159999996,
+        "max": 520.5271470000099,
+        "min": 408.5796909999999
+      },
+      "first_byte": {
+        "count": 384,
+        "p50": 1557.6253219999999,
+        "p95": 1964.4684920000088,
+        "max": 1986.7543069999983,
+        "min": 787.1533630000016
+      },
+      "errors": 0,
+      "n": 384
+    }
+  ],
+  "p50_of_p50": 1615.0926739999995,
+  "median_p95": 2029.3604720000005,
+  "p95_of_p95": 2080.254060999998,
+  "spread_p95": 236.80909499999802,
+  "errors": 0,
+  "url": "http://127.0.0.1:8081",
+  "text": "Hello, can you hear me now?",
+  "max_frames": 8,
+  "first_only": true
+}
+
+{
+  "callramp_256": {
+    "b": 256,
+    "runs": [
+      {
+        "first_chunk_ms": {
+          "count": 256,
+          "p50": 674.96,
+          "p95": 677.12,
+          "max": 677.39
+        },
+        "first_byte_ms": {
+          "count": 256,
+          "p50": 366.19,
+          "p95": 368.07,
+          "max": 368.34
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 256,
+          "p50": 17.69,
+          "p95": 20.25,
+          "max": 20.59
+        },
+        "timing_first_emit_ms": {
+          "count": 256,
+          "p50": 366.18,
+          "p95": 368.07,
+          "max": 368.32
+        },
+        "batch_sizes": [
+          256.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 258.2,
+            "reserved": 1142.9
+          },
+          "after": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 256,
+          "p50": 468.83,
+          "p95": 471.3,
+          "max": 471.54
+        },
+        "first_byte_ms": {
+          "count": 256,
+          "p50": 171.81,
+          "p95": 174.08,
+          "max": 174.32
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 256,
+          "p50": 19.7,
+          "p95": 22.73,
+          "max": 23.06
+        },
+        "timing_first_emit_ms": {
+          "count": 256,
+          "p50": 171.81,
+          "p95": 174.07,
+          "max": 174.31
+        },
+        "batch_sizes": [
+          256.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          },
+          "after": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 256,
+          "p50": 460.24,
+          "p95": 462.41,
+          "max": 462.64
+        },
+        "first_byte_ms": {
+          "count": 256,
+          "p50": 166.67,
+          "p95": 168.78,
+          "max": 169.03
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 256,
+          "p50": 18.99,
+          "p95": 21.81,
+          "max": 22.14
+        },
+        "timing_first_emit_ms": {
+          "count": 256,
+          "p50": 166.67,
+          "p95": 168.78,
+          "max": 169.02
+        },
+        "batch_sizes": [
+          256.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          },
+          "after": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 256,
+          "p50": 470.44,
+          "p95": 472.57,
+          "max": 472.8
+        },
+        "first_byte_ms": {
+          "count": 256,
+          "p50": 174.96,
+          "p95": 176.99,
+          "max": 177.25
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 256,
+          "p50": 19.97,
+          "p95": 22.69,
+          "max": 23.03
+        },
+        "timing_first_emit_ms": {
+          "count": 256,
+          "p50": 174.96,
+          "p95": 176.98,
+          "max": 177.24
+        },
+        "batch_sizes": [
+          256.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          },
+          "after": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 256,
+          "p50": 469.88,
+          "p95": 471.8,
+          "max": 472.01
+        },
+        "first_byte_ms": {
+          "count": 256,
+          "p50": 176.55,
+          "p95": 178.33,
+          "max": 178.53
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 256,
+          "p50": 18.42,
+          "p95": 20.91,
+          "max": 21.2
+        },
+        "timing_first_emit_ms": {
+          "count": 256,
+          "p50": 176.55,
+          "p95": 178.32,
+          "max": 178.52
+        },
+        "batch_sizes": [
+          256.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          },
+          "after": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          }
+        }
+      }
+    ],
+    "ok": true
+  },
+  "callramp_256_metrics": {
+    "metrics": {
+      "accepted": 1280,
+      "rejected": 0,
+      "completed": 1280,
+      "failed": 0,
+      "cancelled": 0,
+      "slow_clients": 0,
+      "last_errors": [],
+      "queue_ms": {
+        "count": 1000,
+        "p50": 19.18,
+        "p95": 22.07,
+        "max": 23.0
+      },
+      "first_chunk_ms": {
+        "count": 1000,
+        "p50": 173.45,
+        "p95": 177.7,
+        "max": 178.51
+      },
+      "request_first_chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "total_ms": {
+        "count": 1000,
+        "p50": 465.42,
+        "p95": 467.09,
+        "max": 467.46
+      },
+      "chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "batch_size": {
+        "count": 5,
+        "p50": 256.0,
+        "p95": 256.0,
+        "max": 256.0
+      },
+      "batch_spread_ms": {
+        "count": 5,
+        "p50": 6.59,
+        "p95": 7.82,
+        "max": 7.82
+      },
+      "batch_wait_ms": {
+        "count": 5,
+        "p50": 22.0,
+        "p95": 22.92,
+        "max": 22.92
+      },
+      "batch_wall_ms": {
+        "count": 5,
+        "p50": 448.57,
+        "p95": 655.74,
+        "max": 655.74
+      },
+      "arrival_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "burst_spread_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "handler_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "chunks_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "submit_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "vram_alloc_before_mb": {
+        "count": 5,
+        "p50": 246.21,
+        "p95": 246.21,
+        "max": 246.21
+      },
+      "vram_alloc_after_mb": {
+        "count": 5,
+        "p50": 259.33,
+        "p95": 259.33,
+        "max": 259.33
+      },
+      "vram_peak_mb": {
+        "count": 5,
+        "p50": 1580.61,
+        "p95": 1580.61,
+        "max": 1580.61
+      },
+      "vram_reserved_mb": {
+        "count": 5,
+        "p50": 1668.0,
+        "p95": 1668.0,
+        "max": 1668.0
+      },
+      "call_first_ms": {
+        "count": 1280,
+        "p50": 174.66,
+        "p95": 367.25,
+        "max": 368.3
+      },
+      "call_first_wait_ms": {
+        "count": 1280,
+        "p50": 18.93,
+        "p95": 22.15,
+        "max": 23.04
+      },
+      "call_first_wait_behind_normal_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "first_chunk_ms_by_class": {
+        "call_first": {
+          "count": 1280,
+          "p50": 174.66,
+          "p95": 367.25,
+          "max": 368.3
+        },
+        "call_cont": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "normal": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        }
+      },
+      "active_call_sessions": 0,
+      "underruns": 0,
+      "batch_classes": [
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first"
+      ],
+      "timeline_p95": {
+        "batch_start_to_stream_start_ms": 1.26,
+        "stream_start_to_prep_done_ms": 185.35,
+        "prep_done_to_cond_done_ms": 0.84,
+        "cond_done_to_flow0_done_ms": 131.33,
+        "flow0_done_to_mimi0_done_ms": 28.97,
+        "mimi0_done_to_first_emit_ms": 1.78
+      },
+      "timeline_p50": {
+        "batch_start_to_stream_start_ms": 0.58,
+        "stream_start_to_prep_done_ms": 4.34,
+        "prep_done_to_cond_done_ms": 0.66,
+        "cond_done_to_flow0_done_ms": 128.2,
+        "flow0_done_to_mimi0_done_ms": 20.87,
+        "mimi0_done_to_first_emit_ms": 1.02
+      }
+    },
+    "queue_depth": 0,
+    "max_batch": 640,
+    "max_rows": 640,
+    "max_queue": 4096,
+    "max_frames": 192,
+    "batch_window_ms": 150
+  },
+  "callramp_320": {
+    "b": 320,
+    "runs": [
+      {
+        "first_chunk_ms": {
+          "count": 320,
+          "p50": 597.66,
+          "p95": 600.83,
+          "max": 601.23
+        },
+        "first_byte_ms": {
+          "count": 320,
+          "p50": 223.7,
+          "p95": 226.73,
+          "max": 227.13
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 320,
+          "p50": 19.18,
+          "p95": 23.12,
+          "max": 23.63
+        },
+        "timing_first_emit_ms": {
+          "count": 320,
+          "p50": 223.7,
+          "p95": 226.72,
+          "max": 227.12
+        },
+        "batch_sizes": [
+          320.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 271.9,
+            "reserved": 1749.0
+          },
+          "after": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 320,
+          "p50": 556.22,
+          "p95": 559.01,
+          "max": 559.33
+        },
+        "first_byte_ms": {
+          "count": 320,
+          "p50": 213.67,
+          "p95": 216.31,
+          "max": 216.61
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 320,
+          "p50": 22.9,
+          "p95": 26.46,
+          "max": 26.88
+        },
+        "timing_first_emit_ms": {
+          "count": 320,
+          "p50": 213.66,
+          "p95": 216.3,
+          "max": 216.6
+        },
+        "batch_sizes": [
+          320.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          },
+          "after": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 320,
+          "p50": 546.65,
+          "p95": 550.61,
+          "max": 550.9
+        },
+        "first_byte_ms": {
+          "count": 320,
+          "p50": 201.76,
+          "p95": 205.59,
+          "max": 205.89
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 320,
+          "p50": 21.5,
+          "p95": 26.22,
+          "max": 26.62
+        },
+        "timing_first_emit_ms": {
+          "count": 320,
+          "p50": 201.76,
+          "p95": 205.58,
+          "max": 205.88
+        },
+        "batch_sizes": [
+          320.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          },
+          "after": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 320,
+          "p50": 555.96,
+          "p95": 558.31,
+          "max": 558.55
+        },
+        "first_byte_ms": {
+          "count": 320,
+          "p50": 210.17,
+          "p95": 212.33,
+          "max": 212.57
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 320,
+          "p50": 21.99,
+          "p95": 25.07,
+          "max": 25.4
+        },
+        "timing_first_emit_ms": {
+          "count": 320,
+          "p50": 210.16,
+          "p95": 212.33,
+          "max": 212.56
+        },
+        "batch_sizes": [
+          320.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          },
+          "after": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 320,
+          "p50": 558.86,
+          "p95": 561.1,
+          "max": 561.3
+        },
+        "first_byte_ms": {
+          "count": 320,
+          "p50": 211.33,
+          "p95": 213.62,
+          "max": 213.86
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 320,
+          "p50": 20.41,
+          "p95": 23.59,
+          "max": 23.91
+        },
+        "timing_first_emit_ms": {
+          "count": 320,
+          "p50": 211.32,
+          "p95": 213.62,
+          "max": 213.85
+        },
+        "batch_sizes": [
+          320.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          },
+          "after": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          }
+        }
+      }
+    ],
+    "ok": true
+  },
+  "callramp_320_metrics": {
+    "metrics": {
+      "accepted": 2880,
+      "rejected": 0,
+      "completed": 2880,
+      "failed": 0,
+      "cancelled": 0,
+      "slow_clients": 0,
+      "last_errors": [],
+      "queue_ms": {
+        "count": 1000,
+        "p50": 21.02,
+        "p95": 24.73,
+        "max": 26.6
+      },
+      "first_chunk_ms": {
+        "count": 1000,
+        "p50": 209.18,
+        "p95": 213.15,
+        "max": 213.83
+      },
+      "request_first_chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "total_ms": {
+        "count": 1000,
+        "p50": 550.98,
+        "p95": 554.03,
+        "max": 554.16
+      },
+      "chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "batch_size": {
+        "count": 10,
+        "p50": 320.0,
+        "p95": 320.0,
+        "max": 320.0
+      },
+      "batch_spread_ms": {
+        "count": 10,
+        "p50": 8.12,
+        "p95": 10.2,
+        "max": 10.2
+      },
+      "batch_wait_ms": {
+        "count": 10,
+        "p50": 23.5,
+        "p95": 26.66,
+        "max": 26.66
+      },
+      "batch_wall_ms": {
+        "count": 10,
+        "p50": 531.02,
+        "p95": 655.74,
+        "max": 655.74
+      },
+      "arrival_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "burst_spread_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "handler_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "chunks_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "submit_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "vram_alloc_before_mb": {
+        "count": 10,
+        "p50": 246.21,
+        "p95": 246.21,
+        "max": 246.21
+      },
+      "vram_alloc_after_mb": {
+        "count": 10,
+        "p50": 262.61,
+        "p95": 262.61,
+        "max": 262.61
+      },
+      "vram_peak_mb": {
+        "count": 10,
+        "p50": 1914.2,
+        "p95": 1914.2,
+        "max": 1914.2
+      },
+      "vram_reserved_mb": {
+        "count": 10,
+        "p50": 2014.0,
+        "p95": 2014.0,
+        "max": 2014.0
+      },
+      "call_first_ms": {
+        "count": 2880,
+        "p50": 208.43,
+        "p95": 365.95,
+        "max": 368.3
+      },
+      "call_first_wait_ms": {
+        "count": 2880,
+        "p50": 19.79,
+        "p95": 24.63,
+        "max": 26.85
+      },
+      "call_first_wait_behind_normal_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "first_chunk_ms_by_class": {
+        "call_first": {
+          "count": 2880,
+          "p50": 208.43,
+          "p95": 365.95,
+          "max": 368.3
+        },
+        "call_cont": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "normal": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        }
+      },
+      "active_call_sessions": 0,
+      "underruns": 0,
+      "batch_classes": [
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first"
+      ],
+      "timeline_p95": {
+        "batch_start_to_stream_start_ms": 0.81,
+        "stream_start_to_prep_done_ms": 5.66,
+        "prep_done_to_cond_done_ms": 0.85,
+        "cond_done_to_flow0_done_ms": 159.55,
+        "flow0_done_to_mimi0_done_ms": 38.8,
+        "mimi0_done_to_first_emit_ms": 2.15
+      },
+      "timeline_p50": {
+        "batch_start_to_stream_start_ms": 0.63,
+        "stream_start_to_prep_done_ms": 4.74,
+        "prep_done_to_cond_done_ms": 0.66,
+        "cond_done_to_flow0_done_ms": 156.17,
+        "flow0_done_to_mimi0_done_ms": 25.37,
+        "mimi0_done_to_first_emit_ms": 1.23
+      }
+    },
+    "queue_depth": 0,
+    "max_batch": 640,
+    "max_rows": 640,
+    "max_queue": 4096,
+    "max_frames": 192,
+    "batch_window_ms": 150
+  },
+  "callramp_384": {
+    "b": 384,
+    "runs": [
+      {
+        "first_chunk_ms": {
+          "count": 384,
+          "p50": 855.11,
+          "p95": 857.88,
+          "max": 858.34
+        },
+        "first_byte_ms": {
+          "count": 384,
+          "p50": 427.81,
+          "p95": 430.4,
+          "max": 430.86
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 384,
+          "p50": 21.95,
+          "p95": 25.67,
+          "max": 26.26
+        },
+        "timing_first_emit_ms": {
+          "count": 384,
+          "p50": 427.81,
+          "p95": 430.4,
+          "max": 430.85
+        },
+        "batch_sizes": [
+          384.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 275.4,
+            "reserved": 2111.8
+          },
+          "after": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 384,
+          "p50": 663.28,
+          "p95": 665.44,
+          "max": 665.57
+        },
+        "first_byte_ms": {
+          "count": 384,
+          "p50": 253.74,
+          "p95": 256.51,
+          "max": 256.8
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 384,
+          "p50": 24.47,
+          "p95": 28.38,
+          "max": 28.8
+        },
+        "timing_first_emit_ms": {
+          "count": 384,
+          "p50": 253.74,
+          "p95": 256.51,
+          "max": 256.79
+        },
+        "batch_sizes": [
+          384.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          },
+          "after": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 384,
+          "p50": 664.83,
+          "p95": 667.75,
+          "max": 668.05
+        },
+        "first_byte_ms": {
+          "count": 384,
+          "p50": 256.26,
+          "p95": 259.42,
+          "max": 259.77
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 384,
+          "p50": 25.47,
+          "p95": 29.75,
+          "max": 30.24
+        },
+        "timing_first_emit_ms": {
+          "count": 384,
+          "p50": 256.26,
+          "p95": 259.42,
+          "max": 259.76
+        },
+        "batch_sizes": [
+          384.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          },
+          "after": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 384,
+          "p50": 661.89,
+          "p95": 664.84,
+          "max": 664.99
+        },
+        "first_byte_ms": {
+          "count": 384,
+          "p50": 250.0,
+          "p95": 255.2,
+          "max": 255.56
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 384,
+          "p50": 21.47,
+          "p95": 27.81,
+          "max": 28.31
+        },
+        "timing_first_emit_ms": {
+          "count": 384,
+          "p50": 249.99,
+          "p95": 255.2,
+          "max": 255.55
+        },
+        "batch_sizes": [
+          384.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          },
+          "after": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          }
+        }
+      },
+      {
+        "first_chunk_ms": {
+          "count": 384,
+          "p50": 649.4,
+          "p95": 837.8,
+          "max": 837.93
+        },
+        "first_byte_ms": {
+          "count": 384,
+          "p50": 238.87,
+          "p95": 429.12,
+          "max": 429.41
+        },
+        "timing_submit_ms": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "timing_batch_start_ms": {
+          "count": 384,
+          "p50": 7.07,
+          "p95": 198.49,
+          "max": 198.9
+        },
+        "timing_first_emit_ms": {
+          "count": 384,
+          "p50": 238.87,
+          "p95": 429.12,
+          "max": 429.4
+        },
+        "batch_sizes": [
+          384.0
+        ],
+        "errors": 0,
+        "vram_mb": {
+          "before": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          },
+          "after": {
+            "alloc": 278.8,
+            "reserved": 2518.7
+          }
+        }
+      }
+    ],
+    "ok": true
+  },
+  "callramp_384_metrics": {
+    "metrics": {
+      "accepted": 4800,
+      "rejected": 0,
+      "completed": 4800,
+      "failed": 0,
+      "cancelled": 0,
+      "slow_clients": 0,
+      "last_errors": [],
+      "queue_ms": {
+        "count": 1000,
+        "p50": 19.81,
+        "p95": 196.8,
+        "max": 198.88
+      },
+      "first_chunk_ms": {
+        "count": 1000,
+        "p50": 249.64,
+        "p95": 427.65,
+        "max": 429.38
+      },
+      "request_first_chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "total_ms": {
+        "count": 1000,
+        "p50": 651.77,
+        "p95": 827.3,
+        "max": 828.6
+      },
+      "chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "batch_size": {
+        "count": 15,
+        "p50": 320.0,
+        "p95": 384.0,
+        "max": 384.0
+      },
+      "batch_spread_ms": {
+        "count": 15,
+        "p50": 8.75,
+        "p95": 196.38,
+        "max": 196.38
+      },
+      "batch_wait_ms": {
+        "count": 15,
+        "p50": 25.18,
+        "p95": 198.74,
+        "max": 198.74
+      },
+      "batch_wall_ms": {
+        "count": 15,
+        "p50": 535.75,
+        "p95": 830.21,
+        "max": 830.21
+      },
+      "arrival_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "burst_spread_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "handler_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "chunks_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "submit_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "vram_alloc_before_mb": {
+        "count": 15,
+        "p50": 246.21,
+        "p95": 246.21,
+        "max": 246.21
+      },
+      "vram_alloc_after_mb": {
+        "count": 15,
+        "p50": 262.61,
+        "p95": 265.9,
+        "max": 265.9
+      },
+      "vram_peak_mb": {
+        "count": 15,
+        "p50": 1914.2,
+        "p95": 2247.8,
+        "max": 2247.8
+      },
+      "vram_reserved_mb": {
+        "count": 15,
+        "p50": 2014.0,
+        "p95": 2402.0,
+        "max": 2402.0
+      },
+      "call_first_ms": {
+        "count": 4800,
+        "p50": 222.1,
+        "p95": 427.73,
+        "max": 430.83
+      },
+      "call_first_wait_ms": {
+        "count": 4800,
+        "p50": 20.3,
+        "p95": 27.79,
+        "max": 198.88
+      },
+      "call_first_wait_behind_normal_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "first_chunk_ms_by_class": {
+        "call_first": {
+          "count": 4800,
+          "p50": 222.1,
+          "p95": 427.73,
+          "max": 430.83
+        },
+        "call_cont": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        },
+        "normal": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        }
+      },
+      "active_call_sessions": 0,
+      "underruns": 0,
+      "batch_classes": [
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first",
+        "call_first"
+      ],
+      "timeline_p95": {
+        "batch_start_to_stream_start_ms": 0.94,
+        "stream_start_to_prep_done_ms": 178.59,
+        "prep_done_to_cond_done_ms": 0.73,
+        "cond_done_to_flow0_done_ms": 192.37,
+        "flow0_done_to_mimi0_done_ms": 34.55,
+        "mimi0_done_to_first_emit_ms": 2.8
+      },
+      "timeline_p50": {
+        "batch_start_to_stream_start_ms": 0.8,
+        "stream_start_to_prep_done_ms": 5.46,
+        "prep_done_to_cond_done_ms": 0.69,
+        "cond_done_to_flow0_done_ms": 191.07,
+        "flow0_done_to_mimi0_done_ms": 31.05,
+        "mimi0_done_to_first_emit_ms": 1.62
+      }
+    },
+    "queue_depth": 0,
+    "max_batch": 640,
+    "max_rows": 640,
+    "max_queue": 4096,
+    "max_frames": 192,
+    "batch_window_ms": 150
+  },
+  "ws_burst_256": {
+    "mode": "burst",
+    "b": 256,
+    "repeats": 5,
+    "warmups": 2,
+    "runs": [
+      {
+        "repeat": 0,
+        "connect": {
+          "count": 256,
+          "p50": 157.784705500001,
+          "p95": 167.61082700000074,
+          "max": 169.242251,
+          "min": 133.68982000000074
+        },
+        "started": {
+          "count": 256,
+          "p50": 188.70150000000052,
+          "p95": 209.8955690000004,
+          "max": 212.02065199999964,
+          "min": 173.17278800000224
+        },
+        "first_byte": {
+          "count": 256,
+          "p50": 964.4700509999993,
+          "p95": 1169.7613279999998,
+          "max": 1183.7858820000022,
+          "min": 767.8794909999987
+        },
+        "errors": 0,
+        "n": 256
+      },
+      {
+        "repeat": 1,
+        "connect": {
+          "count": 256,
+          "p50": 375.1715299999994,
+          "p95": 394.03099400000133,
+          "max": 395.6163379999999,
+          "min": 130.99422800000227
+        },
+        "started": {
+          "count": 256,
+          "p50": 444.60502000000093,
+          "p95": 491.7623370000008,
+          "max": 494.82326000000046,
+          "min": 408.52561799999876
+        },
+        "first_byte": {
+          "count": 256,
+          "p50": 1233.8440960000003,
+          "p95": 1570.3205370000005,
+          "max": 1593.5576240000025,
+          "min": 735.0161370000023
+        },
+        "errors": 0,
+        "n": 256
+      },
+      {
+        "repeat": 2,
+        "connect": {
+          "count": 256,
+          "p50": 148.8351460000015,
+          "p95": 160.5160089999984,
+          "max": 169.43313599999854,
+          "min": 136.71234799999965
+        },
+        "started": {
+          "count": 256,
+          "p50": 195.68344350000012,
+          "p95": 243.72166600000256,
+          "max": 247.1981819999982,
+          "min": 159.8066530000004
+        },
+        "first_byte": {
+          "count": 256,
+          "p50": 1128.8823874999991,
+          "p95": 1382.6672690000023,
+          "max": 1397.0901190000013,
+          "min": 952.7327589999999
+        },
+        "errors": 0,
+        "n": 256
+      },
+      {
+        "repeat": 3,
+        "connect": {
+          "count": 256,
+          "p50": 159.7628449999995,
+          "p95": 171.1730760000023,
+          "max": 172.5732370000017,
+          "min": 142.13816999999906
+        },
+        "started": {
+          "count": 256,
+          "p50": 194.42473650000204,
+          "p95": 214.8800059999978,
+          "max": 217.8469750000005,
+          "min": 174.25324199999892
+        },
+        "first_byte": {
+          "count": 256,
+          "p50": 964.6230150000026,
+          "p95": 1167.7980549999986,
+          "max": 1177.2317169999978,
+          "min": 759.2824090000008
+        },
+        "errors": 0,
+        "n": 256
+      },
+      {
+        "repeat": 4,
+        "connect": {
+          "count": 256,
+          "p50": 142.06758799999974,
+          "p95": 400.3540680000057,
+          "max": 402.16900899999786,
+          "min": 123.69365800000054
+        },
+        "started": {
+          "count": 256,
+          "p50": 428.162587500001,
+          "p95": 476.35244599999993,
+          "max": 479.7732490000044,
+          "min": 177.7214489999963
+        },
+        "first_byte": {
+          "count": 256,
+          "p50": 1227.9616520000013,
+          "p95": 1472.139845000001,
+          "max": 1488.7899909999974,
+          "min": 1024.1222249999992
+        },
+        "errors": 0,
+        "n": 256
+      }
+    ],
+    "p50_of_p50": 1128.8823874999991,
+    "median_p95": 1382.6672690000023,
+    "p95_of_p95": 1570.3205370000005,
+    "spread_p95": 402.5224820000019,
+    "errors": 0,
+    "url": "http://127.0.0.1:8081",
+    "text": "Hello, can you hear me now?",
+    "max_frames": 8,
+    "first_only": true
+  },
+  "ws_burst_256_metrics": {
+    "metrics": {
+      "accepted": 8384,
+      "rejected": 0,
+      "completed": 8218,
+      "failed": 0,
+      "cancelled": 0,
+      "slow_clients": 0,
+      "last_errors": [],
+      "queue_ms": {
+        "count": 1000,
+        "p50": 38.08,
+        "p95": 276.66,
+        "max": 372.66
+      },
+      "first_chunk_ms": {
+        "count": 1000,
+        "p50": 192.15,
+        "p95": 400.73,
+        "max": 496.96
+      },
+      "request_first_chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "total_ms": {
+        "count": 1000,
+        "p50": 485.19,
+        "p95": 1049.44,
+        "max": 1168.95
+      },
+      "chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "batch_size": {
+        "count": 38,
+        "p50": 256.0,
+        "p95": 384.0,
+        "max": 384.0
+      },
+      "batch_spread_ms": {
+        "count": 38,
+        "p50": 29.49,
+        "p95": 549.21,
+        "max": 568.59
+      },
+      "batch_wait_ms": {
+        "count": 38,
+        "p50": 44.91,
+        "p95": 549.79,
+        "max": 569.63
+      },
+      "batch_wall_ms": {
+        "count": 37,
+        "p50": 448.57,
+        "p95": 798.91,
+        "max": 830.21
+      },
+      "arrival_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "burst_spread_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "handler_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "chunks_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "submit_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "vram_alloc_before_mb": {
+        "count": 37,
+        "p50": 246.21,
+        "p95": 266.9,
+        "max": 267.13
+      },
+      "vram_alloc_after_mb": {
+        "count": 37,
+        "p50": 262.61,
+        "p95": 267.01,
+        "max": 267.24
+      },
+      "vram_peak_mb": {
+        "count": 37,
+        "p50": 1580.61,
+        "p95": 2247.8,
+        "max": 2247.8
+      },
+      "vram_reserved_mb": {
+        "count": 37,
+        "p50": 2402.0,
+        "p95": 2402.0,
+        "max": 2402.0
+      },
+      "call_first_ms": {
+        "count": 6592,
+        "p50": 214.46,
+        "p95": 426.58,
+        "max": 430.83
+      },
+      "call_first_wait_ms": {
+        "count": 6592,
+        "p50": 21.41,
+        "p95": 174.51,
+        "max": 198.88
+      },
+      "call_first_wait_behind_normal_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "first_chunk_ms_by_class": {
+        "call_first": {
+          "count": 6592,
+          "p50": 214.46,
+          "p95": 426.58,
+          "max": 430.83
+        },
+        "call_cont": {
+          "count": 1626,
+          "p50": 218.11,
+          "p95": 491.3,
+          "max": 674.06
+        },
+        "normal": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        }
+      },
+      "active_call_sessions": 166,
+      "underruns": 0,
+      "batch_classes": [
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont"
+      ],
+      "timeline_p95": {
+        "batch_start_to_stream_start_ms": 1.01,
+        "stream_start_to_prep_done_ms": 202.42,
+        "prep_done_to_cond_done_ms": 3.25,
+        "cond_done_to_flow0_done_ms": 143.09,
+        "flow0_done_to_mimi0_done_ms": 30.66,
+        "mimi0_done_to_first_emit_ms": 1.66
+      },
+      "timeline_p50": {
+        "batch_start_to_stream_start_ms": 0.65,
+        "stream_start_to_prep_done_ms": 6.26,
+        "prep_done_to_cond_done_ms": 0.82,
+        "cond_done_to_flow0_done_ms": 98.37,
+        "flow0_done_to_mimi0_done_ms": 18.76,
+        "mimi0_done_to_first_emit_ms": 0.76
+      }
+    },
+    "queue_depth": 0,
+    "max_batch": 640,
+    "max_rows": 640,
+    "max_queue": 4096,
+    "max_frames": 192,
+    "batch_window_ms": 150
+  },
+  "ws_burst_320": {
+    "mode": "burst",
+    "b": 320,
+    "repeats": 5,
+    "warmups": 2,
+    "runs": [
+      {
+        "repeat": 0,
+        "connect": {
+          "count": 320,
+          "p50": 159.38439200000332,
+          "p95": 449.27507799999944,
+          "max": 451.3876649999986,
+          "min": 137.09546100000125
+        },
+        "started": {
+          "count": 320,
+          "p50": 477.5107545000026,
+          "p95": 544.0399760000005,
+          "max": 547.9019570000005,
+          "min": 458.77848699999646
+        },
+        "first_byte": {
+          "count": 320,
+          "p50": 1383.8759110000005,
+          "p95": 1730.2684590000013,
+          "max": 1766.6706340000005,
+          "min": 915.2083600000012
+        },
+        "errors": 0,
+        "n": 320
+      },
+      {
+        "repeat": 1,
+        "connect": {
+          "count": 320,
+          "p50": 183.4540374999989,
+          "p95": 218.34401699999972,
+          "max": 219.70747199999607,
+          "min": 164.17553200000157
+        },
+        "started": {
+          "count": 320,
+          "p50": 251.62083799999735,
+          "p95": 311.7823429999973,
+          "max": 315.55702300000377,
+          "min": 213.02070300000508
+        },
+        "first_byte": {
+          "count": 320,
+          "p50": 1475.9398664999958,
+          "p95": 1796.571587999999,
+          "max": 1914.0613759999994,
+          "min": 1222.5889349999975
+        },
+        "errors": 0,
+        "n": 320
+      },
+      {
+        "repeat": 2,
+        "connect": {
+          "count": 320,
+          "p50": 179.1842804999959,
+          "p95": 198.57162999999645,
+          "max": 260.9593760000024,
+          "min": 152.9836919999994
+        },
+        "started": {
+          "count": 320,
+          "p50": 233.623699999999,
+          "p95": 296.1930589999966,
+          "max": 299.8172739999987,
+          "min": 207.56002800000317
+        },
+        "first_byte": {
+          "count": 320,
+          "p50": 1297.057534500002,
+          "p95": 1612.4868690000014,
+          "max": 1655.0065989999964,
+          "min": 1030.3851249999952
+        },
+        "errors": 0,
+        "n": 320
+      },
+      {
+        "repeat": 3,
+        "connect": {
+          "count": 320,
+          "p50": 396.8865884999992,
+          "p95": 421.1126239999956,
+          "max": 425.0681619999952,
+          "min": 169.50614999999658
+        },
+        "started": {
+          "count": 320,
+          "p50": 444.56665099999526,
+          "p95": 497.90734500000156,
+          "max": 502.03977700000024,
+          "min": 427.3768249999961
+        },
+        "first_byte": {
+          "count": 320,
+          "p50": 1446.7613499999993,
+          "p95": 1717.9890990000004,
+          "max": 1738.6689379999964,
+          "min": 1199.267492000004
+        },
+        "errors": 0,
+        "n": 320
+      },
+      {
+        "repeat": 4,
+        "connect": {
+          "count": 320,
+          "p50": 172.72293250000104,
+          "p95": 464.07819599999556,
+          "max": 475.25687799999616,
+          "min": 154.38802799999962
+        },
+        "started": {
+          "count": 320,
+          "p50": 405.19044800000256,
+          "p95": 465.6791679999941,
+          "max": 476.3963139999987,
+          "min": 381.8557009999992
+        },
+        "first_byte": {
+          "count": 320,
+          "p50": 1494.4054959999987,
+          "p95": 1739.2611670000022,
+          "max": 1842.9740579999957,
+          "min": 1228.9329919999973
+        },
+        "errors": 0,
+        "n": 320
+      }
+    ],
+    "p50_of_p50": 1446.7613499999993,
+    "median_p95": 1730.2684590000013,
+    "p95_of_p95": 1796.571587999999,
+    "spread_p95": 184.08471899999768,
+    "errors": 0,
+    "url": "http://127.0.0.1:8081",
+    "text": "Hello, can you hear me now?",
+    "max_frames": 8,
+    "first_only": true
+  },
+  "ws_burst_320_metrics": {
+    "metrics": {
+      "accepted": 12864,
+      "rejected": 0,
+      "completed": 12636,
+      "failed": 0,
+      "cancelled": 0,
+      "slow_clients": 0,
+      "last_errors": [],
+      "queue_ms": {
+        "count": 1000,
+        "p50": 119.69,
+        "p95": 316.24,
+        "max": 424.68
+      },
+      "first_chunk_ms": {
+        "count": 1000,
+        "p50": 306.9,
+        "p95": 474.05,
+        "max": 869.19
+      },
+      "request_first_chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "total_ms": {
+        "count": 1000,
+        "p50": 641.43,
+        "p95": 753.53,
+        "max": 1038.18
+      },
+      "chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "batch_size": {
+        "count": 65,
+        "p50": 209.0,
+        "p95": 384.0,
+        "max": 384.0
+      },
+      "batch_spread_ms": {
+        "count": 65,
+        "p50": 62.61,
+        "p95": 549.21,
+        "max": 617.4
+      },
+      "batch_wait_ms": {
+        "count": 65,
+        "p50": 151.08,
+        "p95": 549.79,
+        "max": 618.1
+      },
+      "batch_wall_ms": {
+        "count": 64,
+        "p50": 447.35,
+        "p95": 655.74,
+        "max": 830.21
+      },
+      "arrival_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "burst_spread_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "handler_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "chunks_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "submit_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "vram_alloc_before_mb": {
+        "count": 64,
+        "p50": 259.33,
+        "p95": 270.34,
+        "max": 275.63
+      },
+      "vram_alloc_after_mb": {
+        "count": 64,
+        "p50": 262.61,
+        "p95": 270.54,
+        "max": 275.74
+      },
+      "vram_peak_mb": {
+        "count": 64,
+        "p50": 1379.33,
+        "p95": 2247.8,
+        "max": 2247.8
+      },
+      "vram_reserved_mb": {
+        "count": 64,
+        "p50": 2402.0,
+        "p95": 2404.0,
+        "max": 2404.0
+      },
+      "call_first_ms": {
+        "count": 8832,
+        "p50": 238.05,
+        "p95": 459.42,
+        "max": 596.52
+      },
+      "call_first_wait_ms": {
+        "count": 8832,
+        "p50": 23.53,
+        "p95": 215.95,
+        "max": 532.53
+      },
+      "call_first_wait_behind_normal_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "first_chunk_ms_by_class": {
+        "call_first": {
+          "count": 8832,
+          "p50": 238.05,
+          "p95": 459.42,
+          "max": 596.52
+        },
+        "call_cont": {
+          "count": 3804,
+          "p50": 269.59,
+          "p95": 558.28,
+          "max": 869.19
+        },
+        "normal": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        }
+      },
+      "active_call_sessions": 228,
+      "underruns": 0,
+      "batch_classes": [
+        "call_cont",
+        "call_first",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont"
+      ],
+      "timeline_p95": {
+        "batch_start_to_stream_start_ms": 1.01,
+        "stream_start_to_prep_done_ms": 7.28,
+        "prep_done_to_cond_done_ms": 4.14,
+        "cond_done_to_flow0_done_ms": 162.02,
+        "flow0_done_to_mimi0_done_ms": 58.93,
+        "mimi0_done_to_first_emit_ms": 3.84
+      },
+      "timeline_p50": {
+        "batch_start_to_stream_start_ms": 0.72,
+        "stream_start_to_prep_done_ms": 4.91,
+        "prep_done_to_cond_done_ms": 1.29,
+        "cond_done_to_flow0_done_ms": 139.94,
+        "flow0_done_to_mimi0_done_ms": 25.56,
+        "mimi0_done_to_first_emit_ms": 1.04
+      }
+    },
+    "queue_depth": 20,
+    "max_batch": 640,
+    "max_rows": 640,
+    "max_queue": 4096,
+    "max_frames": 192,
+    "batch_window_ms": 150
+  },
+  "ws_burst_384": {
+    "mode": "burst",
+    "b": 384,
+    "repeats": 5,
+    "warmups": 2,
+    "runs": [
+      {
+        "repeat": 0,
+        "connect": {
+          "count": 384,
+          "p50": 200.23830650000107,
+          "p95": 228.0301580000028,
+          "max": 232.01939899999502,
+          "min": 176.877324000003
+        },
+        "started": {
+          "count": 384,
+          "p50": 264.3709749999985,
+          "p95": 345.4840029999957,
+          "max": 350.66496100000677,
+          "min": 240.08424699999864
+        },
+        "first_byte": {
+          "count": 384,
+          "p50": 1385.2641274999974,
+          "p95": 1843.4449659999998,
+          "max": 1919.1591869999982,
+          "min": 1071.1108030000034
+        },
+        "errors": 0,
+        "n": 384
+      },
+      {
+        "repeat": 1,
+        "connect": {
+          "count": 384,
+          "p50": 340.8356885000039,
+          "p95": 494.93623699999745,
+          "max": 510.8895629999992,
+          "min": 309.1245049999998
+        },
+        "started": {
+          "count": 384,
+          "p50": 376.550338499996,
+          "p95": 496.7921089999976,
+          "max": 511.65364499999555,
+          "min": 336.9121659999976
+        },
+        "first_byte": {
+          "count": 384,
+          "p50": 1692.107526000001,
+          "p95": 2080.254060999998,
+          "max": 2124.3968930000037,
+          "min": 1369.5435079999995
+        },
+        "errors": 0,
+        "n": 384
+      },
+      {
+        "repeat": 2,
+        "connect": {
+          "count": 384,
+          "p50": 431.0708854999987,
+          "p95": 461.6391679999978,
+          "max": 465.49701,
+          "min": 206.76385399999475
+        },
+        "started": {
+          "count": 384,
+          "p50": 488.4668400000045,
+          "p95": 557.4745329999971,
+          "max": 562.4482420000021,
+          "min": 459.8200619999986
+        },
+        "first_byte": {
+          "count": 384,
+          "p50": 1615.0926739999995,
+          "p95": 2029.3604720000005,
+          "max": 2093.3399410000034,
+          "min": 825.9709629999961
+        },
+        "errors": 0,
+        "n": 384
+      },
+      {
+        "repeat": 3,
+        "connect": {
+          "count": 384,
+          "p50": 396.6637355000024,
+          "p95": 422.3747009999954,
+          "max": 425.8416589999996,
+          "min": 185.62950999999828
+        },
+        "started": {
+          "count": 384,
+          "p50": 451.207028999999,
+          "p95": 488.89344399999857,
+          "max": 516.4139369999958,
+          "min": 427.355845000001
+        },
+        "first_byte": {
+          "count": 384,
+          "p50": 1673.5268465,
+          "p95": 2072.209249999993,
+          "max": 2196.1927759999967,
+          "min": 1363.9172170000008
+        },
+        "errors": 0,
+        "n": 384
+      },
+      {
+        "repeat": 4,
+        "connect": {
+          "count": 384,
+          "p50": 378.84480449999813,
+          "p95": 423.7497130000065,
+          "max": 426.1590739999974,
+          "min": 195.08826199999874
+        },
+        "started": {
+          "count": 384,
+          "p50": 450.7666169999993,
+          "p95": 515.6662159999996,
+          "max": 520.5271470000099,
+          "min": 408.5796909999999
+        },
+        "first_byte": {
+          "count": 384,
+          "p50": 1557.6253219999999,
+          "p95": 1964.4684920000088,
+          "max": 1986.7543069999983,
+          "min": 787.1533630000016
+        },
+        "errors": 0,
+        "n": 384
+      }
+    ],
+    "p50_of_p50": 1615.0926739999995,
+    "median_p95": 2029.3604720000005,
+    "p95_of_p95": 2080.254060999998,
+    "spread_p95": 236.80909499999802,
+    "errors": 0,
+    "url": "http://127.0.0.1:8081",
+    "text": "Hello, can you hear me now?",
+    "max_frames": 8,
+    "first_only": true
+  },
+  "ws_burst_384_metrics": {
+    "metrics": {
+      "accepted": 18240,
+      "rejected": 0,
+      "completed": 18020,
+      "failed": 0,
+      "cancelled": 0,
+      "slow_clients": 0,
+      "last_errors": [],
+      "queue_ms": {
+        "count": 1000,
+        "p50": 174.13,
+        "p95": 450.82,
+        "max": 714.6
+      },
+      "first_chunk_ms": {
+        "count": 1000,
+        "p50": 389.69,
+        "p95": 564.5,
+        "max": 835.03
+      },
+      "request_first_chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "total_ms": {
+        "count": 1000,
+        "p50": 738.42,
+        "p95": 932.77,
+        "max": 1102.65
+      },
+      "chunk_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "batch_size": {
+        "count": 96,
+        "p50": 208.0,
+        "p95": 384.0,
+        "max": 384.0
+      },
+      "batch_spread_ms": {
+        "count": 96,
+        "p50": 149.09,
+        "p95": 584.73,
+        "max": 740.5
+      },
+      "batch_wait_ms": {
+        "count": 96,
+        "p50": 198.74,
+        "p95": 585.44,
+        "max": 741.12
+      },
+      "batch_wall_ms": {
+        "count": 95,
+        "p50": 450.97,
+        "p95": 798.91,
+        "max": 880.2
+      },
+      "arrival_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "burst_spread_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "handler_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "chunks_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "submit_offset_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "validate_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "vram_alloc_before_mb": {
+        "count": 95,
+        "p50": 259.33,
+        "p95": 273.65,
+        "max": 275.63
+      },
+      "vram_alloc_after_mb": {
+        "count": 95,
+        "p50": 263.9,
+        "p95": 273.75,
+        "max": 275.74
+      },
+      "vram_peak_mb": {
+        "count": 95,
+        "p50": 1255.38,
+        "p95": 2247.8,
+        "max": 2248.89
+      },
+      "vram_reserved_mb": {
+        "count": 95,
+        "p50": 2404.0,
+        "p95": 2404.0,
+        "max": 2404.0
+      },
+      "call_first_ms": {
+        "count": 11520,
+        "p50": 257.81,
+        "p95": 521.29,
+        "max": 601.22
+      },
+      "call_first_wait_ms": {
+        "count": 11520,
+        "p50": 27.33,
+        "p95": 239.78,
+        "max": 532.53
+      },
+      "call_first_wait_behind_normal_ms": {
+        "count": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "first_chunk_ms_by_class": {
+        "call_first": {
+          "count": 11520,
+          "p50": 257.81,
+          "p95": 521.29,
+          "max": 601.22
+        },
+        "call_cont": {
+          "count": 6500,
+          "p50": 287.78,
+          "p95": 579.93,
+          "max": 869.19
+        },
+        "normal": {
+          "count": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0.0
+        }
+      },
+      "active_call_sessions": 220,
+      "underruns": 0,
+      "batch_classes": [
+        "call_cont",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_cont",
+        "call_cont",
+        "call_cont",
+        "call_first",
+        "call_first",
+        "call_cont",
+        "call_cont"
+      ],
+      "timeline_p95": {
+        "batch_start_to_stream_start_ms": 4.08,
+        "stream_start_to_prep_done_ms": 6.44,
+        "prep_done_to_cond_done_ms": 1.72,
+        "cond_done_to_flow0_done_ms": 195.63,
+        "flow0_done_to_mimi0_done_ms": 38.29,
+        "mimi0_done_to_first_emit_ms": 2.67
+      },
+      "timeline_p50": {
+        "batch_start_to_stream_start_ms": 0.74,
+        "stream_start_to_prep_done_ms": 4.23,
+        "prep_done_to_cond_done_ms": 0.66,
+        "cond_done_to_flow0_done_ms": 145.41,
+        "flow0_done_to_mimi0_done_ms": 21.64,
+        "mimi0_done_to_first_emit_ms": 1.17
+      }
+    },
+    "queue_depth": 0,
+    "max_batch": 640,
+    "max_rows": 640,
+    "max_queue": 4096,
+    "max_frames": 192,
+    "batch_window_ms": 150
+  }
+}
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/tushar-ps2/main/ap-8zLVeO6YBDjocOkAUkNb4d

@@ -1,0 +1,35 @@
+[
+  {
+    "test": "b_full",
+    "B": 64,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 64,
+    "first_byte_p95": 90.51,
+    "first_chunk_p95": 251.16,
+    "errors": 0,
+    "vram": 295.9
+  },
+  {
+    "test": "b_full",
+    "B": 128,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 128,
+    "first_byte_p95": 116.39,
+    "first_chunk_p95": 308.57,
+    "errors": 0,
+    "vram": 303.4
+  },
+  {
+    "test": "b_full",
+    "B": 224,
+    "mf": 16,
+    "window": 5,
+    "sub_batch": 224,
+    "first_byte_p95": 143.6,
+    "first_chunk_p95": 435.18,
+    "errors": 0,
+    "vram": 314.7
+  }
+]

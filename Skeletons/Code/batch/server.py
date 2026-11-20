@@ -3,12 +3,12 @@
 @stageset kind: IMPLEMENTATION
 @stageset target: Code/batch/server.py
 @stageset source_idea: IDEA-0005
-@stageset status: IN_PROGRESS
+@stageset status: READY
 @stageset priority: P0
-@stageset spec_revision: 9
-@stageset implemented_revision: 8
+@stageset spec_revision: 10
+@stageset implemented_revision: 10
 @stageset planned_in: .stageset/sessions/coding-production-readiness-fixes.md
-@stageset last_updated_in: .stageset/sessions/coding-burst-recovery.md
+@stageset last_updated_in: .stageset/sessions/plan-call-mode.md
 @stageset implemented_in: .stageset/sessions/coding-batch-target.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
@@ -50,6 +50,22 @@ Report health and metrics.
 - Per-row voice prefill uses one batched text conditioner call, not one call per row.
 - Text chunk results are cached per text.
 - `request_first_chunk_ms` in `/metrics` counts only the first chunk of each request.
+- Each job has `job_class`: `call_first`, `call_cont`, or `normal`. Normal HTTP jobs are `normal`.
+- The worker uses `job_classes.select_batch`. One batch never mixes classes.
+- Priority is `call_first > call_cont > normal`.
+- While any call session is active, normal batches use `ARSENAL_NORMAL_BUSY_MAX_BATCH` and `ARSENAL_NORMAL_BUSY_MAX_FRAMES`.
+- `call_first` jobs use `ARSENAL_CALL_FIRST_MAX_FRAMES` (default 32). `call_cont` jobs use `ARSENAL_CALL_CONT_MAX_FRAMES` (default 192).
+- `GET /ws/tts` is a WebSocket. Client sends `start{voice?, mode?}`, `text{text}`, `flush`, `cancel`.
+- The call stream sends binary 16-bit PCM frames and JSON events `chunk_start`, `chunk_done`, `error`.
+- Call chunks use `call_chunker.split_call_text`: short first chunk, then longer chunks, same voice.
+- `?mode=call` on `/tts/stream` routes the request to `call_first` and `call_cont`.
+- `/metrics` adds `first_chunk_ms` per class, `call_first_wait_behind_normal_ms`, `active_call_sessions`, and `underruns`.
+- A normal HTTP request never changes class and never uses a call-mode chunker.
+- A cancel frees queued jobs and sets the stop event. Rows are released at the batch end.
+- The WebSocket closes after `flush` completes all chunks, or on `cancel`, or on client close.
+- When `ARSENAL_DEBUG=1`, these read-only debug routes exist for the probes:
+  `/debug/callramp`, `/debug/callmixed`, `/debug/callcancel`, `/debug/vram`.
+  They call the same WebSocket path as a real client. They do not change project files.
 
 ## Edge cases
 
@@ -109,9 +125,41 @@ Report health and metrics.
 - Pass condition: the run report shows the file exists and a server started with `ARSENAL_VOICE_PROFILES=id=OUT_DIR/id.pt` serves a profile request with 200.
 - Fail condition: the build fails or the server cannot load the id.
 
+### CHECK-CALL-WS-01 - WebSocket call stream
+
+- Command: start the server, open `/ws/tts`, send `start{}`, `text{"Hello there, this is a call."}`, `flush`, read messages.
+- Predicted output: one or more binary PCM frames, then JSON `chunk_done` and a final close.
+- Pass condition: a run report shows at least one binary frame, a `chunk_done` event, and exit code 0.
+- Fail condition: no binary frame, no `chunk_done`, or an unhandled exception.
+
+### CHECK-CALL-NORMAL-01 - normal HTTP not regressed
+
+- Command: `ARSENAL_LOAD_BURSTS=5 ARSENAL_LOAD_PER_BURST=32 ARSENAL_POCKET_TTS=/kaggle/working/pocket-tts python Code/probes/probe_http_load.py`
+- Predicted output: `{"ok": true, "requests": 160, "p95": <= 350}`
+- Pass condition: server first-chunk p95 within 10 percent of FACT-0110 (294.0 ms), 0 errors.
+- Fail condition: server p95 above 323.4 ms, any error, or a changed response body.
+
+### CHECK-CALL-HOL-01 - call first chunk not blocked by normal
+
+- Command: `arsenal_call_mixed` mode in `probe_call_mode.md`: 128 call streams plus 32 normal HTTP.
+- Predicted output: call first-chunk p95 <= 350 ms and normal p95 recorded separately.
+- Pass condition: call p95 <= 350 ms and `call_first_wait_behind_normal_ms` p95 <= 350 ms.
+- Fail condition: call p95 above 350 ms. Then write a READY preemption plan only.
+
+### CHECK-CALL-CANCEL-01 - cancel frees work
+
+- Command: the cancel test in `probe_call_mode.md`: cancel 50 percent of streams mid-stream.
+- Predicted output: after 10 s, `active_call_sessions` is 0, queue depth is 0, and VRAM is flat.
+- Pass condition: queue depth 0, no error, VRAM change under 100 MB.
+- Fail condition: a stuck session, a growing queue, or VRAM growth.
+
 ## References
 
 - `Ideas/IDEA-0005-long-text-and-production-readiness.md`
+- `Ideas/IDEA-0007-dual-service-call-mode.md`
+- `Skeletons/Code/batch/job_classes.py`
+- `Skeletons/Code/batch/call_chunker.py`
+- `Skeletons/Probes/probe_call_mode.md`
 - `Code/batch/batched_stream.py`
 - `Code/probes/check_server.py`
 - `Code/batch/build_voice_profiles.py`

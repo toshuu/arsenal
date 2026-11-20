@@ -1,20 +1,20 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-20T08:53:46Z",
+  "generated_at": "2026-11-20T20:45:50Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
     "branch": "main"
   },
   "totals": {
-    "skeletons": 17,
-    "done": 14,
-    "waiting": 2,
+    "skeletons": 21,
+    "done": 17,
+    "waiting": 3,
     "draft": 1,
-    "sessions": 89,
-    "runs": 15,
+    "sessions": 97,
+    "runs": 19,
     "runs_active": 0,
-    "results": 3
+    "results": 4
   },
   "skeletons": [
     {
@@ -24,6 +24,15 @@
       "status": "DONE",
       "spec_revision": 7,
       "implemented_revision": 7,
+      "phase": "done"
+    },
+    {
+      "id": "call_chunker",
+      "path": "Skeletons/Code/batch/call_chunker.py",
+      "title": "Implementation: call-mode text chunker",
+      "status": "READY",
+      "spec_revision": 1,
+      "implemented_revision": 1,
       "phase": "done"
     },
     {
@@ -45,6 +54,15 @@
       "phase": "done"
     },
     {
+      "id": "job_classes",
+      "path": "Skeletons/Code/batch/job_classes.py",
+      "title": "Implementation: job classes and class scheduler",
+      "status": "READY",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
       "id": "overlap",
       "path": "Skeletons/Code/batch/overlap.py",
       "title": "Implementation: overlap decode",
@@ -57,10 +75,10 @@
       "id": "server",
       "path": "Skeletons/Code/batch/server.py",
       "title": "Implementation: HTTP serving layer",
-      "status": "IN_PROGRESS",
-      "spec_revision": 9,
-      "implemented_revision": 8,
-      "phase": "waiting"
+      "status": "READY",
+      "spec_revision": 10,
+      "implemented_revision": 10,
+      "phase": "done"
     },
     {
       "id": "shared_prefix",
@@ -88,6 +106,24 @@
       "spec_revision": 1,
       "implemented_revision": 1,
       "phase": "done"
+    },
+    {
+      "id": "probe_call_ceiling",
+      "path": "Skeletons/Probes/probe_call_ceiling.md",
+      "title": "Probe: first-chunk B ceiling",
+      "status": "READY",
+      "spec_revision": 1,
+      "implemented_revision": 0,
+      "phase": "waiting"
+    },
+    {
+      "id": "probe_call_mode",
+      "path": "Skeletons/Probes/probe_call_mode.md",
+      "title": "Probe: call-mode ramp, seams, mixed load, cancel",
+      "status": "READY",
+      "spec_revision": 1,
+      "implemented_revision": 0,
+      "phase": "waiting"
     },
     {
       "id": "probe_cold_start",
@@ -265,6 +301,40 @@
         }
       ],
       "source": ".stageset/runs/20261115-131244-RUN.md"
+    },
+    {
+      "id": "RES-004",
+      "date": "2026-11-20",
+      "title": "Call-mode formation and Modal T4 diagnostics (incomplete gate)",
+      "status": "FAIL",
+      "summary": "Local: B=256 grace10 stable 197/199 ms p50/p95; Poisson <350 up to 224/s (324 ms), 288/s 367 ms. Modal callramp server first-byte ~177-259 ms steady for B=256-384 but WS e2e 1383-2029 ms median p95 (diagnostic, contaminated by cont backlog/connect). Poisson/mixed/B=448/mf WAVs pending clean rerun.",
+      "metrics": [
+        {
+          "label": "Local burst B=256 grace10 p50/p95",
+          "value": "197.4/199.1 ms (10/10 1-batch)"
+        },
+        {
+          "label": "Local Poisson 224/s p50/p95",
+          "value": "186.0/324.1 ms (~219 rows/s)"
+        },
+        {
+          "label": "Local Poisson 288/s p50/p95",
+          "value": "214.5/367.0 ms (fail 350)"
+        },
+        {
+          "label": "Modal callramp B=320 median p95",
+          "value": "~213 ms server, steady"
+        },
+        {
+          "label": "Modal WS burst B=320 median p95",
+          "value": "~1730-1742 ms client (diag)"
+        },
+        {
+          "label": "Modal WS connect/start",
+          "value": "~142-431 / 189-488 ms p50"
+        }
+      ],
+      "source": ".stageset/reports/20261120-call-mode-complete/summary.json"
     }
   ],
   "runs": [
@@ -862,6 +932,144 @@
           "status": "DONE"
         }
       ]
+    },
+    {
+      "id": "SSLD-018",
+      "path": "LivingDocs/SSLD-018-call-mode-job-classes.md",
+      "title": "Call-mode job classes",
+      "status": "DONE",
+      "current_task": "T004",
+      "skeleton": "Skeletons/Code/batch/job_classes.py",
+      "tasks_total": 4,
+      "tasks_done": 4,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create job_classes.py",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Check class priority",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Check busy caps and row limit",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Record the implemented revision",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-019",
+      "path": "LivingDocs/SSLD-019-call-mode-chunker.md",
+      "title": "Call-mode chunker",
+      "status": "DONE",
+      "current_task": "T004",
+      "skeleton": "Skeletons/Code/batch/call_chunker.py",
+      "tasks_total": 4,
+      "tasks_done": 4,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create call_chunker.py",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Check the first clause rule",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Check the chunk cache",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Record the implemented revision",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-020",
+      "path": "LivingDocs/SSLD-020-call-mode-server-wiring.md",
+      "title": "Call-mode server wiring",
+      "status": "DONE",
+      "current_task": "T005",
+      "skeleton": "Skeletons/Code/batch/server.py",
+      "tasks_total": 5,
+      "tasks_done": 5,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Add class-aware imports and job fields",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Replace the worker with class queues",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Add the WebSocket call endpoint",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Add the WebSocket check",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Prove normal HTTP did not regress",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-021",
+      "path": "LivingDocs/SSLD-021-call-mode-server-complete.md",
+      "title": "Call-mode server complete",
+      "status": "DONE",
+      "current_task": "T005",
+      "skeleton": "Skeletons/Code/batch/server.py",
+      "tasks_total": 5,
+      "tasks_done": 5,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Route mode=call in HTTP stream",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Add class metrics",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Close flush and add debug routes",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Extend the call check",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Prove normal HTTP did not regress",
+          "status": "DONE"
+        }
+      ]
     }
   ],
   "ideas": [
@@ -883,7 +1091,7 @@
     {
       "path": "Ideas/IDEA-0007-dual-service-call-mode.md",
       "title": "Dual service classes - call mode and normal HTTP",
-      "status": "DISCOVERY"
+      "status": "SKELETONIZED"
     },
     {
       "path": "Ideas/_index.md",
@@ -1440,9 +1648,62 @@
       "date": "2026-11-20T14:20:10+05:30",
       "type": "ideation",
       "summary": "Record dual service class plan (call/WebSocket + normal HTTP) and T4 diagnosis evidence."
+    },
+    {
+      "id": "20261120-203841-CODING",
+      "date": "2026-11-20T20:38:41+00:00",
+      "type": "coding",
+      "summary": "End session 20 Nov 18:00-21 Nov ~02:00: add WS load client and Modal in-container probe, run local formation/Poisson consolidation and 3 Modal T4 diagnostic runs, document all artifacts and gaps."
+    },
+    {
+      "id": "20261120-204500-MAINTENANCE",
+      "date": "2026-11-20T20:45:00+00:00",
+      "type": "maintenance",
+      "summary": "End-of-session handoff for 2026-11-21 after 07:00 with Claude direction for clean Modal rerun/fixes."
+    },
+    {
+      "id": "20261120-224500-IDEATION",
+      "date": "2026-11-20T22:45:00+05:30",
+      "type": "ideation",
+      "summary": "Approve dual-mode plan. Answer the B question. Add call-mode skeletons and probes."
+    },
+    {
+      "id": "20261120-225200-CODING",
+      "date": "2026-11-20T22:52:00+05:30",
+      "type": "coding",
+      "summary": "Implement call-mode job classes and chunker through SSLD-018 and SSLD-019. All checks pass."
+    },
+    {
+      "id": "20261120-230000-CODING",
+      "date": "2026-11-20T23:00:00+05:30",
+      "type": "coding",
+      "summary": "Wire call-mode job classes and the call WebSocket into the server. Fake-engine checks pass."
+    },
+    {
+      "id": "20261120-231300-CODING",
+      "date": "2026-11-20T23:13:00+05:30",
+      "type": "coding",
+      "summary": "Complete server.py revision 10. Add mode=call, class metrics, flush close, and debug routes. Fake-engine checks pass."
+    },
+    {
+      "id": "20261120-232200-CODING",
+      "date": "2026-11-20T23:22:00+05:30",
+      "type": "coding",
+      "summary": "Run local T4 call ramp, mixed, and cancel probes with the debug routes. Record results and facts."
+    },
+    {
+      "id": "20261120-234000-CODING",
+      "date": "2026-11-20T23:40:00+05:30",
+      "type": "coding",
+      "summary": "Fix call measurement, add first-byte and first-only debug support, run split ramps, sub-batch and mf/window sweeps, mixed and seam checks on local T4."
     }
   ],
   "commits": [
+    {
+      "sha": "02f8e0e",
+      "date": "2026-11-20T08:54:05+00:00",
+      "subject": "StageSet: document Modal T4 diagnosis and dual-service call mode plan"
+    },
     {
       "sha": "8b2f29c",
       "date": "2026-11-19T21:12:45+00:00",
@@ -1637,11 +1898,6 @@
       "sha": "319abe6",
       "date": "2026-11-16T10:08:59+00:00",
       "subject": "Save step1 debug scripts (mem model, OOM, cProfile)"
-    },
-    {
-      "sha": "6f11acf",
-      "date": "2026-11-16T10:08:05+00:00",
-      "subject": "Close single-T4 phase: mark SSLD-015/016 done, SSLD-017 planned; FACT-0085/0086; strategy summary"
     }
   ]
 }

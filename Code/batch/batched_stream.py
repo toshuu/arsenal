@@ -514,6 +514,7 @@ class BatchedStream:
                 }
                 for name, module in mimi_state.items()
             }
+        mark(-1, "mimi_init_done")
 
         latent = flow_lm.bos_emb.view(1, 1, -1).expand(batch_size, 1, -1)
         audio_chunks: dict[int, list[torch.Tensor]] = {row: [] for row in range(batch_size)}

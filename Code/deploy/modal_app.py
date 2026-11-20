@@ -33,14 +33,12 @@ image = (
         "fastapi>=0.100",
         "uvicorn[standard]>=0.13",
         "httpx",
+        "websockets",
     )
     .add_local_dir("Code/batch", remote_path=f"{CODE_DIR}/batch")
     .add_local_dir("Code/model", remote_path=f"{CODE_DIR}/model")
     .add_local_dir("Code/probes/ref", remote_path=f"{CODE_DIR}/probes/ref")
-    .add_local_file(
-        "Code/probes/probe_http_load.py",
-        remote_path=f"{CODE_DIR}/probes/probe_http_load.py",
-    )
+    .add_local_dir("Code/probes", remote_path=f"{CODE_DIR}/probes")
 )
 
 cache = modal.Volume.from_name("arsenal-tts-cache", create_if_missing=True)
@@ -54,12 +52,17 @@ common_env = {
     "ARSENAL_MODEL_DIR": f"{CODE_DIR}/model",
     "ARSENAL_VOICE_CACHE": VOICE_CACHE,
     "ARSENAL_VOICE_PROFILES": f"v1={PROFILES}/v1.pt;v2={PROFILES}/v2.pt",
-    "ARSENAL_MAX_BATCH": "224",
-    "ARSENAL_MAX_ROWS": "224",
-    "ARSENAL_MAX_QUEUE": "256",
+    "ARSENAL_MAX_BATCH": "640",
+    "ARSENAL_MAX_ROWS": "640",
+    "ARSENAL_MAX_QUEUE": "4096",
     "ARSENAL_MAX_FRAMES": "192",
     "ARSENAL_BATCH_WINDOW_MS": "150",
-    "ARSENAL_BATCH_TARGET": "224",
+    "ARSENAL_BATCH_TARGET": "640",
+    "ARSENAL_CALL_FIRST_QUIET_MS": "3",
+    "ARSENAL_CALL_FIRST_HARD_CAP_MS": "40",
+    "ARSENAL_CALL_FIRST_GRACE_MS": "10",
+    "ARSENAL_CALL_FIRST_MAX_BATCH": "640",
+    "ARSENAL_CALL_FIRST_MAX_FRAMES": "8",
     "ARSENAL_PREWARM": "1",
     "ARSENAL_PREWARM_B": "192",
     "ARSENAL_TIMELINE": "1",
@@ -218,6 +221,34 @@ def serve():
     import sys
 
     sys.path.insert(0, CODE_DIR)
+    from batch.server import create_app
+
+    return create_app()
+
+
+@dev.function(
+    image=image,
+    gpu="T4",
+    volumes={CACHE_DIR: cache},
+    env=common_env,
+    cpu=8,
+    memory=16384,
+    timeout=7200,
+)
+def call_probe() -> dict:
+    import sys
+
+    sys.path.insert(0, CODE_DIR)
+    from probes.probe_call_modal_run import main
+
+    main()
+    import json
+    from pathlib import Path
+
+    p = Path("/tmp/call_probe_out/all_results.json")
+    if p.exists():
+        return json.loads(p.read_text())
+    return {"error": "no results"}
     from batch.server import app as fastapi_app
 
     return fastapi_app

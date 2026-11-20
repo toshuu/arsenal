@@ -1,0 +1,26 @@
+{
+  "12": {
+    "text": "Hello, can you hear me now?",
+    "words": 6,
+    "fits_full": true,
+    "token_ids": 11
+  },
+  "16": {
+    "text": "Hello, can you hear me now?",
+    "words": 6,
+    "fits_full": true,
+    "token_ids": 11
+  },
+  "24": {
+    "text": "Hello, can you hear me now?",
+    "words": 6,
+    "fits_full": true,
+    "token_ids": 11
+  },
+  "32": {
+    "text": "Hello, can you hear me now?",
+    "words": 6,
+    "fits_full": true,
+    "token_ids": 11
+  }
+}

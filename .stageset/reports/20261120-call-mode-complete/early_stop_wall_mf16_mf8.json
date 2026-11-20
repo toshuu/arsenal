@@ -1,0 +1,18 @@
+{
+  "16": {
+    "mf": 16,
+    "rows": 224,
+    "bs_to_first_emit_batch_p50": 156.352767,
+    "bs_to_first_emit_p50_stream_p50": 157.052882,
+    "bs_to_synth_end_p50": 745.050777,
+    "bs_to_flow0_p50": 134.728858
+  },
+  "8": {
+    "mf": 8,
+    "rows": 224,
+    "bs_to_first_emit_batch_p50": 150.840363,
+    "bs_to_first_emit_p50_stream_p50": 151.58309,
+    "bs_to_synth_end_p50": 433.254597,
+    "bs_to_flow0_p50": 130.569478
+  }
+}

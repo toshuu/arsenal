@@ -95,11 +95,19 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261120-013315-CODING | CODING | 2026-11-20T01:33:15+05:30 | Steps 1,2,4 ramp and window sweep. Max HTTP pass B=37. B=224 still fails. | .stageset/sessions/coding-b224-ramp.md | IDEA-0005; FACT-0111; FACT-0115; FACT-0116 | e6c8153 |
 | 20261120-132514-CODING | CODING | 2026-11-20T13:25:14+05:30 | Deploy Arsenal TTS on a Modal T4, add a co-located prober and direct bench, and stop the GPU after the test. | .stageset/sessions/coding-modal-t4-deploy.md | IDEA-0005; SSLD-017; 20261120-132514-RUN | - |
 | 20261120-142010-IDEATION | IDEATION | 2026-11-20T14:20:10+05:30 | Record dual service class plan (call/WebSocket + normal HTTP) and T4 diagnosis evidence. | .stageset/sessions/ideation-call-mode-dual-service.md | IDEA-0005; IDEA-0007; FACT-0123; FACT-0124; FACT-0125; FACT-0126; 20261120-142010-RUN | - |
+| 20261120-203841-CODING | CODING | 2026-11-20T20:38:41+00:00 | End session 20 Nov 18:00-21 Nov ~02:00: add WS load client and Modal in-container probe, run local formation/Poisson consolidation and 3 Modal T4 diagnostic runs, document all artifacts and gaps. | .stageset/sessions/coding-call-formation-modal-diagnostics.md | IDEA-0007; FACT-0134; FACT-0135; FACT-0136; FACT-0137; 20261121-020840-RUN; 20261121-020840-RUN-02; 20261121-020840-RUN-03; 20261121-020840-RUN-04 | - |
+| 20261120-204500-MAINTENANCE | MAINTENANCE | 2026-11-20T20:45:00+00:00 | End-of-session handoff for 2026-11-21 after 07:00 with Claude direction for clean Modal rerun/fixes. | .stageset/sessions/maintenance-call-modal-handoff-20261121.md | IDEA-0007; FACT-0137; .stageset/reports/20261120-call-mode-complete/summary.json | - |
+| 20261120-224500-IDEATION | IDEATION | 2026-11-20T22:45:00+05:30 | Approve dual-mode plan. Answer the B question. Add call-mode skeletons and probes. | .stageset/sessions/plan-call-mode.md | IDEA-0007; FACT-0119; FACT-0120; FACT-0121; FACT-0123; FACT-0124; FACT-0125; FACT-0126 | - |
+| 20261120-225200-CODING | CODING | 2026-11-20T22:52:00+05:30 | Implement call-mode job classes and chunker through SSLD-018 and SSLD-019. All checks pass. | .stageset/sessions/coding-call-mode-foundation.md | IDEA-0007; SSLD-018; SSLD-019; 20261120-225006-RUN; 20261120-225006-RUN-02; 20261120-225006-RUN-03; 20261120-225006-RUN-04 | - |
+| 20261120-230000-CODING | CODING | 2026-11-20T23:00:00+05:30 | Wire call-mode job classes and the call WebSocket into the server. Fake-engine checks pass. | .stageset/sessions/coding-call-mode-server-wiring.md | IDEA-0007; SSLD-020; FACT-0128; 20261120-225605-RUN; 20261120-225605-RUN-02 | - |
+| 20261120-231300-CODING | CODING | 2026-11-20T23:13:00+05:30 | Complete server.py revision 10. Add mode=call, class metrics, flush close, and debug routes. Fake-engine checks pass. | .stageset/sessions/coding-call-mode-server-complete.md | IDEA-0007; SSLD-021; FACT-0129; 20261120-231125-RUN; 20261120-231125-RUN-02 | - |
+| 20261120-232200-CODING | CODING | 2026-11-20T23:22:00+05:30 | Run local T4 call ramp, mixed, and cancel probes with the debug routes. Record results and facts. | .stageset/sessions/coding-call-mode-local-probe.md | IDEA-0007; SSLD-021; FACT-0130; FACT-0131; 20261120-231834-RUN; 20261120-231834-RUN-02 | - |
+| 20261120-234000-CODING | CODING | 2026-11-20T23:40:00+05:30 | Fix call measurement, add first-byte and first-only debug support, run split ramps, sub-batch and mf/window sweeps, mixed and seam checks on local T4. | .stageset/sessions/coding-call-measurement-fix.md | IDEA-0007; FACT-0133; 20261120-233425-RUN; 20261120-233425-RUN-02 | - |
 
 ## Totals
 
-- CODING: 43.
-- IDEATION: 11.
-- MAINTENANCE: 10.
+- CODING: 49.
+- IDEATION: 12.
+- MAINTENANCE: 11.
 - PROBE: 0.
 - PUSH: 25.
