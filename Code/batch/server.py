@@ -12,7 +12,7 @@ import queue
 import threading
 import time
 import wave
-from concurrent.futures import Future
+from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
@@ -23,6 +23,11 @@ from pydantic import BaseModel, Field
 
 class QueueFull(Exception):
     pass
+
+
+_CHUNK_POOL = ThreadPoolExecutor(
+    max_workers=max(1, int(os.getenv("ARSENAL_CHUNK_THREADS", "64")))
+)
 
 
 @dataclass
@@ -68,6 +73,22 @@ class Metrics:
         self.first_ms: list[float] = []
         self.request_first_ms: list[float] = []
         self.total_ms: list[float] = []
+        self.chunk_ms: list[float] = []
+        self.batch_size: list[float] = []
+        self.batch_spread_ms: list[float] = []
+        self.batch_wait_ms: list[float] = []
+        self.arrival_ms: list[float] = []
+        self.bursts: dict[str, list[float]] = {}
+        self.burst_t0: dict[str, float] = {}
+        self.handler_offset_ms: list[float] = []
+        self.validate_offset_ms: list[float] = []
+        self.chunks_offset_ms: list[float] = []
+        self.submit_offset_ms: list[float] = []
+        self.validate_ms: list[float] = []
+        self.vram_alloc_before_mb: list[float] = []
+        self.vram_alloc_after_mb: list[float] = []
+        self.vram_peak_mb: list[float] = []
+        self.vram_reserved_mb: list[float] = []
         self.timeline: dict[str, list[float]] = {} if os.getenv("ARSENAL_TIMELINE") == "1" else None
 
     def add(self, name: str, value: int = 1) -> None:
@@ -99,6 +120,104 @@ class Metrics:
             self.total_ms.append(total_ms)
             for items in (self.queue_ms, self.first_ms, self.total_ms):
                 del items[:-1000]
+
+    def reset(self) -> None:
+        with self.lock:
+            self.accepted = 0
+            self.rejected = 0
+            self.completed = 0
+            self.failed = 0
+            self.cancelled = 0
+            self.slow_clients = 0
+            self.last_errors = []
+            self.queue_ms = []
+            self.first_ms = []
+            self.request_first_ms = []
+            self.total_ms = []
+            self.chunk_ms = []
+            self.batch_size = []
+            self.batch_spread_ms = []
+            self.batch_wait_ms = []
+            self.arrival_ms = []
+            self.bursts = {}
+            self.burst_t0 = {}
+            self.handler_offset_ms = []
+            self.validate_offset_ms = []
+            self.chunks_offset_ms = []
+            self.submit_offset_ms = []
+            self.validate_ms = []
+            self.vram_alloc_before_mb = []
+            self.vram_alloc_after_mb = []
+            self.vram_peak_mb = []
+            self.vram_reserved_mb = []
+            if self.timeline is not None:
+                self.timeline = {}
+
+    def record_arrival(self, sent_at_ns: int, burst_id: str | None) -> None:
+        now_ns = time.time_ns()
+        latency = (now_ns - sent_at_ns) / 1e6
+        with self.lock:
+            self.arrival_ms.append(latency)
+            del self.arrival_ms[:-2000]
+            if burst_id:
+                self.bursts.setdefault(burst_id, []).append(time.monotonic() * 1000.0)
+                if len(self.bursts) > 500:
+                    for key in list(self.bursts)[: len(self.bursts) - 500]:
+                        del self.bursts[key]
+                        self.burst_t0.pop(key, None)
+
+    def record_stage_offsets(
+        self,
+        burst_id: str | None,
+        handler_ns: int,
+        validate_ns: int,
+        chunks_ns: int,
+        submit_ns: int,
+    ) -> None:
+        if not burst_id:
+            return
+        h = handler_ns / 1e6
+        with self.lock:
+            t0 = self.burst_t0.get(burst_id)
+            if t0 is None or h < t0:
+                self.burst_t0[burst_id] = h
+                t0 = h
+            self.handler_offset_ms.append(h - t0)
+            self.validate_offset_ms.append(validate_ns / 1e6 - t0)
+            self.chunks_offset_ms.append(chunks_ns / 1e6 - t0)
+            self.submit_offset_ms.append(submit_ns / 1e6 - t0)
+            self.validate_ms.append((validate_ns - handler_ns) / 1e6)
+            for lst in (
+                self.handler_offset_ms,
+                self.validate_offset_ms,
+                self.chunks_offset_ms,
+                self.submit_offset_ms,
+                self.validate_ms,
+            ):
+                del lst[:-2000]
+
+    def record_vram(self, before: float, after: float, peak: float, reserved: float) -> None:
+        with self.lock:
+            self.vram_alloc_before_mb.append(before)
+            self.vram_alloc_after_mb.append(after)
+            self.vram_peak_mb.append(peak)
+            self.vram_reserved_mb.append(reserved)
+            for lst in (self.vram_alloc_before_mb, self.vram_alloc_after_mb, self.vram_peak_mb, self.vram_reserved_mb):
+                del lst[:-1000]
+
+    def record_batch(self, size: int, spread_ms: float, wait_ms: float) -> None:
+        with self.lock:
+            self.batch_size.append(float(size))
+            self.batch_spread_ms.append(spread_ms)
+            self.batch_wait_ms.append(wait_ms)
+            del self.batch_size[:-1000]
+            del self.batch_spread_ms[:-1000]
+            del self.batch_wait_ms[:-1000]
+
+    def record_chunk(self, value_ms: float) -> None:
+        with self.lock:
+            self.chunk_ms.append(value_ms)
+            del self.chunk_ms[:-1000]
 
     def record_request_first(self, value_ms: float) -> None:
         with self.lock:
@@ -146,6 +265,23 @@ class Metrics:
                 "first_chunk_ms": self._stats(self.first_ms),
                 "request_first_chunk_ms": self._stats(self.request_first_ms),
                 "total_ms": self._stats(self.total_ms),
+                "chunk_ms": self._stats(self.chunk_ms),
+                "batch_size": self._stats(self.batch_size),
+                "batch_spread_ms": self._stats(self.batch_spread_ms),
+                "batch_wait_ms": self._stats(self.batch_wait_ms),
+                "arrival_ms": self._stats(self.arrival_ms),
+                "burst_spread_ms": self._stats(
+                    [max(v) - min(v) for v in self.bursts.values() if len(v) > 1]
+                ),
+                "handler_offset_ms": self._stats(self.handler_offset_ms),
+                "validate_offset_ms": self._stats(self.validate_offset_ms),
+                "chunks_offset_ms": self._stats(self.chunks_offset_ms),
+                "submit_offset_ms": self._stats(self.submit_offset_ms),
+                "validate_ms": self._stats(self.validate_ms),
+                "vram_alloc_before_mb": self._stats(self.vram_alloc_before_mb),
+                "vram_alloc_after_mb": self._stats(self.vram_alloc_after_mb),
+                "vram_peak_mb": self._stats(self.vram_peak_mb),
+                "vram_reserved_mb": self._stats(self.vram_reserved_mb),
             }
             if self.timeline is not None:
                 out["timeline_p95"] = {k: self._stats(v)["p95"] for k, v in self.timeline.items()}
@@ -238,6 +374,12 @@ class BatchWorker:
                     break
                 batch.append(nxt)
                 rows += len(nxt.texts)
+            created = [job.created_at for job in batch]
+            self.metrics.record_batch(
+                len(batch),
+                (max(created) - min(created)) * 1000.0,
+                (time.monotonic() - min(created)) * 1000.0,
+            )
             self._execute(batch)
 
     def _execute(self, batch: list[Job]) -> None:
@@ -251,6 +393,13 @@ class BatchWorker:
         keys = {job.profile_id for job in active}
         profile_id = next(iter(keys)) if len(keys) == 1 else None
         self._execute_group(active, profile_id)
+        if os.getenv("ARSENAL_EMPTY_CACHE") == "1":
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            except Exception:
+                pass
 
     def _execute_group(self, jobs: list[Job], profile_id: str | None) -> None:
         texts = [text for job in jobs for text in job.texts]
@@ -283,6 +432,17 @@ class BatchWorker:
             profile_ids = [
                 job.profile_id for job in jobs for _ in job.texts
             ]
+            vram = None
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    torch.cuda.synchronize()
+                    torch.cuda.reset_peak_memory_stats()
+                    a0 = torch.cuda.memory_allocated() / (1024 * 1024)
+                    r0 = torch.cuda.memory_reserved() / (1024 * 1024)
+                    vram = (a0, r0)
+            except Exception:
+                vram = None
             audio = self.engine.synthesize(
                 texts,
                 max_frames=max_frames,
@@ -292,7 +452,29 @@ class BatchWorker:
                 on_chunk=relay,
                 on_stage=on_stage,
             )
+            if vram is not None:
+                try:
+                    import torch
+                    torch.cuda.synchronize()
+                    a1 = torch.cuda.memory_allocated() / (1024 * 1024)
+                    p1 = torch.cuda.max_memory_allocated() / (1024 * 1024)
+                    r1 = torch.cuda.memory_reserved() / (1024 * 1024)
+                    self.metrics.record_vram(vram[0], a1, p1, r1)
+                    if os.getenv("ARSENAL_VRAM_LOG") == "1":
+                        print(f"VRAM batch={len(jobs)} rows={len(texts)} before={vram[0]:.0f} after={a1:.0f} peak={p1:.0f} reserved={r1:.0f}", flush=True)
+                except Exception:
+                    pass
         except Exception as exc:
+            if vram is not None:
+                try:
+                    import torch
+                    torch.cuda.synchronize()
+                    a1 = torch.cuda.memory_allocated() / (1024 * 1024)
+                    p1 = torch.cuda.max_memory_allocated() / (1024 * 1024)
+                    r1 = torch.cuda.memory_reserved() / (1024 * 1024)
+                    self.metrics.record_vram(vram[0], a1, p1, r1)
+                except Exception:
+                    pass
             self.metrics.add("failed")
             self.metrics.add_error(str(exc))
             for job in jobs:
@@ -434,8 +616,17 @@ class TTSEngine:
             from batch.boot import maybe_prewarm
 
             n = int(os.getenv("ARSENAL_PREWARM_B", "192"))
+            try:
+                torch.cuda.synchronize()
+                print(f"VRAM load alloc={torch.cuda.memory_allocated()/1024**2:.0f}MB reserved={torch.cuda.memory_reserved()/1024**2:.0f}MB", flush=True)
+            except Exception:
+                pass
             self.prewarm_ms = maybe_prewarm(self.stream, ["Ready."] * max(1, n))
             torch.cuda.synchronize()
+            try:
+                print(f"VRAM prewarm alloc={torch.cuda.memory_allocated()/1024**2:.0f}MB reserved={torch.cuda.memory_reserved()/1024**2:.0f}MB peak={torch.cuda.max_memory_allocated()/1024**2:.0f}MB", flush=True)
+            except Exception:
+                pass
             self.ready = True
         finally:
             os.chdir(old)
@@ -606,6 +797,15 @@ def create_app(
             if not getattr(engine, "has_profile", lambda _: False)(profile_id):
                 raise HTTPException(status_code=400, detail="unknown voice profile")
 
+    def _note_arrival(request: Request) -> None:
+        sent = request.headers.get("x-sent-at")
+        if not sent:
+            return
+        try:
+            metrics.record_arrival(int(sent), request.headers.get("x-burst-id"))
+        except Exception:
+            pass
+
     async def wait_for(job: Job, request: Request) -> list[Any]:
         wrapped = asyncio.wrap_future(job.future)
         deadline = time.monotonic() + settings.timeout_s
@@ -656,25 +856,38 @@ def create_app(
             "batch_window_ms": int(os.getenv("ARSENAL_BATCH_WINDOW_MS", "150")),
         }
 
+    @app.get("/debug/reset")
+    def debug_reset() -> dict[str, Any]:
+        if os.getenv("ARSENAL_DEBUG") != "1":
+            raise HTTPException(status_code=404, detail="not found")
+        metrics.reset()
+        return {"ok": True}
+
     @app.post("/tts")
     async def tts(body: TTSRequest, request: Request) -> Response:
-        validate([body.text], body.voice_profile, body.max_frames)
         t0 = time.perf_counter_ns()
-        chunks = await asyncio.to_thread(
-            engine.chunks_for, body.text, body.voice_profile
+        _note_arrival(request)
+        validate([body.text], body.voice_profile, body.max_frames)
+        t_validate = time.perf_counter_ns()
+        chunks = await asyncio.get_running_loop().run_in_executor(
+            _CHUNK_POOL, engine.chunks_for, body.text, body.voice_profile
         )
         t1 = time.perf_counter_ns()
+        metrics.record_chunk((t1 - t_validate) / 1e6)
         parts: list[Any] = []
-        for chunk in chunks:
+        for i, chunk in enumerate(chunks):
             try:
                 job = worker.submit(
-                [chunk], body.max_frames, body.voice_profile, priority=0
-            )
+                    [chunk], body.max_frames, body.voice_profile, priority=0
+                )
             except QueueFull as exc:
                 raise HTTPException(status_code=503, detail="queue is full") from exc
+            t_sub = time.perf_counter_ns()
+            if i == 0:
+                metrics.record_stage_offsets(request.headers.get("x-burst-id"), t0, t_validate, t1, t_sub)
             job.t.setdefault("handler", t0)
             job.t.setdefault("chunks_done", t1)
-            job.t.setdefault("submit", time.perf_counter_ns())
+            job.t.setdefault("submit", t_sub)
             audio = await wait_for(job, request)
             parts.append(audio[0])
         data = wav_bytes(concat_audio(parts), settings.sample_rate)
@@ -684,11 +897,14 @@ def create_app(
     async def tts_stream(body: TTSRequest, request: Request) -> StreamingResponse:
         request_start = time.monotonic()
         t_handler = time.perf_counter_ns()
+        _note_arrival(request)
         validate([body.text], body.voice_profile, body.max_frames)
-        chunks = await asyncio.to_thread(
-            engine.chunks_for, body.text, body.voice_profile
+        t_validate = time.perf_counter_ns()
+        chunks = await asyncio.get_running_loop().run_in_executor(
+            _CHUNK_POOL, engine.chunks_for, body.text, body.voice_profile
         )
         t_chunks = time.perf_counter_ns()
+        metrics.record_chunk((t_chunks - t_validate) / 1e6)
         loop = asyncio.get_running_loop()
         chunks_out: asyncio.Queue[bytes | None] = asyncio.Queue(maxsize=64)
         holder: dict[str, Any] = {}
@@ -729,9 +945,14 @@ def create_app(
                 state["error"] = HTTPException(status_code=503, detail="queue is full")
                 done.set()
                 raise
+            t_sub = time.perf_counter_ns()
             job.t.setdefault("handler", t_handler)
             job.t.setdefault("chunks_done", t_chunks)
-            job.t.setdefault("submit", time.perf_counter_ns())
+            job.t.setdefault("submit", t_sub)
+            if index == 0:
+                metrics.record_stage_offsets(
+                    request.headers.get("x-burst-id"), t_handler, t_validate, t_chunks, t_sub
+                )
             state["job"] = job
             holder["job"] = job
             done.clear()
@@ -821,6 +1042,111 @@ def create_app(
                 "X-Accel-Buffering": "no",
             },
         )
+
+    @app.get("/debug/vram")
+    def debug_vram() -> dict[str, Any]:
+        if os.getenv("ARSENAL_DEBUG") != "1":
+            raise HTTPException(status_code=404, detail="not found")
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+                return {
+                    "allocated_mb": round(torch.cuda.memory_allocated() / (1024 * 1024), 1),
+                    "reserved_mb": round(torch.cuda.memory_reserved() / (1024 * 1024), 1),
+                    "max_allocated_mb": round(torch.cuda.max_memory_allocated() / (1024 * 1024), 1),
+                }
+        except Exception as e:
+            return {"error": str(e)}
+        return {"error": "no cuda"}
+
+    @app.get("/debug/selfprobe")
+    async def debug_selfprobe(
+        b: int = 32,
+        bursts: int = 3,
+        window: int = 150,
+        target: int = 224,
+        profile: str | None = None,
+        max_frames: int = 192,
+        empty_cache: int = 0,
+    ) -> dict[str, Any]:
+        if os.getenv("ARSENAL_DEBUG") != "1":
+            raise HTTPException(status_code=404, detail="not found")
+        import httpx
+        from httpx import ASGITransport
+
+        def _pct(values: list[float], p: float) -> float | None:
+            if not values:
+                return None
+            ordered = sorted(values)
+            k = max(0, min(len(ordered) - 1, int(round((p / 100.0) * (len(ordered) - 1)))))
+            return round(ordered[k], 2)
+
+        os.environ["ARSENAL_BATCH_WINDOW_MS"] = str(window)
+        os.environ["ARSENAL_BATCH_TARGET"] = str(target)
+        texts = [
+            "A short test line for the TTS benchmark.",
+            "This is a longer line to keep the batch worker busy while we measure first byte timing under burst load.",
+            "Another example sentence that should produce several audio frames and exercise the worker queue.",
+            "Short one.",
+        ]
+        metrics.reset()
+        transport = ASGITransport(app=app)
+        all_first: list[float] = []
+        errors = 0
+        async with httpx.AsyncClient(transport=transport, base_url="http://self") as client:
+            for bi in range(bursts):
+                if empty_cache:
+                    try:
+                        import torch
+                        if torch.cuda.is_available():
+                            torch.cuda.empty_cache()
+                    except Exception:
+                        pass
+                bid = f"self-{bi}-{b}-{time.time_ns()}"
+                async def one(i: int, _bid: str = bid) -> tuple[int, float | None]:
+                    body: dict[str, Any] = {"text": texts[i % len(texts)], "max_frames": max_frames}
+                    if profile:
+                        body["voice_profile"] = profile
+                    headers = {"x-burst-id": _bid, "x-sent-at": str(time.time_ns())}
+                    start = time.perf_counter()
+                    first: float | None = None
+                    try:
+                        async with client.stream(
+                            "POST", "/tts/stream", json=body, headers=headers, timeout=300.0
+                        ) as r:
+                            status = r.status_code
+                            async for _ in r.aiter_bytes():
+                                if first is None:
+                                    first = (time.perf_counter() - start) * 1000.0
+                            if status == 200 and first is None:
+                                first = (time.perf_counter() - start) * 1000.0
+                            return status, first
+                    except Exception:
+                        return 0, None
+
+                results = await asyncio.gather(*(one(i) for i in range(b)))
+                for status, first in results:
+                    if status != 200 or first is None:
+                        errors += 1
+                    else:
+                        all_first.append(first)
+        snap = metrics.snapshot()
+        return {
+            "b": b,
+            "bursts": bursts,
+            "window": window,
+            "target": target,
+            "profile": profile,
+            "max_frames": max_frames,
+            "client": {
+                "p50_ms": _pct(all_first, 50),
+                "p95_ms": _pct(all_first, 95),
+                "errors": errors,
+                "n": len(all_first),
+            },
+            "server": snap,
+        }
 
     @app.post("/tts/batch")
     async def tts_batch(body: BatchRequest, request: Request) -> JSONResponse:

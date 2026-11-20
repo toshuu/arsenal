@@ -93,11 +93,13 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261120-004532-MAINTENANCE | MAINTENANCE | 2026-11-20T00:45:32+05:30 | Record current standing: B and time, reverted regressions, delusion, and next steps. | .stageset/sessions/maintenance-status-2026-11-20.md | IDEA-0005; FACT-0109; FACT-0110; FACT-0111; FACT-0112; FACT-0113; FACT-0114 | - |
 | 20261120-005500-PUSH | PUSH | 2026-11-20T00:55:00+05:30 | Push burst recovery fixes, StageSet evidence, and report JSON. | .stageset/sessions/event-push-burst-recovery.md | IDEA-0005; FACT-0110; FACT-0111; FACT-0112; FACT-0113; fcd4253 | fcd4253 |
 | 20261120-013315-CODING | CODING | 2026-11-20T01:33:15+05:30 | Steps 1,2,4 ramp and window sweep. Max HTTP pass B=37. B=224 still fails. | .stageset/sessions/coding-b224-ramp.md | IDEA-0005; FACT-0111; FACT-0115; FACT-0116 | e6c8153 |
+| 20261120-132514-CODING | CODING | 2026-11-20T13:25:14+05:30 | Deploy Arsenal TTS on a Modal T4, add a co-located prober and direct bench, and stop the GPU after the test. | .stageset/sessions/coding-modal-t4-deploy.md | IDEA-0005; SSLD-017; 20261120-132514-RUN | - |
+| 20261120-142010-IDEATION | IDEATION | 2026-11-20T14:20:10+05:30 | Record dual service class plan (call/WebSocket + normal HTTP) and T4 diagnosis evidence. | .stageset/sessions/ideation-call-mode-dual-service.md | IDEA-0005; IDEA-0007; FACT-0123; FACT-0124; FACT-0125; FACT-0126; 20261120-142010-RUN | - |
 
 ## Totals
 
-- CODING: 42.
-- IDEATION: 10.
+- CODING: 43.
+- IDEATION: 11.
 - MAINTENANCE: 10.
 - PROBE: 0.
 - PUSH: 25.

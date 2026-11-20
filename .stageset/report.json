@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-19T21:12:40Z",
+  "generated_at": "2026-11-20T08:53:46Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 14,
     "waiting": 2,
     "draft": 1,
-    "sessions": 87,
+    "sessions": 89,
     "runs": 15,
     "runs_active": 0,
     "results": 3
@@ -876,6 +876,16 @@
       "status": "DISCOVERY"
     },
     {
+      "path": "Ideas/IDEA-0006-stageset-dev-acceleration.md",
+      "title": "IDEA-0006: StageSet system acceleration for project dev",
+      "status": "DISCOVERY"
+    },
+    {
+      "path": "Ideas/IDEA-0007-dual-service-call-mode.md",
+      "title": "Dual service classes - call mode and normal HTTP",
+      "status": "DISCOVERY"
+    },
+    {
       "path": "Ideas/_index.md",
       "title": "Ideas index",
       "status": null
@@ -1418,9 +1428,26 @@
       "date": "2026-11-20T01:33:15+05:30",
       "type": "coding",
       "summary": "Steps 1,2,4 ramp and window sweep. Max HTTP pass B=37. B=224 still fails."
+    },
+    {
+      "id": "20261120-132514-CODING",
+      "date": "2026-11-20T13:25:14+05:30",
+      "type": "coding",
+      "summary": "Deploy Arsenal TTS on a Modal T4, add a co-located prober and direct bench, and stop the GPU after the test."
+    },
+    {
+      "id": "20261120-142010-IDEATION",
+      "date": "2026-11-20T14:20:10+05:30",
+      "type": "ideation",
+      "summary": "Record dual service class plan (call/WebSocket + normal HTTP) and T4 diagnosis evidence."
     }
   ],
   "commits": [
+    {
+      "sha": "8b2f29c",
+      "date": "2026-11-19T21:12:45+00:00",
+      "subject": "Document HTTP cliff diagnosis (FACT-0117) and gated timeline; update StageSet/reports"
+    },
     {
       "sha": "f1d0f51",
       "date": "2026-11-19T20:21:36+00:00",
@@ -1615,11 +1642,6 @@
       "sha": "6f11acf",
       "date": "2026-11-16T10:08:05+00:00",
       "subject": "Close single-T4 phase: mark SSLD-015/016 done, SSLD-017 planned; FACT-0085/0086; strategy summary"
-    },
-    {
-      "sha": "8499af3",
-      "date": "2026-11-16T10:01:47+00:00",
-      "subject": "Docs: SSLD-017 session + FACT-0084, report sync"
     }
   ]
 }

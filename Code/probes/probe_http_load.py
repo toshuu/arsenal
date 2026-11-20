@@ -14,9 +14,10 @@ from pathlib import Path
 import httpx
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "probes" / "out" / "probe_http_load.json"
 PORT = 8081
-BASE = f"http://127.0.0.1:{PORT}"
+REMOTE_BASE = os.getenv("ARSENAL_LOAD_BASE") or None
+BASE = REMOTE_BASE or f"http://127.0.0.1:{PORT}"
+OUT = Path(os.getenv("ARSENAL_LOAD_OUT", str(ROOT / "probes" / "out" / "probe_http_load.json")))
 BURSTS = int(os.getenv("ARSENAL_LOAD_BURSTS", "5"))
 PER_BURST = int(os.getenv("ARSENAL_LOAD_PER_BURST", "32"))
 TEXTS = [
@@ -99,7 +100,7 @@ def start_server(profiles: dict[str, str]) -> subprocess.Popen[bytes]:
 
 
 async def one_request(
-    client: httpx.AsyncClient, index: int, start_at: float
+    client: httpx.AsyncClient, index: int, start_at: float, burst_id: str = ""
 ) -> dict[str, object]:
     text = TEXTS[index % len(TEXTS)]
     profile = SINGLE_PROFILE or PROFILES[index % len(PROFILES)]
@@ -107,6 +108,7 @@ async def one_request(
     if profile:
         body["voice_profile"] = profile
     await asyncio.sleep(max(0.0, start_at - time.perf_counter()))
+    headers = {"x-burst-id": burst_id, "x-sent-at": str(time.time_ns())}
     start = time.perf_counter()
     first_ms = None
     header_ms = None
@@ -114,7 +116,9 @@ async def one_request(
     status = 0
     error = None
     try:
-        async with client.stream("POST", "/tts/stream", json=body, timeout=120) as response:
+        async with client.stream(
+            "POST", "/tts/stream", json=body, headers=headers, timeout=120
+        ) as response:
             status = response.status_code
             header_ms = (time.perf_counter() - start) * 1000
             async for chunk in response.aiter_bytes():
@@ -142,9 +146,10 @@ async def run_bursts(client: httpx.AsyncClient, result: dict[str, object]) -> li
     for burst in range(BURSTS):
         start = time.perf_counter()
         start_at = time.perf_counter() + 0.05
+        burst_id = f"{int(time.time()*1000)}-{burst}-{PER_BURST}"
         batch = await asyncio.gather(
             *(
-                one_request(client, burst * PER_BURST + index, start_at)
+                one_request(client, burst * PER_BURST + index, start_at, burst_id)
                 for index in range(PER_BURST)
             )
         )
@@ -154,13 +159,27 @@ async def run_bursts(client: httpx.AsyncClient, result: dict[str, object]) -> li
         result[f"burst_{burst}_wall_s"] = round(wall, 3)
         result[f"burst_{burst}_rtf"] = round(wall / audio_s, 3) if audio_s else 0
         result[f"burst_{burst}_ok"] = all(r["status"] == 200 for r in batch)
+        burst_firsts = sorted(float(r["first_ms"]) for r in batch if r["first_ms"] is not None)
+        result[f"burst_{burst}_first_p50_ms"] = (
+            round(statistics.median(burst_firsts), 2) if burst_firsts else 0
+        )
+        result[f"burst_{burst}_first_p95_ms"] = (
+            round(burst_firsts[min(len(burst_firsts) - 1, int(len(burst_firsts) * 0.95))], 2)
+            if burst_firsts
+            else 0
+        )
     return rows
 
 
 def main() -> int:
-    profiles = build_profiles()
-    proc = start_server(profiles)
+    proc = None
+    if REMOTE_BASE:
+        profiles: dict[str, str] = {}
+    else:
+        profiles = build_profiles()
+        proc = start_server(profiles)
     result: dict[str, object] = {
+        "base": BASE,
         "bursts": BURSTS,
         "per_burst": PER_BURST,
         "load_limits": LOAD_LIMITS or "default",
@@ -189,11 +208,12 @@ def main() -> int:
     try:
         rows, metrics = asyncio.run(run())
     finally:
-        proc.terminate()
-        try:
-            proc.wait(timeout=10)
-        except subprocess.TimeoutExpired:
-            proc.kill()
+        if proc is not None:
+            proc.terminate()
+            try:
+                proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                proc.kill()
     firsts = sorted(float(r["first_ms"]) for r in rows if r["first_ms"] is not None)
     headers = sorted(float(r["header_ms"]) for r in rows if r["header_ms"] is not None)
     result["requests"] = len(rows)
