@@ -319,8 +319,7 @@ finally:
 """
     Path('/tmp/run_modal.py').write_text(script)
     # ensure pc_poisson in image
-    r = subprocess.run([sys.executable,'/tmp/run_modal.py'], capture_output=True, text=True, timeout=3600)
-    print(r.stdout[-4000:])
-    if r.stderr: print('STDERR',r.stderr[-2000:])
+    r = subprocess.run([sys.executable,'/tmp/run_modal.py'], text=True, timeout=3600)
+    print('RC',r.returncode)
     p=Path('/tmp/fm_results.json')
     return json.loads(p.read_text()) if p.exists() else {'error':'no_results','stdout':r.stdout[-2000:],'stderr':r.stderr[-2000:]}
