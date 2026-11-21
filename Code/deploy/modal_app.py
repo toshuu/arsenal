@@ -304,7 +304,7 @@ try:
     for rate in [64,128,192]:
         drain(); time.sleep(1)
         out=f'/tmp/pois_{rate}.json'
-        d=run(['taskset','-c','4-7',sys.executable,'/tmp/pc_poisson.py','--url',base,'--sessions',str(max(rate,64)),'--rate',str(rate),'--duration','20','--mf','96','--profile','v1','--out',out,'--text',TEXT],out,180)
+        d=run(['taskset','-c','4-7',sys.executable,'Code/probes/pc_poisson.py','--url',base,'--sessions',str(max(rate,64)),'--rate',str(rate),'--duration','20','--mf','96','--profile','v1','--out',out,'--text',TEXT],out,180)
         fb=d.get('first_byte',{})
         row={'case':f'poisson_{rate}','p50':fb.get('p50'),'p95':fb.get('p95'),'errors':d.get('errors'),'completed':d.get('completed')}
         if 'error' in d: row['err']=d['error']
@@ -319,7 +319,6 @@ finally:
 """
     Path('/tmp/run_modal.py').write_text(script)
     # ensure pc_poisson in image
-    subprocess.run(['cp','Code/probes/call_load_client.py','/tmp/','-n'], check=False)
     r = subprocess.run([sys.executable,'/tmp/run_modal.py'], capture_output=True, text=True, timeout=3600)
     print(r.stdout[-4000:])
     if r.stderr: print('STDERR',r.stderr[-2000:])
