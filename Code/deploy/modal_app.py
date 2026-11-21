@@ -296,15 +296,15 @@ try:
     for b in [64,128,192,256]:
         drain(); time.sleep(1)
         out=f'/tmp/burst_{b}.json'
-        d=run(['taskset','-c','4-7',sys.executable,'Code/probes/call_load_client.py','--url',base,'--mode','burst','--b',str(b),'--repeats','5','--warmups','2','--max-frames','96','--profile','v1','--text',TEXT,'--out',out],out,180)
+        d=run(['taskset','-c','4-7',sys.executable,'Code/probes/call_load_client.py','--url',base,'--mode','burst','--b',str(b),'--repeats','3','--warmups','2','--max-frames','96','--profile','v1','--text',TEXT,'--out',out],out,300)
         m=getj(base+'/metrics'); bs=m.get('metrics',{}).get('batch_size',{}); bw=m.get('metrics',{}).get('batch_wall_ms',{}).get('p95')
-        row={'case':f'burst_b{b}','p50':d.get('p50_of_p50'),'p95':d.get('p95_of_p95'),'median_p95':d.get('median_p95'),'errors':d.get('errors'),'batches_per_rep':(bs.get('count',0)/7 if bs.get('count') else None),'batch_wall_p95':bw}
+        row={'case':f'burst_b{b}','p50':d.get('p50_of_p50'),'p95':d.get('p95_of_p95'),'median_p95':d.get('median_p95'),'errors':d.get('errors'),'batches_per_rep':(bs.get('count',0)/5 if bs.get('count') else None),'batch_wall_p95':bw}
         if 'error' in d: row['err']=d['error']
         results['burst'].append(row); print(json.dumps(row),flush=True)
     for rate in [64,128,192]:
         drain(); time.sleep(1)
         out=f'/tmp/pois_{rate}.json'
-        d=run(['taskset','-c','4-7',sys.executable,'Code/probes/pc_poisson.py','--url',base,'--sessions',str(max(rate,64)),'--rate',str(rate),'--duration','20','--mf','96','--profile','v1','--out',out,'--text',TEXT],out,180)
+        d=run(['taskset','-c','4-7',sys.executable,'Code/probes/pc_poisson.py','--url',base,'--sessions',str(max(rate,64)),'--rate',str(rate),'--duration','20','--mf','96','--profile','v1','--out',out,'--text',TEXT],out,300)
         fb=d.get('first_byte',{})
         row={'case':f'poisson_{rate}','p50':fb.get('p50'),'p95':fb.get('p95'),'errors':d.get('errors'),'completed':d.get('completed')}
         if 'error' in d: row['err']=d['error']
