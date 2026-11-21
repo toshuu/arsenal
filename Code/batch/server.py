@@ -16,10 +16,13 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
+import numpy as np
+import torch
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
-from batch.call_chunker import CALL_MODE, ChunkCache, split_call_text
+from batch.call_chunker import CALL_MODE, ChunkCache, estimate_first_max_frames, split_call_text
+from batch.audio_join import join_chunks, smooth_chunk
 from batch.job_classes import (
     PRIORITY,
     Config,
@@ -56,7 +59,10 @@ class Job:
     mode: str = "normal"
     started_at: float | None = None
     first_chunk_at: float | None = None
+    pcm: bytes | None = None
     t: dict[str, int] = field(default_factory=dict)
+    cap_hit: bool = False
+    chunk_texts: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -113,6 +119,13 @@ class Metrics:
         self.active_calls = 0
         self.underruns = 0
         self.batch_classes: list[str] = []
+        self.ws_text_to_submit_ms: list[float] = []
+        self.ws_text_to_first_byte_ms: list[float] = []
+        self.ws_send_to_recv_ms: list[float] = []
+        self.ws_job_wait_ms: list[float] = []
+        self.ws_pcm_ms: list[float] = []
+        self.ws_send_ms: list[float] = []
+        self.ws_after_emit_ms: list[float] = []
 
     def add(self, name: str, value: int = 1) -> None:
         with self.lock:
@@ -256,7 +269,7 @@ class Metrics:
         if self.timeline is None or not data:
             return
         # continuation chunks have large handler-to-submit gap and no first_byte_sent from request
-        if first_only and "submit" in data and "handler" in data:
+        if first_only and not data.get("ws") and "submit" in data and "handler" in data:
             if (data["submit"] - data["handler"]) / 1e6 > 500:
                 return
         order = [
@@ -310,6 +323,30 @@ class Metrics:
             self.batch_classes.append(name)
             del self.batch_classes[:-200]
 
+    def record_ws_timing(self, to_submit: float | None, to_first: float | None, send_to_recv: float | None) -> None:
+        with self.lock:
+            if to_submit is not None:
+                self.ws_text_to_submit_ms.append(to_submit)
+                del self.ws_text_to_submit_ms[:-2000]
+            if to_first is not None:
+                self.ws_text_to_first_byte_ms.append(to_first)
+                del self.ws_text_to_first_byte_ms[:-2000]
+            if send_to_recv is not None:
+                self.ws_send_to_recv_ms.append(send_to_recv)
+                del self.ws_send_to_recv_ms[:-2000]
+
+    def record_ws_phase(self, job_wait: float, pcm: float, send: float, after_emit: float | None) -> None:
+        with self.lock:
+            self.ws_job_wait_ms.append(job_wait)
+            self.ws_pcm_ms.append(pcm)
+            self.ws_send_ms.append(send)
+            del self.ws_job_wait_ms[:-2000]
+            del self.ws_pcm_ms[:-2000]
+            del self.ws_send_ms[:-2000]
+            if after_emit is not None:
+                self.ws_after_emit_ms.append(after_emit)
+                del self.ws_after_emit_ms[:-2000]
+
     def add_underrun(self) -> None:
         with self.lock:
             self.underruns += 1
@@ -355,6 +392,13 @@ class Metrics:
                     name: self._stats(values)
                     for name, values in self.class_first_ms.items()
                 },
+                "ws_text_to_submit_ms": self._stats(self.ws_text_to_submit_ms),
+                "ws_text_to_first_byte_ms": self._stats(self.ws_text_to_first_byte_ms),
+                "ws_send_to_recv_ms": self._stats(self.ws_send_to_recv_ms),
+                "ws_job_wait_ms": self._stats(self.ws_job_wait_ms),
+                "ws_pcm_ms": self._stats(self.ws_pcm_ms),
+                "ws_send_ms": self._stats(self.ws_send_ms),
+                "ws_after_emit_ms": self._stats(self.ws_after_emit_ms),
                 "active_call_sessions": self.active_calls,
                 "underruns": self.underruns,
                 "batch_classes": list(self.batch_classes[-20:]),
@@ -553,6 +597,13 @@ class BatchWorker:
             rows += len(job.texts)
         return batch
 
+    def _frame_bucket(self, job: Job) -> int:
+        mf = int(job.max_frames or 48)
+        for b in (24, 48, 96, 192):
+            if mf <= b:
+                return b
+        return 192
+
     def _collect_call_first_quiet(
         self, cls: JobClass, limit: int, q_ms: float, h_ms: float
     ) -> list[Job]:
@@ -560,6 +611,7 @@ class BatchWorker:
         batch: list[Job] = []
         start: float | None = None
         grace_ms = float(os.getenv("ARSENAL_CALL_FIRST_GRACE_MS", "0"))
+        use_buckets = os.getenv("ARSENAL_CALL_FIRST_BUCKETS", "1") == "1"
         while True:
             drained = False
             while True:
@@ -579,6 +631,8 @@ class BatchWorker:
                 with self.cond:
                     self.cond.wait(timeout=0.25)
                 continue
+            if self.active_call_sessions > 0 and len(batch) >= self.active_call_sessions:
+                break
             now = time.monotonic()
             last = self.last_enqueue.get(cls, start)
             quiet = q_ms <= 0 or (now - last) * 1000.0 >= q_ms
@@ -587,7 +641,6 @@ class BatchWorker:
                 if not hard and grace_ms > 0:
                     with self.cond:
                         self.cond.wait(timeout=grace_ms / 1000.0)
-                # final absorb before GPU step
                 for _ in range(8):
                     while True:
                         try:
@@ -612,7 +665,21 @@ class BatchWorker:
             wait = min(waits) if waits else 0.001
             with self.cond:
                 self.cond.wait(timeout=min(max(wait, 0.0), 0.01))
-        return batch
+        if not use_buckets or len(batch) <= 1:
+            return batch
+        # form batch within one bucket; requeue rest
+        groups: dict[int, list[Job]] = {}
+        for j in batch:
+            groups.setdefault(self._frame_bucket(j), []).append(j)
+        # pick bucket with most rows, tie by smallest bucket (lower latency)
+        pick = sorted(groups.items(), key=lambda kv: (-len(kv[1]), kv[0]))[0][0]
+        chosen = groups[pick][:limit]
+        rest = [j for b, js in groups.items() for j in (js if b != pick else js[limit:])]
+        for j in rest:
+            self.queues[cls].put_nowait((j.priority, j.seq, j))
+        with self.cond:
+            self.cond.notify_all()
+        return chosen
 
     def _execute(self, batch: list[Job]) -> None:
         active = [job for job in batch if not job.cancelled]
@@ -688,6 +755,12 @@ class BatchWorker:
             )
             for j in jobs:
                 j.t["synth_end"] = time.perf_counter_ns()
+            _trunc_stream = self.engine._stream_for(profile_id) if profile_id is not None or len({j.profile_id for j in jobs})==1 else getattr(self.engine, "mixed_stream", None)
+            trunc = list(getattr(_trunc_stream, "last_truncated_rows", []) or []) if _trunc_stream is not None else []
+            if trunc:
+                for r in trunc:
+                    if 0 <= r < len(owners):
+                        owners[r].cap_hit = True
             if vram is not None:
                 try:
                     import torch
@@ -741,6 +814,12 @@ class BatchWorker:
                 job.future.set_exception(asyncio.CancelledError())
                 self.metrics.add("cancelled")
             else:
+                if (
+                    job.mode == CALL_MODE
+                    and job.job_class is JobClass.CALL_CONT
+                    and len(part) == 1
+                ):
+                    job.pcm = pcm_bytes(part[0])
                 job.future.set_result(part)
                 self.metrics.add("completed")
 
@@ -748,8 +827,6 @@ class BatchWorker:
 def concat_audio(parts: list[Any]) -> Any:
     if len(parts) == 1:
         return parts[0]
-    import numpy as np
-
     arrays = []
     for part in parts:
         if hasattr(part, "detach"):
@@ -758,11 +835,21 @@ def concat_audio(parts: list[Any]) -> Any:
     return np.concatenate(arrays)
 
 
+
+def _norm_text(s: str) -> str:
+    import re
+    return re.sub(r"\s+", " ", " ".join(re.findall(r"[a-z0-9']+", (s or "").lower()))).strip()
+
+
+def _assert_text_integrity(input_text: str, chunk_texts: list[str]) -> None:
+    a = _norm_text(input_text)
+    b = _norm_text(" ".join(chunk_texts))
+    if a != b:
+        raise HTTPException(status_code=500, detail=f"text integrity failed: in={a!r} out={b!r}")
+
 def pcm_bytes(samples: Any) -> bytes:
     if hasattr(samples, "detach"):
         samples = samples.detach().float().cpu().numpy()
-    import numpy as np
-
     data = np.clip(np.asarray(samples, dtype="float32"), -1.0, 1.0)
     return (data * 32767.0).astype("<i2").tobytes()
 
@@ -770,8 +857,6 @@ def pcm_bytes(samples: Any) -> bytes:
 def wav_bytes(samples: Any, sample_rate: int) -> bytes:
     if hasattr(samples, "detach"):
         samples = samples.detach().float().cpu().numpy()
-    import numpy as np
-
     data = np.clip(np.asarray(samples, dtype="float32"), -1.0, 1.0)
     pcm = (data * 32767.0).astype("<i2").tobytes()
     buf = io.BytesIO()
@@ -1137,28 +1222,54 @@ def create_app(
         _note_arrival(request)
         validate([body.text], body.voice_profile, body.max_frames)
         t_validate = time.perf_counter_ns()
-        chunks = await asyncio.get_running_loop().run_in_executor(
-            _CHUNK_POOL, engine.chunks_for, body.text, body.voice_profile
-        )
+        call_mode = request.query_params.get("mode") == "call"
+        if call_mode:
+            stream = engine._stream_for(body.voice_profile)
+            requested = int(request.query_params.get("first_max_frames", "0") or 0)
+            est = estimate_first_max_frames(stream, body.text)
+            first_frames = requested if requested > 0 else int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES", str(est)))
+            first_frames = max(16, min(first_frames, body.max_frames))
+            cache: ChunkCache = app.state.chunk_cache
+            chunks = await asyncio.get_running_loop().run_in_executor(
+                _CHUNK_POOL, cache.get_or_split, (body.text, first_frames),
+                lambda: split_call_text(stream, body.text, first_frames),
+            )
+        else:
+            chunks = await asyncio.get_running_loop().run_in_executor(
+                _CHUNK_POOL, engine.chunks_for, body.text, body.voice_profile
+            )
         t1 = time.perf_counter_ns()
         metrics.record_chunk((t1 - t_validate) / 1e6)
         parts: list[Any] = []
+        chunk_logs=[]
+        call_mode = request.query_params.get("mode") == "call"
         for i, chunk in enumerate(chunks):
+            mf = body.max_frames
+            if call_mode:
+                est = estimate_first_max_frames(engine._stream_for(body.voice_profile), chunk)
+                mf = max(24, min(int(est), body.max_frames))
             try:
-                job = worker.submit(
-                    [chunk], body.max_frames, body.voice_profile, priority=0
-                )
+                job = worker.submit([chunk], mf, body.voice_profile, priority=0, mode=CALL_MODE if call_mode else "normal",
+                                    job_class=JobClass.CALL_FIRST if call_mode and i==0 else (JobClass.CALL_CONT if call_mode else JobClass.NORMAL))
             except QueueFull as exc:
                 raise HTTPException(status_code=503, detail="queue is full") from exc
             t_sub = time.perf_counter_ns()
             if i == 0:
                 metrics.record_stage_offsets(request.headers.get("x-burst-id"), t0, t_validate, t1, t_sub)
-            job.t.setdefault("handler", t0)
-            job.t.setdefault("chunks_done", t1)
-            job.t.setdefault("submit", t_sub)
+            job.t.setdefault("handler", t0); job.t.setdefault("chunks_done", t1); job.t.setdefault("submit", t_sub)
             audio = await wait_for(job, request)
-            parts.append(audio[0])
-        data = wav_bytes(concat_audio(parts), settings.sample_rate)
+            arr = audio[0].detach().float().cpu().numpy() if hasattr(audio[0], 'detach') else np.asarray(audio[0], dtype=np.float32)
+            parts.append(arr)
+            chunk_logs.append({"index":i,"text":chunk,"frames_cap":mf,"cap_hit":bool(getattr(job,'cap_hit',False)),"audio_sec":len(arr)/settings.sample_rate})
+            if getattr(job,'cap_hit',False):
+                log.warning("CAP_HIT /tts chunk=%s frames=%s text=%r", i, mf, chunk)
+        if call_mode:
+            _assert_text_integrity(body.text, [c["text"] for c in chunk_logs])
+            joined = join_chunks(parts, sr=settings.sample_rate, pause_ms=100)
+            # duration check vs ref not available here; log shortfall risk
+            data = wav_bytes(torch.from_numpy(joined), settings.sample_rate)
+        else:
+            data = wav_bytes(concat_audio([torch.from_numpy(p) if not hasattr(p,'dtype') or str(p.dtype).startswith('float') else torch.from_numpy(p.astype('float32')) for p in parts]), settings.sample_rate)
         return Response(content=data, media_type="audio/wav")
 
     @app.post("/tts/stream")
@@ -1170,13 +1281,14 @@ def create_app(
         t_validate = time.perf_counter_ns()
         call_mode = request.query_params.get("mode") == "call"
         if call_mode:
-            first_frames = min(
-                int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES", "32")), body.max_frames
-            )
+            stream = engine._stream_for(body.voice_profile)
+            requested = int(request.query_params.get("first_max_frames", "0") or 0)
+            est = estimate_first_max_frames(stream, body.text)
+            first_frames = requested if requested > 0 else int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES", str(est)))
+            first_frames = max(16, min(first_frames, body.max_frames))
             cont_frames = min(
                 int(os.getenv("ARSENAL_CALL_CONT_MAX_FRAMES", "192")), body.max_frames
             )
-            stream = engine._stream_for(body.voice_profile)
             cache: ChunkCache = app.state.chunk_cache
             chunks = await asyncio.get_running_loop().run_in_executor(
                 _CHUNK_POOL,
@@ -1293,39 +1405,116 @@ def create_app(
         metrics.record_request_first((time.monotonic() - request_start) * 1000.0)
 
         async def generate():
-            job = state["job"]
             try:
-                yield first
-                while True:
-                    if await request.is_disconnected():
-                        if job is not None:
-                            job.cancelled = True
-                            job.stop.set()
-                        metrics.add("cancelled")
+                if not call_mode:
+                    job = state["job"]
+                    yield first
+                    while True:
+                        if await request.is_disconnected():
+                            job = state.get("job")
+                            if job is not None:
+                                job.cancelled = True; job.stop.set()
+                            metrics.add("cancelled"); break
+                        if done.is_set():
+                            if state["error"] is not None: break
+                            if state["index"] >= len(chunks):
+                                while not chunks_out.empty():
+                                    rest = chunks_out.get_nowait()
+                                    if rest is not None: yield rest
+                                break
+                            submit_next(); job = state["job"]
+                        try:
+                            item = await asyncio.wait_for(chunks_out.get(), 0.05)
+                        except asyncio.TimeoutError:
+                            continue
+                        if item is not None: yield item
+                    return
+                # call mode: collect per-chunk full audio from already-submitted pipeline? easier: rebuild as smoothed prefetch
+                sr = settings.sample_rate
+                holdback = int(sr * 0.04)
+                prev_tail = np.zeros(0, dtype=np.float32)
+                prev_rms = None
+                chunk_meta = []
+
+                async def run_one(idx, ch):
+                    mf = first_frames if idx == 0 else cont_frames
+                    frame_q: asyncio.Queue = asyncio.Queue()
+                    first_ev = asyncio.Event()
+                    def on_frame(frame, elapsed, _q=frame_q, _f=first_ev):
+                        data = pcm_bytes(frame)
+                        loop.call_soon_threadsafe(_q.put_nowait, data)
+                        if not _f.is_set(): loop.call_soon_threadsafe(_f.set)
+                    job = worker.submit([ch], mf, body.voice_profile,
+                                        job_class=JobClass.CALL_FIRST if idx == 0 else JobClass.CALL_CONT,
+                                        mode=CALL_MODE, on_chunk=on_frame)
+                    job.chunk_texts = [ch]
+                    job.future.add_done_callback(lambda _fut, _q=frame_q: loop.call_soon_threadsafe(_q.put_nowait, None))
+                    try: await asyncio.wait_for(first_ev.wait(), timeout=30)
+                    except Exception: pass
+                    return job, frame_q, mf
+
+                next_idx = 0
+                current = asyncio.create_task(run_one(next_idx, chunks[next_idx])); next_idx += 1
+                prefetched = asyncio.create_task(run_one(next_idx, chunks[next_idx])) if next_idx < len(chunks) else None
+                if prefetched: next_idx += 1
+                idx = 0
+                while idx < len(chunks):
+                    job, frame_q, mf = await current
+                    bufs = []
+                    while True:
+                        d = await frame_q.get()
+                        if d is None: break
+                        bufs.append(np.frombuffer(d, dtype='<i2').astype(np.float32) / 32768.0)
+                    audio = await asyncio.wrap_future(job.future)
+                    arr = np.concatenate(bufs) if bufs else (audio[0].detach().float().cpu().numpy() if hasattr(audio[0], 'detach') else np.asarray(audio[0], dtype=np.float32))
+                    cap_hit = bool(getattr(job, 'cap_hit', False))
+                    chunk_meta.append({"index": idx, "text": chunks[idx], "frames_cap": mf, "cap_hit": cap_hit, "eos_reached": not cap_hit, "audio_sec": round(len(arr)/sr,4)})
+                    if cap_hit: log.warning("CAP_HIT /tts/stream chunk=%s frames=%s text=%r", idx, mf, chunks[idx])
+                    a, prev_rms = smooth_chunk(arr, sr=sr, is_first=(idx==0), is_last=(idx==len(chunks)-1), prev_rms=prev_rms)
+                    # determine pause by punctuation
+                    txt = chunks[idx].rstrip()
+                    pause_ms = 200 if re.search(r'[.?!]$', txt) else (100 if re.search(r'[,;:]$', txt) else 20)
+                    if idx > 0:
+                        cf = min(len(prev_tail), len(a), int(sr * 0.02))
+                        if cf > 1:
+                            w = np.linspace(1.0, 0.0, cf, dtype=np.float32)
+                            cross = prev_tail[-cf:] * w + a[:cf] * (1.0 - w)
+                            send = np.concatenate([prev_tail[:-cf], cross]) if len(prev_tail) > cf else cross
+                            a = a[cf:]
+                        else:
+                            send = prev_tail
+                        send = np.concatenate([send, np.zeros(int(sr * pause_ms / 1000), dtype=np.float32)])
+                        if len(send) > holdback:
+                            yield (np.clip(send[:-holdback], -1, 1) * 32767).astype('<i2').tobytes()
+                            prev_tail = send[-holdback:]
+                        else:
+                            prev_tail = send
+                    if len(a) > holdback:
+                        out = a[:-holdback]
+                        if idx == 0:
+                            yield (np.clip(out, -1, 1) * 32767).astype('<i2').tobytes(); prev_tail = a[-holdback:]
+                        else:
+                            prev_tail = np.concatenate([prev_tail, out]) if len(prev_tail) else out
+                            if len(prev_tail) > holdback:
+                                yield (np.clip(prev_tail[:-holdback], -1, 1) * 32767).astype('<i2').tobytes(); prev_tail = prev_tail[-holdback:]
+                    else:
+                        prev_tail = np.concatenate([prev_tail, a]) if idx > 0 else a
+                    idx += 1
+                    if prefetched is not None:
+                        current = prefetched
+                        prefetched = asyncio.create_task(run_one(next_idx, chunks[next_idx])) if next_idx < len(chunks) else None
+                        if prefetched: next_idx += 1
+                    elif idx < len(chunks):
+                        current = asyncio.create_task(run_one(idx, chunks[idx])); next_idx = idx + 1
+                    else:
                         break
-                    if done.is_set():
-                        if state["error"] is not None:
-                            break
-                        if state["index"] >= len(chunks):
-                            while not chunks_out.empty():
-                                rest = chunks_out.get_nowait()
-                                if rest is not None:
-                                    yield rest
-                            break
-                        submit_next()
-                        job = state["job"]
-                    try:
-                        item = await asyncio.wait_for(chunks_out.get(), 0.05)
-                    except asyncio.TimeoutError:
-                        continue
-                    if item is not None:
-                        yield item
+                if len(prev_tail):
+                    yield (np.clip(prev_tail, -1, 1) * 32767).astype('<i2').tobytes()
+                _assert_text_integrity(body.text, [m["text"] for m in chunk_meta])
             finally:
-                job = state["job"]
-                if job is not None:
-                    job.stop.set()
-                if call_mode:
-                    worker.exit_call()
+                job = state.get("job")
+                if job is not None: job.stop.set()
+                if call_mode: worker.exit_call()
 
         if call_mode:
             worker.enter_call()
@@ -1374,53 +1563,92 @@ def create_app(
                         continue
                     profile = state["profile"]
                     max_frames = int(msg.get("max_frames") or settings.max_frames)
-                    first_frames = min(
-                        int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES", "32")), max_frames
-                    )
+                    first_only = bool(msg.get("first_only"))
+                    t_recv_ns = time.perf_counter_ns()
+                    sent_ns = msg.get("sent_ns")
+                    send_to_recv = None
+                    if sent_ns:
+                        send_to_recv = (time.time_ns() - int(sent_ns)) / 1e6
+                    stream = engine._stream_for(profile)
+                    requested = int(msg.get("first_max_frames") or 0)
+                    est = estimate_first_max_frames(stream, text)
+                    first_frames = requested if requested > 0 else int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES", str(est)))
+                    first_frames = max(16, min(first_frames, max_frames))
                     cont_frames = min(
                         int(os.getenv("ARSENAL_CALL_CONT_MAX_FRAMES", "192")), max_frames
                     )
-                    stream = engine._stream_for(profile)
                     chunks = await loop.run_in_executor(
                         _CHUNK_POOL,
                         cache.get_or_split,
                         (text, first_frames),
                         lambda: split_call_text(stream, text, first_frames),
                     )
+                    chunk_meta = []
+                    total_samples = 0
                     for index, chunk in enumerate(chunks):
                         if state["cancelled"]:
                             break
                         cls = JobClass.CALL_FIRST if index == 0 else JobClass.CALL_CONT
-                        frames = first_frames if index == 0 else cont_frames
+                        est_chunk = estimate_first_max_frames(engine._stream_for(profile), chunk)
+                        frames = max(24, min(int(est_chunk), max_frames)) if index == 0 else max(24, min(int(estimate_first_max_frames(engine._stream_for(profile), chunk)), max_frames))
+                        # tokens*3+16 policy - generous, no truncation
+                        t_submit_ns = time.perf_counter_ns()
+                        frame_q: asyncio.Queue = asyncio.Queue()
+                        def on_frame(frame: Any, elapsed: float, _q=frame_q) -> None:
+                            data = pcm_bytes(frame)
+                            loop.call_soon_threadsafe(_q.put_nowait, data)
                         try:
                             job = worker.submit(
-                                [chunk],
-                                frames,
-                                profile,
-                                job_class=cls,
-                                mode=CALL_MODE,
+                                [chunk], frames, profile,
+                                job_class=cls, mode=CALL_MODE, on_chunk=on_frame,
                             )
+                            job.t["handler"] = t_recv_ns
+                            job.t["submit"] = t_submit_ns
+                            job.t["ws"] = 1
+                            job.chunk_texts = [chunk]
+                            if index == 0:
+                                metrics.record_ws_timing((t_submit_ns - t_recv_ns) / 1e6, None, send_to_recv)
                         except QueueFull:
                             await ws.send_json({"event": "error", "detail": "queue is full"})
                             break
-                        await ws.send_json(
-                            {"event": "chunk_start", "index": index, "frames": frames}
-                        )
+                        await ws.send_json({"event": "chunk_start", "index": index, "frames": frames, "text": chunk})
+                        t_job_ns = time.perf_counter_ns()
+                        job.future.add_done_callback(lambda _f, _q=frame_q: loop.call_soon_threadsafe(_q.put_nowait, None))
+                        samples = 0
+                        first_sent_ns = None
+                        while True:
+                            data = await frame_q.get()
+                            if data is None:
+                                break
+                            await ws.send_bytes(data)
+                            if first_sent_ns is None:
+                                first_sent_ns = time.perf_counter_ns()
+                                job.t["first_byte_sent"] = first_sent_ns
+                                emit_ns = job.t.get("first_emit")
+                                after_emit = (first_sent_ns - emit_ns) / 1e6 if emit_ns else None
+                                if index == 0:
+                                    metrics.record_ws_phase((first_sent_ns - t_job_ns) / 1e6, 0.0, 0.0, after_emit)
+                            samples += len(data) // 2
                         audio = await asyncio.wrap_future(job.future)
-                        await ws.send_bytes(pcm_bytes(audio[0]))
-                        item = audio[0]
-                        samples = (
-                            int(item.numel())
-                            if hasattr(item, "numel")
-                            else int(getattr(item, "size", 0))
-                        )
-                        await ws.send_json(
-                            {
-                                "event": "chunk_done",
-                                "index": index,
-                                "samples": samples,
-                            }
-                        )
+                        if index == 0:
+                            metrics.record_ws_timing(None, (time.perf_counter_ns() - t_recv_ns) / 1e6, None)
+                        audio_sec = samples / float(settings.sample_rate)
+                        cap_hit = bool(getattr(job, "cap_hit", False))
+                        meta = {"index": index, "text": chunk, "frames_cap": frames, "cap_hit": cap_hit,
+                                "eos_reached": not cap_hit, "audio_sec": round(audio_sec, 4), "samples": samples}
+                        chunk_meta.append(meta)
+                        total_samples += samples
+                        if cap_hit:
+                            log.warning("CAP_HIT chunk=%s frames=%s text=%r", index, frames, chunk)
+                        await ws.send_json({"event": "chunk_done", **meta})
+                        if first_only:
+                            break
+                    try:
+                        _assert_text_integrity(text, [m["text"] for m in chunk_meta])
+                    except Exception as e:
+                        await ws.send_json({"event": "error", "detail": str(e)})
+                        log.error("text integrity: %s", e)
+                    await ws.send_json({"event": "utterance_done", "chunks": chunk_meta, "total_audio_sec": round(total_samples/float(settings.sample_rate),4)})
                 elif action == "flush":
                     await ws.send_json({"event": "flushed"})
                     await ws.close()
@@ -1440,6 +1668,30 @@ def create_app(
     def _debug_guard() -> None:
         if os.getenv("ARSENAL_DEBUG") != "1":
             raise HTTPException(status_code=404, detail="not found")
+
+    async def _wait_drained(timeout_s: float = 60.0, empty_cache: bool = False) -> dict[str, Any]:
+        deadline = time.monotonic() + timeout_s
+        while time.monotonic() < deadline:
+            if worker.depth == 0 and worker.active_call_sessions == 0:
+                if empty_cache:
+                    try:
+                        import torch
+                        if torch.cuda.is_available():
+                            torch.cuda.empty_cache()
+                    except Exception:
+                        pass
+                return {"drained": True, "queue_depth": 0, "active_call_sessions": 0}
+            await asyncio.sleep(0.02)
+        return {
+            "drained": False,
+            "queue_depth": worker.depth,
+            "active_call_sessions": worker.active_call_sessions,
+        }
+
+    @app.get("/debug/drain")
+    async def debug_drain(timeout: float = 60.0, empty_cache: int = 0) -> dict[str, Any]:
+        _debug_guard()
+        return await _wait_drained(timeout_s=timeout, empty_cache=bool(empty_cache))
 
     def _call_text() -> str:
         return (
@@ -1526,7 +1778,7 @@ def create_app(
         qp = request.query_params
         b = int(qp.get("b", "224"))
         repeats = max(1, int(qp.get("repeats", "1")))
-        first_frames = int(qp.get("first_max_frames", "32"))
+        first_frames = int(qp.get("first_max_frames", "0")) or int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES","24"))
         cont_frames = int(qp.get("cont_max_frames", "192"))
         profile = qp.get("profile") or None
         first_only = qp.get("first_only", "0") == "1"
@@ -1537,6 +1789,7 @@ def create_app(
         worker.reload_config()
         runs = []
         for _ in range(repeats):
+            drained_before = await _wait_drained(timeout_s=120.0, empty_cache=True)
             before = _vram_mb()
             bs0 = list(metrics.batch_size)
             results = await asyncio.gather(
@@ -1572,6 +1825,8 @@ def create_app(
                     "batch_sizes": list(metrics.batch_size)[len(bs0):],
                     "errors": errors,
                     "vram_mb": {"before": before, "after": _vram_mb()},
+                    "drained_before": drained_before,
+                    "drained_after": await _wait_drained(timeout_s=120.0, empty_cache=True),
                 }
             )
         return {"b": b, "runs": runs, "ok": all(r["errors"] == 0 for r in runs)}
@@ -1582,10 +1837,11 @@ def create_app(
         qp = request.query_params
         calls = int(qp.get("call", "128"))
         normals = int(qp.get("normal", "32"))
-        first_frames = int(qp.get("first_max_frames", "32"))
+        first_frames = int(qp.get("first_max_frames", "0")) or int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES","24"))
         cont_frames = int(qp.get("cont_max_frames", "192"))
         profile = qp.get("profile") or None
         first_only = qp.get("first_only", "1") == "1"
+        drained_before = await _wait_drained(timeout_s=120.0, empty_cache=True)
         call_tasks = [
             _one_call(
                 profile,
@@ -1614,6 +1870,8 @@ def create_app(
             "normal_ms": _stats_list(normal_ms),
             "errors": errors,
             "ok": errors == 0,
+            "drained_before": drained_before,
+            "drained_after": await _wait_drained(timeout_s=120.0, empty_cache=True),
         }
 
     @app.get("/debug/callcancel")
@@ -1622,10 +1880,11 @@ def create_app(
         qp = request.query_params
         b = int(qp.get("b", "128"))
         cancel_frac = float(qp.get("cancel_frac", "0.5"))
-        first_frames = int(qp.get("first_max_frames", "32"))
+        first_frames = int(qp.get("first_max_frames", "0")) or int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES","24"))
         cont_frames = int(qp.get("cont_max_frames", "192"))
         profile = qp.get("profile") or None
         cancelled = int(b * cancel_frac)
+        drained_before = await _wait_drained(timeout_s=120.0, empty_cache=True)
         before = _vram_mb()
         await asyncio.gather(
             *[
@@ -1645,6 +1904,8 @@ def create_app(
             "active_call_sessions": worker.active_call_sessions,
             "queue_depth": worker.depth,
             "vram_mb": {"before": before, "after": after},
+            "drained_before": drained_before,
+            "drained_after": await _wait_drained(timeout_s=120.0, empty_cache=True),
             "ok": worker.active_call_sessions == 0 and worker.depth == 0,
         }
 

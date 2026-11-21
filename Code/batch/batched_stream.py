@@ -228,8 +228,9 @@ class BatchedStream:
             )
         return limit
 
-    def _fits_frame_budget(self, text: str) -> bool:
-        if self.max_allowed_frames is None:
+    def _fits_frame_budget(self, text: str, limit: int | None = None) -> bool:
+        cap = limit if limit is not None else self.max_allowed_frames
+        if cap is None:
             return True
         prepared, _ = prepare_text_prompt(
             text,
@@ -240,7 +241,7 @@ class BatchedStream:
             self.model.replace_characters,
         )
         ids = self.model.flow_lm.conditioner.tokenizer.encode(prepared)
-        return self.model._estimate_max_gen_len(len(ids)) + 8 <= self.max_allowed_frames
+        return self.model._estimate_max_gen_len(len(ids)) + 8 <= cap
 
     def _greedy_split(self, text: str, fits) -> list[str]:
         import re

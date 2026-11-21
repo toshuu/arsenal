@@ -17,7 +17,7 @@ from batch.server import Settings, create_app
 
 
 class FakeStream:
-    def _fits_frame_budget(self, text):
+    def _fits_frame_budget(self, text, limit=None):
         return True
 
     def _text_chunks(self, text):
