@@ -104,11 +104,12 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261120-232200-CODING | CODING | 2026-11-20T23:22:00+05:30 | Run local T4 call ramp, mixed, and cancel probes with the debug routes. Record results and facts. | .stageset/sessions/coding-call-mode-local-probe.md | IDEA-0007; SSLD-021; FACT-0130; FACT-0131; 20261120-231834-RUN; 20261120-231834-RUN-02 | - |
 | 20261120-234000-CODING | CODING | 2026-11-20T23:40:00+05:30 | Fix call measurement, add first-byte and first-only debug support, run split ramps, sub-batch and mf/window sweeps, mixed and seam checks on local T4. | .stageset/sessions/coding-call-measurement-fix.md | IDEA-0007; FACT-0133; 20261120-233425-RUN; 20261120-233425-RUN-02 | - |
 | 20261121-120300-CODING | CODING | 2026-11-21 12:03 +0530 | Fix call-mode measurement/server, run local burst/Poisson/mixed/WAV probes, record Modal attempt. | .stageset/sessions/coding-call-mode-maxb-local-fixes.md | IDEA-0007; Skeletons/Probes/probe_call_ceiling.md; Skeletons/Probes/probe_call_mode.md; 20261121-120307-RUN; 20261121-120353-RUN; 20261121-120353-RUN-02; 20261121-120353-RUN-03; 20261121-120354-RUN; 20261121-120354-RUN-02; 20261121-120354-RUN-03 | - |
+| 20261121-121500-CODING | CODING | 2026-11-21 12:15 +0530 | Finalize call quality (pause compression, single-chunk), diagnose A-vs-B pause, attempt B re-measure, stop Modal GPU. | .stageset/sessions/coding-call-quality-finalization.md | IDEA-0007; 20261121-121500-RUN; FACT-0146 | 94a2e57 f0e35ef 20372b1 800313b 6ce4aa7 a29b457 |
 | 20261121-123900-CODING | CODING | 2026-11-21 12:39 +0530 | Pause B-ceiling; fix call chunking naturalness (sentence-level), cap-hit/integrity logging, listening pack, start burst/Poisson re-measure. | .stageset/sessions/coding-call-quality-sentence-level.md | IDEA-0007; 20261121-123900-RUN | - |
 
 ## Totals
 
-- CODING: 51.
+- CODING: 52.
 - IDEATION: 12.
 - MAINTENANCE: 11.
 - PROBE: 0.

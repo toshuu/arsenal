@@ -110,5 +110,62 @@
     "errors": 0,
     "normal_p50": 3164.2,
     "normal_p95": 3164.3
+  },
+  {
+    "quality_finalization_20261121": {
+      "owner_gate": "pause compression accepted; listening pending",
+      "listen_pack": "Code/probes/out/quality/call_live_1..5.wav + manifest_live.json (single chunk, 0 cap-hit, integrity true)",
+      "compression": {
+        "env": "ARSENAL_CALL_PAUSE_MAX_MS default 250",
+        "cpu_ms_per_1p5s_direct": 8.5,
+        "cpu_ms_per_1p5s_stream": 9.7
+      },
+      "pause_diag_local": {
+        "text": "Thanks for calling Riverline Clinic. Your appointment is on Tuesday, April seventh, at ten fifteen AM with Doctor Mehta.",
+        "token_ids_A_eq_B": true,
+        "normal_chunks": 4,
+        "call_chunks": 1,
+        "modes": {
+          "A_single_normal": {
+            "maxgap_p50_ms": 304.4,
+            "key_gap_s": 6.03,
+            "dur_s": 7.2
+          },
+          "B_call_cap192": {
+            "maxgap_p50_ms": 359.1,
+            "key_gap_s": 3.67,
+            "dur_s": 7.28
+          },
+          "C_call_cap132": {
+            "maxgap_p50_ms": 441.2,
+            "key_gap_s": 3.68,
+            "dur_s": 7.44
+          },
+          "D_call_cap128": {
+            "maxgap_p50_ms": 427.3,
+            "key_gap_s": 3.65,
+            "dur_s": 7.44
+          },
+          "E_call_normcap": {
+            "maxgap_p50_ms": 416.7,
+            "key_gap_s": 3.68,
+            "dur_s": 7.44
+          }
+        },
+        "conclusion": "A vs B differs -> call path cause, not batching. No no-B-cost fix; awaiting approval."
+      },
+      "b_remeasure": {
+        "status": "NOT_CAPTURED",
+        "reason": "probe client hangs local and Modal; all Modal apps stopped, 0 containers"
+      },
+      "commits": [
+        "94a2e57",
+        "f0e35ef",
+        "20372b1",
+        "800313b",
+        "6ce4aa7",
+        "a29b457"
+      ]
+    }
   }
 ]
