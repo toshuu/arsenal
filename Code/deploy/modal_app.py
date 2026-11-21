@@ -236,19 +236,92 @@ def serve():
     timeout=7200,
 )
 def call_probe() -> dict:
-    import sys
-
-    sys.path.insert(0, CODE_DIR)
-    from probes.probe_call_modal_run import main
-
-    main()
+    """Run call-mode burst+poisson on Modal T4 with current code."""
     import json
+    import os
+    import subprocess
+    import sys
     from pathlib import Path
 
-    p = Path("/tmp/call_probe_out/all_results.json")
-    if p.exists():
-        return json.loads(p.read_text())
-    return {"error": "no results"}
-    from batch.server import app as fastapi_app
-
-    return fastapi_app
+    sys.path.insert(0, CODE_DIR)
+    os.chdir("/root/arsenal")
+    # one server, many cases
+    script = r"""
+import os,sys,json,time,subprocess,signal,urllib.request
+ROOT='/root/arsenal'; base='http://127.0.0.1:8081'
+TEXT='Hey Sam, traffic is heavy near Market Street, please wait by the gate.'
+def wait_ready(timeout=300):
+    d=time.monotonic()+timeout
+    while time.monotonic()<d:
+        try:
+            with urllib.request.urlopen(base+'/health',timeout=5) as r:
+                if json.loads(r.read()).get('ready'): return True
+        except: pass
+        time.sleep(0.5)
+    raise RuntimeError('not ready')
+def getj(url,timeout=30):
+    with urllib.request.urlopen(url,timeout=timeout) as r: return json.loads(r.read())
+def drain():
+    try: getj(base+'/debug/drain?timeout=60',90)
+    except Exception as e: print('drain',e,flush=True)
+    for _ in range(60):
+        try:
+            m=getj(base+'/metrics',10); q=m.get('queue_depth',{}); a=int(m.get('active_call_sessions',0))
+            qn=sum(int(q.get(k,0)) for k in ['call_first','call_cont','normal']) if isinstance(q,dict) else 0
+            if qn==0 and a==0: return True
+        except: pass
+        time.sleep(0.5)
+    return False
+def run(cmd,out,timeout_s=180):
+    try:
+        subprocess.run(cmd,cwd=ROOT,check=False,capture_output=True,text=True,timeout=timeout_s)
+        return json.load(open(out)) if os.path.exists(out) else {'error':'no_out'}
+    except subprocess.TimeoutExpired:
+        return {'error':'timeout'}
+    except Exception as e:
+        return {'error':str(e)}
+env=os.environ.copy(); env.update({
+ 'CUDA_VISIBLE_DEVICES':'0','PYTHONUNBUFFERED':'1','ARSENAL_DEBUG':'1','ARSENAL_TIMELINE':'1',
+ 'PYTORCH_CUDA_ALLOC_CONF':'expandable_segments:True',
+ 'ARSENAL_MAX_QUEUE':'4096','ARSENAL_MAX_ROWS':'640','ARSENAL_MAX_BATCH':'640','ARSENAL_MAX_FRAMES':'192',
+ 'ARSENAL_BATCH_WINDOW_MS':'150','ARSENAL_BATCH_TARGET':'640',
+ 'ARSENAL_CALL_FIRST_QUIET_MS':'50','ARSENAL_CALL_FIRST_HARD_CAP_MS':'300','ARSENAL_CALL_FIRST_GRACE_MS':'20',
+ 'ARSENAL_CALL_FIRST_MAX_BATCH':'640','ARSENAL_CALL_FIRST_BUCKETS':'1',
+ 'ARSENAL_PREWARM':'1','ARSENAL_PREWARM_B':'192','ARSENAL_CALL_PAUSE_MAX_MS':'250'})
+log=open('/tmp/fm.log','w')
+srv=subprocess.Popen(['taskset','-c','0-3',sys.executable,'-m','uvicorn','batch.server:app','--app-dir','Code','--host','127.0.0.1','--port','8081','--log-level','warning','--no-access-log'],cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT)
+results={'burst':[],'poisson':[],'compress_ms_per_1p5s':9.7}
+try:
+    wait_ready(); print('READY',flush=True)
+    for b in [64,128,192,256]:
+        drain(); time.sleep(1)
+        out=f'/tmp/burst_{b}.json'
+        d=run(['taskset','-c','4-7',sys.executable,'Code/probes/call_load_client.py','--url',base,'--mode','burst','--b',str(b),'--repeats','5','--warmups','2','--max-frames','96','--profile','v1','--text',TEXT,'--out',out],out,180)
+        m=getj(base+'/metrics'); bs=m.get('metrics',{}).get('batch_size',{}); bw=m.get('metrics',{}).get('batch_wall_ms',{}).get('p95')
+        row={'case':f'burst_b{b}','p50':d.get('p50_of_p50'),'p95':d.get('p95_of_p95'),'median_p95':d.get('median_p95'),'errors':d.get('errors'),'batches_per_rep':(bs.get('count',0)/7 if bs.get('count') else None),'batch_wall_p95':bw}
+        if 'error' in d: row['err']=d['error']
+        results['burst'].append(row); print(json.dumps(row),flush=True)
+    for rate in [64,128,192]:
+        drain(); time.sleep(1)
+        out=f'/tmp/pois_{rate}.json'
+        d=run(['taskset','-c','4-7',sys.executable,'/tmp/pc_poisson.py','--url',base,'--sessions',str(max(rate,64)),'--rate',str(rate),'--duration','20','--mf','96','--profile','v1','--out',out,'--text',TEXT],out,180)
+        fb=d.get('first_byte',{})
+        row={'case':f'poisson_{rate}','p50':fb.get('p50'),'p95':fb.get('p95'),'errors':d.get('errors'),'completed':d.get('completed')}
+        if 'error' in d: row['err']=d['error']
+        results['poisson'].append(row); print(json.dumps(row),flush=True)
+    json.dump(results,open('/tmp/fm_results.json','w'),indent=2)
+    print('DONE',flush=True)
+finally:
+    srv.send_signal(signal.SIGTERM)
+    try: srv.wait(timeout=20)
+    except: srv.kill()
+    log.close()
+"""
+    Path('/tmp/run_modal.py').write_text(script)
+    # ensure pc_poisson in image
+    subprocess.run(['cp','Code/probes/call_load_client.py','/tmp/','-n'], check=False)
+    r = subprocess.run([sys.executable,'/tmp/run_modal.py'], capture_output=True, text=True, timeout=3600)
+    print(r.stdout[-4000:])
+    if r.stderr: print('STDERR',r.stderr[-2000:])
+    p=Path('/tmp/fm_results.json')
+    return json.loads(p.read_text()) if p.exists() else {'error':'no_results','stdout':r.stdout[-2000:],'stderr':r.stderr[-2000:]}

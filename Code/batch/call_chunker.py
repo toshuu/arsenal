@@ -123,6 +123,9 @@ def split_call_text(stream: Any, text: str, first_max_frames: int) -> list[str]:
     cleaned = _clean(text)
     if not cleaned:
         return [""]
+    # Naturalness first: keep short/medium utterances whole to avoid model-prosody breaks.
+    if len(_words(cleaned)) <= 35:
+        return [cleaned]
     sentences = _split_sentences(cleaned)
     if not sentences:
         sentences = [cleaned]

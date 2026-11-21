@@ -23,6 +23,7 @@ from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from batch.call_chunker import CALL_MODE, ChunkCache, estimate_first_max_frames, split_call_text
 from batch.audio_join import join_chunks, smooth_chunk
+from batch.pause_compress import StreamPauseCompressor, compress_long_pauses
 from batch.job_classes import (
     PRIORITY,
     Config,
@@ -1266,7 +1267,7 @@ def create_app(
         if call_mode:
             _assert_text_integrity(body.text, [c["text"] for c in chunk_logs])
             joined = join_chunks(parts, sr=settings.sample_rate, pause_ms=100)
-            # duration check vs ref not available here; log shortfall risk
+            joined = compress_long_pauses(joined, sr=settings.sample_rate)
             data = wav_bytes(torch.from_numpy(joined), settings.sample_rate)
         else:
             data = wav_bytes(concat_audio([torch.from_numpy(p) if not hasattr(p,'dtype') or str(p.dtype).startswith('float') else torch.from_numpy(p.astype('float32')) for p in parts]), settings.sample_rate)
@@ -1435,6 +1436,12 @@ def create_app(
                 prev_tail = np.zeros(0, dtype=np.float32)
                 prev_rms = None
                 chunk_meta = []
+                pause_comp = StreamPauseCompressor(sr=sr, holdback_ms=50)
+                def _yield_pcm(arr, final=False):
+                    out = pause_comp.push(arr, final=final)
+                    if out.size == 0:
+                        return b""
+                    return (np.clip(out,-1,1)*32767).astype('<i2').tobytes()
 
                 async def run_one(idx, ch):
                     mf = first_frames if idx == 0 else cont_frames
@@ -1485,18 +1492,23 @@ def create_app(
                             send = prev_tail
                         send = np.concatenate([send, np.zeros(int(sr * pause_ms / 1000), dtype=np.float32)])
                         if len(send) > holdback:
-                            yield (np.clip(send[:-holdback], -1, 1) * 32767).astype('<i2').tobytes()
+                            b=_yield_pcm(send[:-holdback]); 
+                            if b: yield b
                             prev_tail = send[-holdback:]
                         else:
                             prev_tail = send
                     if len(a) > holdback:
                         out = a[:-holdback]
                         if idx == 0:
-                            yield (np.clip(out, -1, 1) * 32767).astype('<i2').tobytes(); prev_tail = a[-holdback:]
+                            b=_yield_pcm(out); 
+                            if b: yield b
+                            prev_tail = a[-holdback:]
                         else:
                             prev_tail = np.concatenate([prev_tail, out]) if len(prev_tail) else out
                             if len(prev_tail) > holdback:
-                                yield (np.clip(prev_tail[:-holdback], -1, 1) * 32767).astype('<i2').tobytes(); prev_tail = prev_tail[-holdback:]
+                                b=_yield_pcm(prev_tail[:-holdback]); 
+                                if b: yield b
+                                prev_tail = prev_tail[-holdback:]
                     else:
                         prev_tail = np.concatenate([prev_tail, a]) if idx > 0 else a
                     idx += 1
@@ -1508,8 +1520,8 @@ def create_app(
                         current = asyncio.create_task(run_one(idx, chunks[idx])); next_idx = idx + 1
                     else:
                         break
-                if len(prev_tail):
-                    yield (np.clip(prev_tail, -1, 1) * 32767).astype('<i2').tobytes()
+                b=_yield_pcm(prev_tail, final=True)
+                if b: yield b
                 _assert_text_integrity(body.text, [m["text"] for m in chunk_meta])
             finally:
                 job = state.get("job")
@@ -1616,11 +1628,12 @@ def create_app(
                         job.future.add_done_callback(lambda _f, _q=frame_q: loop.call_soon_threadsafe(_q.put_nowait, None))
                         samples = 0
                         first_sent_ns = None
-                        while True:
-                            data = await frame_q.get()
-                            if data is None:
-                                break
-                            await ws.send_bytes(data)
+                        comp = StreamPauseCompressor(sr=settings.sample_rate, holdback_ms=50)
+                        async def _send_pcm(arr):
+                            nonlocal first_sent_ns, samples
+                            if arr.size == 0: return
+                            pcm = (np.clip(arr,-1,1)*32767).astype('<i2').tobytes()
+                            await ws.send_bytes(pcm)
                             if first_sent_ns is None:
                                 first_sent_ns = time.perf_counter_ns()
                                 job.t["first_byte_sent"] = first_sent_ns
@@ -1628,7 +1641,16 @@ def create_app(
                                 after_emit = (first_sent_ns - emit_ns) / 1e6 if emit_ns else None
                                 if index == 0:
                                     metrics.record_ws_phase((first_sent_ns - t_job_ns) / 1e6, 0.0, 0.0, after_emit)
-                            samples += len(data) // 2
+                            samples += len(pcm) // 2
+                        while True:
+                            data = await frame_q.get()
+                            if data is None:
+                                break
+                            arr = np.frombuffer(data, dtype='<i2').astype(np.float32) / 32768.0
+                            out = comp.push(arr, final=False)
+                            await _send_pcm(out)
+                        tail = comp.push(np.zeros(0,dtype=np.float32), final=True)
+                        await _send_pcm(tail)
                         audio = await asyncio.wrap_future(job.future)
                         if index == 0:
                             metrics.record_ws_timing(None, (time.perf_counter_ns() - t_recv_ns) / 1e6, None)
