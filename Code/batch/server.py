@@ -1266,8 +1266,11 @@ def create_app(
                 log.warning("CAP_HIT /tts chunk=%s frames=%s text=%r", i, mf, chunk)
         if call_mode:
             _assert_text_integrity(body.text, [c["text"] for c in chunk_logs])
-            joined = join_chunks(parts, sr=settings.sample_rate, pause_ms=100)
-            joined = compress_long_pauses(joined, sr=settings.sample_rate)
+            if len(parts) == 1:
+                joined = parts[0]
+            else:
+                joined = join_chunks(parts, sr=settings.sample_rate, pause_ms=100)
+                joined = compress_long_pauses(joined, sr=settings.sample_rate)
             data = wav_bytes(torch.from_numpy(joined), settings.sample_rate)
         else:
             data = wav_bytes(concat_audio([torch.from_numpy(p) if not hasattr(p,'dtype') or str(p.dtype).startswith('float') else torch.from_numpy(p.astype('float32')) for p in parts]), settings.sample_rate)
