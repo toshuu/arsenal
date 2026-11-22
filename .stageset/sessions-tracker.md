@@ -131,17 +131,20 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261122-194629-PUSH | PUSH | 2026-11-22T19:46:29+00:00 | Push latency WS frame-budget fix and web probe to origin/main as d455f06. | .stageset/sessions/push-latency-frame-budget.md | IDEA-0008; 20261122-235919-RUN | d455f06 |
 | 20261122-194929-MAINTENANCE | MAINTENANCE | 2026-11-22T19:49:29+05:30 | Review the formation probe. The default policy is stable but slow. Confirm on a real server. | .stageset/sessions/maintenance-phase4-formation-review.md | IDEA-0008; FACT-0153; SSLD-026; 20261122-193729-RUN | - |
 | 20261122-195007-CODING | CODING | 2026-11-22T19:50:07+05:30 | Confirm Phase 4 formation on a separate-process uvicorn server. | .stageset/sessions/coding-phase4-confirm.md | IDEA-0008; SSLD-027; FACT-0153; 20261122-195007-RUN | - |
+| 20261122-195319-CODING | CODING | 2026-11-22T19:53:19+00:00 | Latency WS now uses sentence-mode chunks for all text after the first frame-budget chunk. | .stageset/sessions/coding-latency-then-sentence.md | IDEA-0008; FACT-0161; 20261122-235919-RUN | - |
+| 20261122-195635-MAINTENANCE | MAINTENANCE | 2026-11-22T19:56:35+00:00 | Record owner decision that the optimal latency design is 24 first frames then sentence-based chunks. | .stageset/sessions/maintenance-optimal-latency-design.md | IDEA-0008; FACT-0161; coding-latency-then-sentence | - |
 | 20261122-195737-MAINTENANCE | MAINTENANCE | 2026-11-22T19:57:37+05:30 | Review the real-server confirmation. B=320 is one batch but over 350 ms. | .stageset/sessions/maintenance-phase4-confirm-review.md | IDEA-0008; FACT-0154; SSLD-027; 20261122-195007-RUN | - |
 | 20261122-200000-CODING | CODING | 2026-11-22T20:00:00+05:30 | Run the Phase 4 quiet formation probe at B=320. | .stageset/sessions/coding-phase4-quiet.md | IDEA-0008; SSLD-028; FACT-0155; 20261122-195737-RUN | - |
 | 20261122-200500-MAINTENANCE | MAINTENANCE | 2026-11-22T20:05:00+05:30 | Review quiet probe. No policy passes. Early break causes [1,319]. | .stageset/sessions/maintenance-phase4-quiet-review.md | IDEA-0008; FACT-0155; SSLD-028; 20261122-195737-RUN | - |
 | 20261122-201200-CODING | CODING | 2026-11-22T20:12:00+05:30 | Guard quiet early break and test B=320 formation. | .stageset/sessions/coding-phase4-quiet-fix.md | IDEA-0008; SSLD-029; FACT-0156; 20261122-200804-RUN | - |
 | 20261122-202000-MAINTENANCE | MAINTENANCE | 2026-11-22T20:20:00+05:30 | Quiet fix probe failed. Lock B=224 sentence as 350 ms operating point. | .stageset/sessions/maintenance-phase4-quiet-fix-review.md | IDEA-0008; FACT-0156; SSLD-029; 20261122-200804-RUN | - |
+| 20261122-202152-PROBE | PROBE | 2026-11-22T20:21:52+00:00 | Sweep B for the 24-frame latency tier and find the 100/200/350 ms gates. | .stageset/sessions/probe-lat24-b-sweep.md | FACT-0162; IDEA-0008; 20261122-235919-RUN | - |
 | 20261122-232457-MAINTENANCE | MAINTENANCE | 2026-11-22T23:24:57+05:30 | Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS. | .stageset/sessions/maintenance-sentence-decision.md | IDEA-0008; FACT-0139; FACT-0158; FACT-0159; FACT-0160; 20261122-232457-RUN | - |
 
 ## Totals
 
-- CODING: 68.
+- CODING: 69.
 - IDEATION: 16.
-- MAINTENANCE: 21.
-- PROBE: 0.
+- MAINTENANCE: 22.
+- PROBE: 1.
 - PUSH: 26.

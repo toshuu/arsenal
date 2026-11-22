@@ -30,6 +30,10 @@ def split_by_frame_budget(text: str, audio_frames: int) -> list[str]:
     return [" ".join(words[i:i + per]) for i in range(0, len(words), per)]
 
 
+def first_chunk_words(text: str, audio_frames: int) -> int:
+    return max(1, audio_frames // _FRAMES_PER_WORD)
+
+
 def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", " ".join(re.findall(r"[a-z0-9']+", s.lower()))).strip()
 

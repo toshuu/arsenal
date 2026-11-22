@@ -24,7 +24,7 @@ import torch
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
-from batch.call_chunker import CALL_MODE, ChunkCache, estimate_first_max_frames, split_by_frame_budget, split_call_text
+from batch.call_chunker import CALL_MODE, ChunkCache, estimate_first_max_frames, first_chunk_words, split_by_frame_budget, split_call_text
 from batch.audio_join import join_chunks, smooth_chunk
 from batch.pause_compress import StreamPauseCompressor, compress_long_pauses
 from batch.job_classes import (
@@ -1688,17 +1688,23 @@ def create_app(
                     cont_frames = min(
                         int(os.getenv("ARSENAL_CALL_CONT_MAX_FRAMES", "192")), max_frames
                     )
+                    chunk_modes = [mode]
                     if mode == "utterance":
                         chunks = [text]
                     elif mode == "sentence":
                         chunks = await loop.run_in_executor(_CHUNK_POOL, chunk_stream._text_chunks, text)
                     elif mode == "latency":
-                        chunks = await loop.run_in_executor(
-                            _CHUNK_POOL,
-                            cache.get_or_split,
-                            ("latency", text, audio_cap),
-                            lambda: split_by_frame_budget(text, audio_cap),
-                        )
+                        words = text.split()
+                        per = first_chunk_words(text, audio_cap)
+                        first_text = " ".join(words[:per])
+                        rest_text = " ".join(words[per:])
+                        chunks = [first_text]
+                        if rest_text:
+                            rest = await loop.run_in_executor(
+                                _CHUNK_POOL, chunk_stream._text_chunks, rest_text
+                            )
+                            chunks.extend(rest)
+                            chunk_modes.extend(["sentence"] * len(rest))
                     else:
                         chunks = await loop.run_in_executor(
                             _CHUNK_POOL,
@@ -1711,13 +1717,14 @@ def create_app(
                     for index, chunk in enumerate(chunks):
                         if state["cancelled"]:
                             break
+                        chunk_mode = chunk_modes[index] if index < len(chunk_modes) else mode
                         cls = JobClass.CALL_FIRST if index == 0 else JobClass.CALL_CONT
                         est_chunk = estimate_first_max_frames(chunk_stream, chunk)
                         frames = max(min_frames, min(int(est_chunk), max_frames))
                         if mode == "utterance":
                             frames = min(max_frames, quality_cap)
-                        elif mode == "sentence":
-                            frames = max(24, min(int(est_chunk), quality_cap))
+                        elif mode == "sentence" or (mode == "latency" and chunk_mode == "sentence"):
+                            frames = max(24, min(int(est_chunk), CALL_STREAM_SETTINGS["sentence"]["max_allowed_frames"]))
                         # tokens*3+16 policy - generous, no truncation
                         t_submit_ns = time.perf_counter_ns()
                         frame_q: asyncio.Queue = asyncio.Queue()
@@ -1727,7 +1734,7 @@ def create_app(
                         try:
                             job = worker.submit(
                                 [chunk], frames, profile,
-                                job_class=cls, mode=CALL_MODE, stream_mode=mode,
+                                job_class=cls, mode=CALL_MODE, stream_mode=chunk_mode,
                                 on_chunk=on_frame,
                             )
                             job.t["handler"] = t_recv_ns
@@ -1739,14 +1746,14 @@ def create_app(
                         except QueueFull:
                             await ws.send_json({"event": "error", "detail": "queue is full"})
                             break
-                        await ws.send_json({"event": "chunk_start", "index": index, "frames": frames, "text": chunk, "stream_mode": mode})
+                        await ws.send_json({"event": "chunk_start", "index": index, "frames": frames, "text": chunk, "stream_mode": chunk_mode})
                         t_job_ns = time.perf_counter_ns()
                         job.future.add_done_callback(lambda _f, _q=frame_q: loop.call_soon_threadsafe(_q.put_nowait, None))
                         samples = 0
                         first_sent_ns = None
                         comp = (
                             StreamPauseCompressor(sr=settings.sample_rate, holdback_ms=50)
-                            if mode == "latency"
+                            if chunk_mode == "latency"
                             else None
                         )
                         async def _send_pcm(arr):
@@ -1789,11 +1796,12 @@ def create_app(
                         await ws.send_json({"event": "chunk_done", **meta})
                         if first_only:
                             break
-                    try:
-                        _assert_text_integrity(text, [m["text"] for m in chunk_meta])
-                    except Exception as e:
-                        await ws.send_json({"event": "error", "detail": str(e)})
-                        logging.getLogger(__name__).error("text integrity: %s", e)
+                    if not first_only:
+                        try:
+                            _assert_text_integrity(text, [m["text"] for m in chunk_meta])
+                        except Exception as e:
+                            await ws.send_json({"event": "error", "detail": str(e)})
+                            logging.getLogger(__name__).error("text integrity: %s", e)
                     await ws.send_json({"event": "utterance_done", "chunks": chunk_meta, "total_audio_sec": round(total_samples/float(settings.sample_rate),4), "stream_mode": mode})
                 elif action == "flush":
                     await ws.send_json({"event": "flushed"})

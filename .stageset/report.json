@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-22T19:46:38Z",
+  "generated_at": "2026-11-22T20:22:43Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 131,
+    "sessions": 134,
     "runs": 31,
     "runs_active": 1,
     "results": 5
@@ -2508,6 +2508,12 @@
       "summary": "Split latency text by frame budget so cap-hit no longer cuts words."
     },
     {
+      "id": "20261122-194629-PUSH",
+      "date": "2026-11-22T19:46:29+00:00",
+      "type": "push",
+      "summary": "Push latency WS frame-budget fix and web probe to origin/main as d455f06."
+    },
+    {
       "id": "20261122-194929-MAINTENANCE",
       "date": "2026-11-22T19:49:29+05:30",
       "type": "maintenance",
@@ -2518,6 +2524,18 @@
       "date": "2026-11-22T19:50:07+05:30",
       "type": "coding",
       "summary": "Confirm Phase 4 formation on a separate-process uvicorn server."
+    },
+    {
+      "id": "20261122-195319-CODING",
+      "date": "2026-11-22T19:53:19+00:00",
+      "type": "coding",
+      "summary": "Latency WS now uses sentence-mode chunks for all text after the first frame-budget chunk."
+    },
+    {
+      "id": "20261122-195635-MAINTENANCE",
+      "date": "2026-11-22T19:56:35+00:00",
+      "type": "maintenance",
+      "summary": "Record owner decision that the optimal latency design is 24 first frames then sentence-based chunks."
     },
     {
       "id": "20261122-195737-MAINTENANCE",
@@ -2550,19 +2568,24 @@
       "summary": "Quiet fix probe failed. Lock B=224 sentence as 350 ms operating point."
     },
     {
+      "id": "20261122-202152-PROBE",
+      "date": "2026-11-22T20:21:52+00:00",
+      "type": "probe",
+      "summary": "Sweep B for the 24-frame latency tier and find the 100/200/350 ms gates."
+    },
+    {
       "id": "20261122-232457-MAINTENANCE",
       "date": "2026-11-22T23:24:57+05:30",
       "type": "maintenance",
       "summary": "Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS."
-    },
-    {
-      "id": "push-latency-frame-budget",
-      "date": "2026-11-22T19:46:29+00:00",
-      "type": "push",
-      "summary": "Push latency WS frame-budget fix and web probe to origin/main as d455f06."
     }
   ],
   "commits": [
+    {
+      "sha": "992e793",
+      "date": "2026-11-22T19:46:39+00:00",
+      "subject": "StageSet: record push of latency frame-budget fix"
+    },
     {
       "sha": "d455f06",
       "date": "2026-11-22T19:46:18+00:00",
@@ -2757,11 +2780,6 @@
       "sha": "ee87665",
       "date": "2026-11-19T14:40:38+00:00",
       "subject": "StageSet: record server throughput defaults push"
-    },
-    {
-      "sha": "fcffdb4",
-      "date": "2026-11-19T14:40:25+00:00",
-      "subject": "Match server defaults to T4 cap, add prewarm and frame admission"
     }
   ]
 }
