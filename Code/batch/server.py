@@ -1752,7 +1752,10 @@ def create_app(
                         samples = 0
                         first_sent_ns = None
                         comp = (
-                            StreamPauseCompressor(sr=settings.sample_rate, holdback_ms=50)
+                            StreamPauseCompressor(
+                                sr=settings.sample_rate,
+                                holdback_ms=int(os.getenv("ARSENAL_CALL_HOLDBACK_MS", "50")),
+                            )
                             if chunk_mode == "latency"
                             else None
                         )

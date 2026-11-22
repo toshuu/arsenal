@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-22T20:23:16Z",
+  "generated_at": "2026-11-22T20:38:20Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 135,
+    "sessions": 136,
     "runs": 31,
     "runs_active": 1,
     "results": 5
@@ -2574,19 +2574,30 @@
       "summary": "Sweep B for the 24-frame latency tier and find the 100/200/350 ms gates."
     },
     {
+      "id": "20261122-202305-PUSH",
+      "date": "2026-11-22T20:23:05+00:00",
+      "type": "push",
+      "summary": "Push 24-frame latency design, B sweep, and StageSet updates to origin/main as 6ced66d."
+    },
+    {
       "id": "20261122-232457-MAINTENANCE",
       "date": "2026-11-22T23:24:57+05:30",
       "type": "maintenance",
       "summary": "Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS."
     },
     {
-      "id": "push-lat24-b-sweep",
-      "date": "2026-11-22T20:23:05+00:00",
-      "type": "push",
-      "summary": "Push 24-frame latency design, B sweep, and StageSet updates to origin/main as 6ced66d."
+      "id": "maintenance-holdback-correction",
+      "date": "2026-11-22T20:40:00+00:00",
+      "type": "maintenance",
+      "summary": "Correct the holdback claim and add a holdback env knob for the latency compressor."
     }
   ],
   "commits": [
+    {
+      "sha": "cbe767c",
+      "date": "2026-11-22T20:23:16+00:00",
+      "subject": "StageSet: record push of lat24 B sweep"
+    },
     {
       "sha": "6ced66d",
       "date": "2026-11-22T20:22:54+00:00",
@@ -2781,11 +2792,6 @@
       "sha": "264d1c9",
       "date": "2026-11-19T14:45:01+00:00",
       "subject": "StageSet: record streaming endpoint push"
-    },
-    {
-      "sha": "2748839",
-      "date": "2026-11-19T14:44:55+00:00",
-      "subject": "Add first-chunk PCM streaming and latency metrics"
     }
   ]
 }
