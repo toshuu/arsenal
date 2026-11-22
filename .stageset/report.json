@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-22T20:38:20Z",
+  "generated_at": "2026-11-22T20:39:00Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 136,
+    "sessions": 137,
     "runs": 31,
     "runs_active": 1,
     "results": 5
@@ -2580,19 +2580,30 @@
       "summary": "Push 24-frame latency design, B sweep, and StageSet updates to origin/main as 6ced66d."
     },
     {
+      "id": "20261122-204000-MAINTENANCE",
+      "date": "2026-11-22T20:40:00+00:00",
+      "type": "maintenance",
+      "summary": "Correct the holdback claim and add a holdback env knob for the latency compressor."
+    },
+    {
       "id": "20261122-232457-MAINTENANCE",
       "date": "2026-11-22T23:24:57+05:30",
       "type": "maintenance",
       "summary": "Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS."
     },
     {
-      "id": "maintenance-holdback-correction",
-      "date": "2026-11-22T20:40:00+00:00",
-      "type": "maintenance",
-      "summary": "Correct the holdback claim and add a holdback env knob for the latency compressor."
+      "id": "push-holdback-correction",
+      "date": "2026-11-22T20:38:49+00:00",
+      "type": "push",
+      "summary": "Push holdback correction, FACT-0163, and holdback env knob to origin/main as 6c5c75c."
     }
   ],
   "commits": [
+    {
+      "sha": "6c5c75c",
+      "date": "2026-11-22T20:38:26+00:00",
+      "subject": "StageSet: correct holdback claim and add holdback env knob"
+    },
     {
       "sha": "cbe767c",
       "date": "2026-11-22T20:23:16+00:00",
@@ -2787,11 +2798,6 @@
       "sha": "304bb50",
       "date": "2026-11-19T14:51:30+00:00",
       "subject": "Document production validation plan and refresh StageSet report"
-    },
-    {
-      "sha": "264d1c9",
-      "date": "2026-11-19T14:45:01+00:00",
-      "subject": "StageSet: record streaming endpoint push"
     }
   ]
 }

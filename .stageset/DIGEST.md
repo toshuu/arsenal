@@ -23,9 +23,9 @@ This file is generated. Do not edit it by hand.
 
 - 20261122-232457-MAINTENANCE · MAINTENANCE · Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS.
 - 20261122-204000-MAINTENANCE · MAINTENANCE · Correct the holdback claim and add a holdback env knob for the latency compressor.
+- 20261122-203849-PUSH · PUSH · Push holdback correction, FACT-0163, and holdback env knob to origin/main as 6c5c75c.
 - 20261122-202305-PUSH · PUSH · Push 24-frame latency design, B sweep, and StageSet updates to origin/main as 6ced66d.
 - 20261122-202152-PROBE · PROBE · Sweep B for the 24-frame latency tier and find the 100/200/350 ms gates.
-- 20261122-202000-MAINTENANCE · MAINTENANCE · Quiet fix probe failed. Lock B=224 sentence as 350 ms operating point.
 
 ## Verified environment facts
 
