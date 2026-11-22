@@ -1,0 +1,4 @@
+INFO:     Started server process [45805]
+INFO:     Waiting for application startup.
+VRAM load alloc=265MB reserved=434MB
+VRAM prewarm alloc=265MB reserved=434MB peak=428MB

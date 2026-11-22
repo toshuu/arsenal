@@ -1,0 +1,810 @@
+{
+  "ok": true,
+  "modes": [
+    "sentence",
+    "utterance"
+  ],
+  "bs": [
+    32,
+    64,
+    96,
+    128,
+    224,
+    320,
+    448
+  ],
+  "rows": [
+    {
+      "mode": "sentence",
+      "b": 32,
+      "reps": 3,
+      "p95_median": 193.13,
+      "rows": [
+        {
+          "mode": "sentence",
+          "b": 32,
+          "rep": 0,
+          "p50": 351.61,
+          "p95": 354.51,
+          "max": 355.6,
+          "errors": 0,
+          "batch_sizes": [
+            32.0
+          ],
+          "vram_after": {
+            "alloc": 293.7,
+            "reserved": 654.3
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 32,
+          "rep": 1,
+          "p50": 189.93,
+          "p95": 191.0,
+          "max": 192.17,
+          "errors": 0,
+          "batch_sizes": [
+            32.0
+          ],
+          "vram_after": {
+            "alloc": 293.7,
+            "reserved": 669.0
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 32,
+          "rep": 2,
+          "p50": 192.23,
+          "p95": 193.13,
+          "max": 194.4,
+          "errors": 0,
+          "batch_sizes": [
+            32.0
+          ],
+          "vram_after": {
+            "alloc": 293.7,
+            "reserved": 669.0
+          }
+        }
+      ]
+    },
+    {
+      "mode": "sentence",
+      "b": 64,
+      "reps": 3,
+      "p95_median": 208.47,
+      "rows": [
+        {
+          "mode": "sentence",
+          "b": 64,
+          "rep": 0,
+          "p50": 251.1,
+          "p95": 251.47,
+          "max": 259.46,
+          "errors": 0,
+          "batch_sizes": [
+            64.0
+          ],
+          "vram_after": {
+            "alloc": 299.6,
+            "reserved": 1038.1
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 64,
+          "rep": 1,
+          "p50": 208.16,
+          "p95": 208.47,
+          "max": 213.23,
+          "errors": 0,
+          "batch_sizes": [
+            64.0
+          ],
+          "vram_after": {
+            "alloc": 299.6,
+            "reserved": 1038.1
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 64,
+          "rep": 2,
+          "p50": 207.29,
+          "p95": 207.67,
+          "max": 211.96,
+          "errors": 0,
+          "batch_sizes": [
+            64.0
+          ],
+          "vram_after": {
+            "alloc": 299.6,
+            "reserved": 1038.1
+          }
+        }
+      ]
+    },
+    {
+      "mode": "sentence",
+      "b": 96,
+      "reps": 3,
+      "p95_median": 235.46,
+      "rows": [
+        {
+          "mode": "sentence",
+          "b": 96,
+          "rep": 0,
+          "p50": 282.07,
+          "p95": 282.62,
+          "max": 289.58,
+          "errors": 0,
+          "batch_sizes": [
+            96.0
+          ],
+          "vram_after": {
+            "alloc": 305.5,
+            "reserved": 1359.0
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 96,
+          "rep": 1,
+          "p50": 232.21,
+          "p95": 232.54,
+          "max": 240.42,
+          "errors": 0,
+          "batch_sizes": [
+            96.0
+          ],
+          "vram_after": {
+            "alloc": 305.5,
+            "reserved": 1359.0
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 96,
+          "rep": 2,
+          "p50": 234.96,
+          "p95": 235.46,
+          "max": 241.67,
+          "errors": 0,
+          "batch_sizes": [
+            96.0
+          ],
+          "vram_after": {
+            "alloc": 305.5,
+            "reserved": 1359.0
+          }
+        }
+      ]
+    },
+    {
+      "mode": "sentence",
+      "b": 128,
+      "reps": 3,
+      "p95_median": 260.91,
+      "rows": [
+        {
+          "mode": "sentence",
+          "b": 128,
+          "rep": 0,
+          "p50": 299.48,
+          "p95": 300.29,
+          "max": 309.68,
+          "errors": 0,
+          "batch_sizes": [
+            128.0
+          ],
+          "vram_after": {
+            "alloc": 311.4,
+            "reserved": 1723.9
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 128,
+          "rep": 1,
+          "p50": 258.1,
+          "p95": 258.5,
+          "max": 267.01,
+          "errors": 0,
+          "batch_sizes": [
+            128.0
+          ],
+          "vram_after": {
+            "alloc": 311.4,
+            "reserved": 1723.9
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 128,
+          "rep": 2,
+          "p50": 259.8,
+          "p95": 260.91,
+          "max": 268.49,
+          "errors": 0,
+          "batch_sizes": [
+            128.0
+          ],
+          "vram_after": {
+            "alloc": 311.4,
+            "reserved": 1723.9
+          }
+        }
+      ]
+    },
+    {
+      "mode": "sentence",
+      "b": 224,
+      "reps": 3,
+      "p95_median": 209.63,
+      "rows": [
+        {
+          "mode": "sentence",
+          "b": 224,
+          "rep": 0,
+          "p50": 247.31,
+          "p95": 248.34,
+          "max": 263.85,
+          "errors": 0,
+          "batch_sizes": [
+            224.0
+          ],
+          "vram_after": {
+            "alloc": 329.1,
+            "reserved": 2715.8
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 224,
+          "rep": 1,
+          "p50": 206.58,
+          "p95": 209.63,
+          "max": 223.83,
+          "errors": 0,
+          "batch_sizes": [
+            224.0
+          ],
+          "vram_after": {
+            "alloc": 329.1,
+            "reserved": 2715.8
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 224,
+          "rep": 2,
+          "p50": 205.76,
+          "p95": 207.01,
+          "max": 220.5,
+          "errors": 0,
+          "batch_sizes": [
+            224.0
+          ],
+          "vram_after": {
+            "alloc": 329.1,
+            "reserved": 2715.8
+          }
+        }
+      ]
+    },
+    {
+      "mode": "sentence",
+      "b": 320,
+      "reps": 3,
+      "p95_median": 361.22,
+      "rows": [
+        {
+          "mode": "sentence",
+          "b": 320,
+          "rep": 0,
+          "p50": 335.74,
+          "p95": 337.77,
+          "max": 359.83,
+          "errors": 0,
+          "batch_sizes": [
+            320.0
+          ],
+          "vram_after": {
+            "alloc": 346.8,
+            "reserved": 3747.6
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 320,
+          "rep": 1,
+          "p50": 270.12,
+          "p95": 1372.85,
+          "max": 1373.64,
+          "errors": 0,
+          "batch_sizes": [
+            231.0,
+            89.0
+          ],
+          "vram_after": {
+            "alloc": 304.4,
+            "reserved": 2795.5
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 320,
+          "rep": 2,
+          "p50": 356.32,
+          "p95": 361.22,
+          "max": 1839.55,
+          "errors": 0,
+          "batch_sizes": [
+            318.0,
+            2.0
+          ],
+          "vram_after": {
+            "alloc": 288.3,
+            "reserved": 3743.4
+          }
+        }
+      ]
+    },
+    {
+      "mode": "sentence",
+      "b": 448,
+      "reps": 3,
+      "p95_median": 1511.94,
+      "rows": [
+        {
+          "mode": "sentence",
+          "b": 448,
+          "rep": 0,
+          "p50": 278.88,
+          "p95": 1511.94,
+          "max": 1512.21,
+          "errors": 0,
+          "batch_sizes": [
+            246.0,
+            202.0
+          ],
+          "vram_after": {
+            "alloc": 325.2,
+            "reserved": 2942.3
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 448,
+          "rep": 1,
+          "p50": 456.14,
+          "p95": 459.83,
+          "max": 479.13,
+          "errors": 0,
+          "batch_sizes": [
+            448.0
+          ],
+          "vram_after": {
+            "alloc": 370.4,
+            "reserved": 5085.6
+          }
+        },
+        {
+          "mode": "sentence",
+          "b": 448,
+          "rep": 2,
+          "p50": 306.02,
+          "p95": 1596.72,
+          "max": 1597.05,
+          "errors": 0,
+          "batch_sizes": [
+            268.0,
+            180.0
+          ],
+          "vram_after": {
+            "alloc": 321.2,
+            "reserved": 3177.2
+          }
+        }
+      ]
+    },
+    {
+      "mode": "utterance",
+      "b": 32,
+      "reps": 3,
+      "p95_median": 192.61,
+      "rows": [
+        {
+          "mode": "utterance",
+          "b": 32,
+          "rep": 0,
+          "p50": 192.96,
+          "p95": 193.3,
+          "max": 193.38,
+          "errors": 0,
+          "batch_sizes": [
+            32.0
+          ],
+          "vram_after": {
+            "alloc": 293.9,
+            "reserved": 696.3
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 32,
+          "rep": 1,
+          "p50": 191.94,
+          "p95": 192.14,
+          "max": 192.21,
+          "errors": 0,
+          "batch_sizes": [
+            32.0
+          ],
+          "vram_after": {
+            "alloc": 293.9,
+            "reserved": 669.0
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 32,
+          "rep": 2,
+          "p50": 192.34,
+          "p95": 192.61,
+          "max": 192.68,
+          "errors": 0,
+          "batch_sizes": [
+            32.0
+          ],
+          "vram_after": {
+            "alloc": 293.9,
+            "reserved": 669.0
+          }
+        }
+      ]
+    },
+    {
+      "mode": "utterance",
+      "b": 64,
+      "reps": 3,
+      "p95_median": 215.97,
+      "rows": [
+        {
+          "mode": "utterance",
+          "b": 64,
+          "rep": 0,
+          "p50": 215.56,
+          "p95": 215.97,
+          "max": 216.08,
+          "errors": 0,
+          "batch_sizes": [
+            64.0
+          ],
+          "vram_after": {
+            "alloc": 299.8,
+            "reserved": 1038.1
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 64,
+          "rep": 1,
+          "p50": 222.87,
+          "p95": 223.22,
+          "max": 223.28,
+          "errors": 0,
+          "batch_sizes": [
+            64.0
+          ],
+          "vram_after": {
+            "alloc": 299.8,
+            "reserved": 1038.1
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 64,
+          "rep": 2,
+          "p50": 213.14,
+          "p95": 213.59,
+          "max": 213.72,
+          "errors": 0,
+          "batch_sizes": [
+            64.0
+          ],
+          "vram_after": {
+            "alloc": 299.8,
+            "reserved": 1038.1
+          }
+        }
+      ]
+    },
+    {
+      "mode": "utterance",
+      "b": 96,
+      "reps": 3,
+      "p95_median": 240.89,
+      "rows": [
+        {
+          "mode": "utterance",
+          "b": 96,
+          "rep": 0,
+          "p50": 239.27,
+          "p95": 240.89,
+          "max": 240.99,
+          "errors": 0,
+          "batch_sizes": [
+            96.0
+          ],
+          "vram_after": {
+            "alloc": 305.7,
+            "reserved": 1359.0
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 96,
+          "rep": 1,
+          "p50": 239.69,
+          "p95": 240.94,
+          "max": 241.13,
+          "errors": 0,
+          "batch_sizes": [
+            96.0
+          ],
+          "vram_after": {
+            "alloc": 305.7,
+            "reserved": 1359.0
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 96,
+          "rep": 2,
+          "p50": 238.45,
+          "p95": 239.4,
+          "max": 239.5,
+          "errors": 0,
+          "batch_sizes": [
+            96.0
+          ],
+          "vram_after": {
+            "alloc": 305.7,
+            "reserved": 1359.0
+          }
+        }
+      ]
+    },
+    {
+      "mode": "utterance",
+      "b": 128,
+      "reps": 3,
+      "p95_median": 271.64,
+      "rows": [
+        {
+          "mode": "utterance",
+          "b": 128,
+          "rep": 0,
+          "p50": 269.41,
+          "p95": 270.85,
+          "max": 271.01,
+          "errors": 0,
+          "batch_sizes": [
+            128.0
+          ],
+          "vram_after": {
+            "alloc": 311.6,
+            "reserved": 1723.9
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 128,
+          "rep": 1,
+          "p50": 270.41,
+          "p95": 272.12,
+          "max": 272.23,
+          "errors": 0,
+          "batch_sizes": [
+            128.0
+          ],
+          "vram_after": {
+            "alloc": 311.6,
+            "reserved": 1723.9
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 128,
+          "rep": 2,
+          "p50": 270.5,
+          "p95": 271.64,
+          "max": 271.77,
+          "errors": 0,
+          "batch_sizes": [
+            128.0
+          ],
+          "vram_after": {
+            "alloc": 311.6,
+            "reserved": 1723.9
+          }
+        }
+      ]
+    },
+    {
+      "mode": "utterance",
+      "b": 224,
+      "reps": 3,
+      "p95_median": 215.47,
+      "rows": [
+        {
+          "mode": "utterance",
+          "b": 224,
+          "rep": 0,
+          "p50": 213.64,
+          "p95": 215.0,
+          "max": 215.19,
+          "errors": 0,
+          "batch_sizes": [
+            224.0
+          ],
+          "vram_after": {
+            "alloc": 329.3,
+            "reserved": 2715.8
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 224,
+          "rep": 1,
+          "p50": 213.9,
+          "p95": 215.47,
+          "max": 215.65,
+          "errors": 0,
+          "batch_sizes": [
+            224.0
+          ],
+          "vram_after": {
+            "alloc": 329.3,
+            "reserved": 2715.8
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 224,
+          "rep": 2,
+          "p50": 213.72,
+          "p95": 217.7,
+          "max": 217.87,
+          "errors": 0,
+          "batch_sizes": [
+            224.0
+          ],
+          "vram_after": {
+            "alloc": 329.3,
+            "reserved": 2715.8
+          }
+        }
+      ]
+    },
+    {
+      "mode": "utterance",
+      "b": 320,
+      "reps": 3,
+      "p95_median": 561.8,
+      "rows": [
+        {
+          "mode": "utterance",
+          "b": 320,
+          "rep": 0,
+          "p50": 247.11,
+          "p95": 1337.96,
+          "max": 1338.84,
+          "errors": 0,
+          "batch_sizes": [
+            226.0,
+            94.0
+          ],
+          "vram_after": {
+            "alloc": 305.3,
+            "reserved": 2734.7
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 320,
+          "rep": 1,
+          "p50": 316.09,
+          "p95": 321.25,
+          "max": 321.74,
+          "errors": 0,
+          "batch_sizes": [
+            320.0
+          ],
+          "vram_after": {
+            "alloc": 346.8,
+            "reserved": 3747.6
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 320,
+          "rep": 2,
+          "p50": 559.64,
+          "p95": 561.8,
+          "max": 1876.71,
+          "errors": 0,
+          "batch_sizes": [
+            316.0,
+            4.0
+          ],
+          "vram_after": {
+            "alloc": 288.7,
+            "reserved": 3726.6
+          }
+        }
+      ]
+    },
+    {
+      "mode": "utterance",
+      "b": 448,
+      "reps": 3,
+      "p95_median": 1499.2,
+      "rows": [
+        {
+          "mode": "utterance",
+          "b": 448,
+          "rep": 0,
+          "p50": 394.84,
+          "p95": 1968.05,
+          "max": 1968.72,
+          "errors": 0,
+          "batch_sizes": [
+            374.0,
+            74.0
+          ],
+          "vram_after": {
+            "alloc": 301.6,
+            "reserved": 4318.0
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 448,
+          "rep": 1,
+          "p50": 264.93,
+          "p95": 1499.2,
+          "max": 1499.49,
+          "errors": 0,
+          "batch_sizes": [
+            227.0,
+            221.0
+          ],
+          "vram_after": {
+            "alloc": 328.7,
+            "reserved": 2759.9
+          }
+        },
+        {
+          "mode": "utterance",
+          "b": 448,
+          "rep": 2,
+          "p50": 431.67,
+          "p95": 435.15,
+          "max": 435.53,
+          "errors": 0,
+          "batch_sizes": [
+            448.0
+          ],
+          "vram_after": {
+            "alloc": 370.4,
+            "reserved": 5085.6
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,721 @@
+{
+  "mode": "utterance",
+  "batch": 64,
+  "mix": "mixed",
+  "reps": 2,
+  "config": {
+    "max_first_tokens": null,
+    "max_allowed_frames": 512,
+    "max_tokens": 512,
+    "max_frames": 256
+  },
+  "first_frame_ms": {
+    "count": 128,
+    "p50": 1159.75,
+    "p95": 1160.05,
+    "max": 1160.08,
+    "min": 337.23
+  },
+  "batch_wall_ms": {
+    "count": 2,
+    "p50": 8596.6,
+    "p95": 8596.6,
+    "max": 8596.6,
+    "min": 7577.4
+  },
+  "last_frame_ms": {
+    "count": 64,
+    "p50": 6707.92,
+    "p95": 7398.24,
+    "max": 7542.85,
+    "min": 916.23
+  },
+  "gaps": {
+    "count": 315,
+    "max_ms": 945.5,
+    "total_ms": 132596.8
+  },
+  "vram_peak_mb": 5150.2,
+  "runs": [
+    {
+      "rep": 0,
+      "wall_ms": 8596.6,
+      "first_ms": {
+        "count": 64,
+        "p50": 1159.93,
+        "p95": 1160.07,
+        "max": 1160.08,
+        "min": 1159.75
+      },
+      "last_ms": {
+        "count": 64,
+        "p50": 7546.07,
+        "p95": 8254.77,
+        "max": 8556.68,
+        "min": 1673.76
+      },
+      "row_gaps": [
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 749.6,
+          "total_ms": 2176.4
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 747.4,
+          "total_ms": 2259.0
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 764.9,
+          "total_ms": 2286.2
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 785.9,
+          "total_ms": 1937.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 795.6,
+          "total_ms": 2281.3
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 866.5,
+          "total_ms": 2397.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 736.0,
+          "total_ms": 1998.6
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 704.3,
+          "total_ms": 2307.1
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 566.0,
+          "total_ms": 1795.8
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 728.1,
+          "total_ms": 2260.4
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 718.8,
+          "total_ms": 1767.5
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 802.6,
+          "total_ms": 1875.9
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 800.9,
+          "total_ms": 1987.9
+        },
+        {
+          "count": 1,
+          "max_ms": 209.3,
+          "total_ms": 209.3
+        },
+        {
+          "count": 5,
+          "max_ms": 599.5,
+          "total_ms": 2140.4
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 658.2,
+          "total_ms": 1933.9
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 738.1,
+          "total_ms": 1920.3
+        },
+        {
+          "count": 1,
+          "max_ms": 167.2,
+          "total_ms": 167.2
+        },
+        {
+          "count": 5,
+          "max_ms": 621.4,
+          "total_ms": 1834.9
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 605.5,
+          "total_ms": 1961.4
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 941.5,
+          "total_ms": 2094.4
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 833.0,
+          "total_ms": 2383.8
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 561.1,
+          "total_ms": 1688.9
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 850.1,
+          "total_ms": 2327.6
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 662.2,
+          "total_ms": 1882.3
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 499.9,
+          "total_ms": 1718.1
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 646.9,
+          "total_ms": 1907.0
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 842.0,
+          "total_ms": 2091.0
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 748.7,
+          "total_ms": 2336.2
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 627.3,
+          "total_ms": 1881.4
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 863.9,
+          "total_ms": 2234.2
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 742.0,
+          "total_ms": 2150.6
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 767.4,
+          "total_ms": 1976.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 527.1,
+          "total_ms": 2042.9
+        }
+      ]
+    },
+    {
+      "rep": 1,
+      "wall_ms": 7577.4,
+      "first_ms": {
+        "count": 64,
+        "p50": 337.41,
+        "p95": 337.57,
+        "max": 337.59,
+        "min": 337.23
+      },
+      "last_ms": {
+        "count": 64,
+        "p50": 6707.92,
+        "p95": 7398.24,
+        "max": 7542.85,
+        "min": 916.23
+      },
+      "row_gaps": [
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 898.6,
+          "total_ms": 2252.7
+        },
+        {
+          "count": 1,
+          "max_ms": 158.1,
+          "total_ms": 158.1
+        },
+        {
+          "count": 5,
+          "max_ms": 556.6,
+          "total_ms": 1841.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 815.1,
+          "total_ms": 2135.4
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 839.6,
+          "total_ms": 1857.5
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 732.4,
+          "total_ms": 2244.6
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 617.9,
+          "total_ms": 2088.1
+        },
+        {
+          "count": 1,
+          "max_ms": 179.7,
+          "total_ms": 179.7
+        },
+        {
+          "count": 5,
+          "max_ms": 419.3,
+          "total_ms": 1592.3
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 695.1,
+          "total_ms": 2001.0
+        },
+        {
+          "count": 1,
+          "max_ms": 188.0,
+          "total_ms": 188.0
+        },
+        {
+          "count": 5,
+          "max_ms": 484.8,
+          "total_ms": 1676.9
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 694.7,
+          "total_ms": 2150.5
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 607.8,
+          "total_ms": 1543.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 853.0,
+          "total_ms": 2276.9
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 883.1,
+          "total_ms": 2540.1
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 760.9,
+          "total_ms": 2165.0
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 645.2,
+          "total_ms": 1952.6
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 641.1,
+          "total_ms": 2072.0
+        },
+        {
+          "count": 1,
+          "max_ms": 151.8,
+          "total_ms": 151.8
+        },
+        {
+          "count": 5,
+          "max_ms": 945.5,
+          "total_ms": 2696.4
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 718.5,
+          "total_ms": 2059.2
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 859.1,
+          "total_ms": 1974.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 564.4,
+          "total_ms": 1837.8
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 675.0,
+          "total_ms": 2089.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 753.7,
+          "total_ms": 2145.9
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 885.3,
+          "total_ms": 2423.6
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 854.1,
+          "total_ms": 2401.2
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 580.3,
+          "total_ms": 1609.5
+        },
+        {
+          "count": 1,
+          "max_ms": 150.6,
+          "total_ms": 150.6
+        },
+        {
+          "count": 5,
+          "max_ms": 799.4,
+          "total_ms": 2260.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 608.6,
+          "total_ms": 1638.3
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 767.0,
+          "total_ms": 2152.2
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 843.2,
+          "total_ms": 2361.7
+        },
+        {
+          "count": 1,
+          "max_ms": 161.5,
+          "total_ms": 161.5
+        },
+        {
+          "count": 5,
+          "max_ms": 726.3,
+          "total_ms": 2215.7
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 5,
+          "max_ms": 582.4,
+          "total_ms": 1683.9
+        },
+        {
+          "count": 0,
+          "max_ms": 0.0,
+          "total_ms": 0
+        },
+        {
+          "count": 4,
+          "max_ms": 601.0,
+          "total_ms": 1451.6
+        }
+      ]
+    }
+  ]
+}

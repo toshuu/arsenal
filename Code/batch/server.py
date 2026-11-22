@@ -5,10 +5,13 @@ from __future__ import annotations
 import asyncio
 import base64
 import copy
+import inspect
 import io
 import itertools
+import logging
 import os
 import queue
+import re
 import threading
 import time
 import wave
@@ -43,6 +46,37 @@ _CHUNK_POOL = ThreadPoolExecutor(
     max_workers=max(1, int(os.getenv("ARSENAL_CHUNK_THREADS", "64")))
 )
 
+CALL_STREAM_MODES = ("sentence", "utterance", "latency")
+CALL_STREAM_SETTINGS = {
+    "sentence": {
+        "max_first_tokens": None,
+        "max_allowed_frames": 224,
+        "max_tokens": 50,
+    },
+    "utterance": {
+        "max_first_tokens": None,
+        "max_allowed_frames": 512,
+        "max_tokens": 512,
+    },
+    "latency": {
+        "max_first_tokens": 16,
+        "max_allowed_frames": 192,
+        "max_tokens": 50,
+    },
+}
+
+
+def resolve_call_stream_mode(value: Any = None) -> str:
+    raw = value if value is not None else os.getenv("ARSENAL_CALL_STREAM_MODE", "sentence")
+    raw = str(raw).strip().lower()
+    if raw in CALL_STREAM_MODES:
+        return raw
+    raise ValueError(f"unknown stream mode {raw!r}")
+
+
+def quality_stream_raw(mode: str) -> bool:
+    return mode in ("sentence", "utterance")
+
 
 @dataclass
 class Job:
@@ -58,6 +92,7 @@ class Job:
     seq: int = 0
     job_class: JobClass = JobClass.NORMAL
     mode: str = "normal"
+    stream_mode: str = "normal"
     started_at: float | None = None
     first_chunk_at: float | None = None
     pcm: bytes | None = None
@@ -420,6 +455,10 @@ class BatchWorker:
         metrics: Metrics,
     ) -> None:
         self.engine = engine
+        try:
+            self.has_stream_mode_arg = "stream_mode" in inspect.signature(engine.synthesize).parameters
+        except (TypeError, ValueError):
+            self.has_stream_mode_arg = False
         self.max_batch = max_batch
         self.max_rows = max_rows
         self.metrics = metrics
@@ -462,6 +501,7 @@ class BatchWorker:
         priority: int | None = None,
         job_class: JobClass | str = JobClass.NORMAL,
         mode: str = "normal",
+        stream_mode: str = "normal",
     ) -> Job:
         cls = job_class if isinstance(job_class, JobClass) else JobClass(job_class)
         if cls is not JobClass.NORMAL and max_frames is None:
@@ -474,6 +514,7 @@ class BatchWorker:
             priority=PRIORITY[cls] if priority is None else priority,
             job_class=cls,
             mode=mode,
+            stream_mode=stream_mode,
             seq=next(self.seq),
         )
         if len(texts) > self.max_rows:
@@ -745,18 +786,31 @@ class BatchWorker:
                 vram = None
             for j in jobs:
                 j.t["synth_start"] = time.perf_counter_ns()
-            audio = self.engine.synthesize(
-                texts,
-                max_frames=max_frames,
-                stop=stop,
-                profile_id=profile_id,
-                profile_ids=profile_ids,
-                on_chunk=relay,
-                on_stage=on_stage,
-            )
+            modes = {j.stream_mode for j in jobs}
+            stream_mode = next(iter(modes)) if len(modes) == 1 else "normal"
+            synth_kwargs: dict[str, Any] = {
+                "texts": texts,
+                "max_frames": max_frames,
+                "stop": stop,
+                "profile_id": profile_id,
+                "profile_ids": profile_ids,
+                "on_chunk": relay,
+                "on_stage": on_stage,
+            }
+            if self.has_stream_mode_arg:
+                synth_kwargs["stream_mode"] = stream_mode
+            audio = self.engine.synthesize(**synth_kwargs)
             for j in jobs:
                 j.t["synth_end"] = time.perf_counter_ns()
-            _trunc_stream = self.engine._stream_for(profile_id) if profile_id is not None or len({j.profile_id for j in jobs})==1 else getattr(self.engine, "mixed_stream", None)
+            _stream_for = getattr(self.engine, "_stream_for", None)
+            quality = getattr(self, "has_stream_mode_arg", False) and quality_stream_raw(stream_mode)
+            if _stream_for is not None and (profile_id is not None or len({j.profile_id for j in jobs}) == 1):
+                if quality and hasattr(self.engine, "_mode_stream"):
+                    _trunc_stream = self.engine._mode_stream(profile_id, stream_mode)
+                else:
+                    _trunc_stream = _stream_for(profile_id)
+            else:
+                _trunc_stream = getattr(self.engine, "mixed_stream", None)
             trunc = list(getattr(_trunc_stream, "last_truncated_rows", []) or []) if _trunc_stream is not None else []
             if trunc:
                 for r in trunc:
@@ -901,6 +955,7 @@ class TTSEngine:
         self.model = None
         self.profiles: dict[str, str] = {}
         self.profile_streams: dict[str, Any] = {}
+        self.mode_streams: dict[tuple[str | None, str], Any] = {}
         self.fallback_streams: dict[Any, Any] = {}
         self.mixed_stream: Any = None
         self.profile_voices: dict[str, Any] = {}
@@ -1009,6 +1064,22 @@ class TTSEngine:
             return self.stream
         return self._profile_stream(profile_id)
 
+    def _mode_stream(self, profile_id: str | None, mode: str) -> Any:
+        key = (profile_id, mode)
+        stream = self.mode_streams.get(key)
+        if stream is None:
+            source = self._stream_for(profile_id)
+            settings = CALL_STREAM_SETTINGS[mode]
+            stream = copy.copy(source)
+            stream.max_first_tokens = settings["max_first_tokens"]
+            stream.max_allowed_frames = settings["max_allowed_frames"]
+            stream.max_tokens = settings["max_tokens"]
+            stream._chunk_cache = {}
+            stream._ids_cache = dict(source._ids_cache)
+            stream.last_truncated_rows = []
+            self.mode_streams[key] = stream
+        return stream
+
     def _normal_stream(self, profile_id: str | None) -> Any:
         key = ("default",) if profile_id is None else profile_id
         stream = self.fallback_streams.get(key)
@@ -1064,6 +1135,7 @@ class TTSEngine:
         profile_ids: list[str | None] | None = None,
         on_chunk: Callable[..., None] | None = None,
         on_stage: Callable[..., None] | None = None,
+        stream_mode: str = "normal",
     ) -> list[Any]:
         if self.stream is None:
             raise RuntimeError("engine is not loaded")
@@ -1077,6 +1149,8 @@ class TTSEngine:
                 texts, max_frames=max_frames, stop=stop, on_chunk=on_chunk, on_stage=on_stage
             )
         stream = self._stream_for(profile_id)
+        if quality_stream_raw(stream_mode):
+            stream = self._mode_stream(profile_id, stream_mode)
         conditioned = profile_id is not None or self.default_is_profile
         if conditioned and len(texts) > 1:
             keys = {self.batch_key(text, profile_id) for text in texts}
@@ -1549,12 +1623,22 @@ def create_app(
         await ws.accept()
         loop = asyncio.get_running_loop()
         cache: ChunkCache = app.state.chunk_cache
-        state: dict[str, Any] = {"profile": None, "started": False, "cancelled": False}
+        state: dict[str, Any] = {
+            "profile": None,
+            "started": False,
+            "cancelled": False,
+            "stream_mode": resolve_call_stream_mode(),
+        }
         try:
             while True:
                 msg = await ws.receive_json()
                 action = msg.get("type") or msg.get("action")
                 if action == "start":
+                    try:
+                        mode = resolve_call_stream_mode(msg.get("stream_mode") or msg.get("mode"))
+                    except ValueError as exc:
+                        await ws.send_json({"event": "error", "detail": str(exc)})
+                        continue
                     profile = msg.get("voice_profile") or msg.get("voice")
                     if profile is not None and not getattr(
                         engine, "has_profile", lambda _: False
@@ -1564,6 +1648,7 @@ def create_app(
                         )
                         continue
                     state["profile"] = profile
+                    state["stream_mode"] = mode
                     state["started"] = True
                     state["cancelled"] = False
                     worker.enter_call()
@@ -1584,28 +1669,45 @@ def create_app(
                     send_to_recv = None
                     if sent_ns:
                         send_to_recv = (time.time_ns() - int(sent_ns)) / 1e6
+                    mode = state["stream_mode"]
                     stream = engine._stream_for(profile)
+                    if quality_stream_raw(mode) and hasattr(engine, "_mode_stream"):
+                        chunk_stream = engine._mode_stream(profile, mode)
+                    else:
+                        chunk_stream = stream
+                    quality_cap = CALL_STREAM_SETTINGS[mode]["max_allowed_frames"]
+                    if quality_stream_raw(mode):
+                        max_frames = max(max_frames, quality_cap)
                     requested = int(msg.get("first_max_frames") or 0)
-                    est = estimate_first_max_frames(stream, text)
+                    est = estimate_first_max_frames(chunk_stream, text)
                     first_frames = requested if requested > 0 else int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES", str(est)))
                     first_frames = max(16, min(first_frames, max_frames))
                     cont_frames = min(
                         int(os.getenv("ARSENAL_CALL_CONT_MAX_FRAMES", "192")), max_frames
                     )
-                    chunks = await loop.run_in_executor(
-                        _CHUNK_POOL,
-                        cache.get_or_split,
-                        (text, first_frames),
-                        lambda: split_call_text(stream, text, first_frames),
-                    )
+                    if mode == "utterance":
+                        chunks = [text]
+                    elif mode == "sentence":
+                        chunks = await loop.run_in_executor(_CHUNK_POOL, chunk_stream._text_chunks, text)
+                    else:
+                        chunks = await loop.run_in_executor(
+                            _CHUNK_POOL,
+                            cache.get_or_split,
+                            (text, first_frames),
+                            lambda: split_call_text(chunk_stream, text, first_frames),
+                        )
                     chunk_meta = []
                     total_samples = 0
                     for index, chunk in enumerate(chunks):
                         if state["cancelled"]:
                             break
                         cls = JobClass.CALL_FIRST if index == 0 else JobClass.CALL_CONT
-                        est_chunk = estimate_first_max_frames(engine._stream_for(profile), chunk)
-                        frames = max(24, min(int(est_chunk), max_frames)) if index == 0 else max(24, min(int(estimate_first_max_frames(engine._stream_for(profile), chunk)), max_frames))
+                        est_chunk = estimate_first_max_frames(chunk_stream, chunk)
+                        frames = max(24, min(int(est_chunk), max_frames))
+                        if mode == "utterance":
+                            frames = min(max_frames, quality_cap)
+                        elif mode == "sentence":
+                            frames = max(24, min(int(est_chunk), quality_cap))
                         # tokens*3+16 policy - generous, no truncation
                         t_submit_ns = time.perf_counter_ns()
                         frame_q: asyncio.Queue = asyncio.Queue()
@@ -1615,7 +1717,8 @@ def create_app(
                         try:
                             job = worker.submit(
                                 [chunk], frames, profile,
-                                job_class=cls, mode=CALL_MODE, on_chunk=on_frame,
+                                job_class=cls, mode=CALL_MODE, stream_mode=mode,
+                                on_chunk=on_frame,
                             )
                             job.t["handler"] = t_recv_ns
                             job.t["submit"] = t_submit_ns
@@ -1626,12 +1729,16 @@ def create_app(
                         except QueueFull:
                             await ws.send_json({"event": "error", "detail": "queue is full"})
                             break
-                        await ws.send_json({"event": "chunk_start", "index": index, "frames": frames, "text": chunk})
+                        await ws.send_json({"event": "chunk_start", "index": index, "frames": frames, "text": chunk, "stream_mode": mode})
                         t_job_ns = time.perf_counter_ns()
                         job.future.add_done_callback(lambda _f, _q=frame_q: loop.call_soon_threadsafe(_q.put_nowait, None))
                         samples = 0
                         first_sent_ns = None
-                        comp = StreamPauseCompressor(sr=settings.sample_rate, holdback_ms=50)
+                        comp = (
+                            StreamPauseCompressor(sr=settings.sample_rate, holdback_ms=50)
+                            if mode == "latency"
+                            else None
+                        )
                         async def _send_pcm(arr):
                             nonlocal first_sent_ns, samples
                             if arr.size == 0: return
@@ -1645,16 +1752,20 @@ def create_app(
                                 if index == 0:
                                     metrics.record_ws_phase((first_sent_ns - t_job_ns) / 1e6, 0.0, 0.0, after_emit)
                             samples += len(pcm) // 2
-                        while True:
-                            data = await frame_q.get()
-                            if data is None:
-                                break
-                            arr = np.frombuffer(data, dtype='<i2').astype(np.float32) / 32768.0
-                            out = comp.push(arr, final=False)
-                            await _send_pcm(out)
-                        tail = comp.push(np.zeros(0,dtype=np.float32), final=True)
-                        await _send_pcm(tail)
+                        async def _drain_frames():
+                            while True:
+                                data = await frame_q.get()
+                                if data is None:
+                                    break
+                                arr = np.frombuffer(data, dtype='<i2').astype(np.float32) / 32768.0
+                                out = comp.push(arr, final=False) if comp is not None else arr
+                                await _send_pcm(out)
+                            if comp is not None:
+                                tail = comp.push(np.zeros(0,dtype=np.float32), final=True)
+                                await _send_pcm(tail)
+                        sender = asyncio.create_task(_drain_frames())
                         audio = await asyncio.wrap_future(job.future)
+                        await sender
                         if index == 0:
                             metrics.record_ws_timing(None, (time.perf_counter_ns() - t_recv_ns) / 1e6, None)
                         audio_sec = samples / float(settings.sample_rate)
@@ -1664,7 +1775,7 @@ def create_app(
                         chunk_meta.append(meta)
                         total_samples += samples
                         if cap_hit:
-                            log.warning("CAP_HIT chunk=%s frames=%s text=%r", index, frames, chunk)
+                            logging.getLogger(__name__).warning("CAP_HIT chunk=%s frames=%s text=%r", index, frames, chunk)
                         await ws.send_json({"event": "chunk_done", **meta})
                         if first_only:
                             break
@@ -1673,7 +1784,7 @@ def create_app(
                     except Exception as e:
                         await ws.send_json({"event": "error", "detail": str(e)})
                         log.error("text integrity: %s", e)
-                    await ws.send_json({"event": "utterance_done", "chunks": chunk_meta, "total_audio_sec": round(total_samples/float(settings.sample_rate),4)})
+                    await ws.send_json({"event": "utterance_done", "chunks": chunk_meta, "total_audio_sec": round(total_samples/float(settings.sample_rate),4), "stream_mode": mode})
                 elif action == "flush":
                     await ws.send_json({"event": "flushed"})
                     await ws.close()
@@ -1685,6 +1796,13 @@ def create_app(
                     await ws.send_json({"event": "error", "detail": "unknown action"})
         except WebSocketDisconnect:
             pass
+        except Exception as exc:
+            import traceback; traceback.print_exc()
+            logging.getLogger(__name__).exception("ws_tts error")
+            try:
+                await ws.send_json({"event": "error", "detail": str(exc)})
+            except Exception:
+                pass
         finally:
             if state["started"]:
                 state["started"] = False
@@ -1732,17 +1850,25 @@ def create_app(
         cancel: bool = False,
         first_only: bool = False,
         text: str | None = None,
+        stream_mode: str = "sentence",
     ) -> dict[str, Any]:
         loop = asyncio.get_running_loop()
         text = text or _call_text()
+        mode = resolve_call_stream_mode(stream_mode)
         stream = engine._stream_for(profile)
+        chunk_stream = engine._mode_stream(profile, mode) if quality_stream_raw(mode) and hasattr(engine, "_mode_stream") else stream
         cache: ChunkCache = app.state.chunk_cache
-        chunks = await loop.run_in_executor(
-            _CHUNK_POOL,
-            cache.get_or_split,
-            (text, first_frames),
-            lambda: split_call_text(stream, text, first_frames),
-        )
+        if mode == "utterance":
+            chunks = [text]
+        elif mode == "sentence":
+            chunks = await loop.run_in_executor(_CHUNK_POOL, chunk_stream._text_chunks, text)
+        else:
+            chunks = await loop.run_in_executor(
+                _CHUNK_POOL,
+                cache.get_or_split,
+                (text, first_frames),
+                lambda: split_call_text(chunk_stream, text, first_frames),
+            )
         worker.enter_call()
         t0 = time.monotonic()
         t0_ns = time.perf_counter_ns()
@@ -1767,6 +1893,7 @@ def create_app(
                     profile,
                     job_class=cls,
                     mode=CALL_MODE,
+                    stream_mode=mode,
                     on_chunk=on_chunk,
                 )
                 if cancel and index == 0:
@@ -1808,6 +1935,7 @@ def create_app(
         profile = qp.get("profile") or None
         first_only = qp.get("first_only", "0") == "1"
         text = qp.get("text") or None
+        stream_mode = qp.get("stream_mode", "sentence")
         window = qp.get("window")
         if window is not None:
             os.environ["ARSENAL_BATCH_WINDOW_MS"] = str(int(window))
@@ -1825,6 +1953,7 @@ def create_app(
                         cont_frames,
                         first_only=first_only,
                         text=text,
+                        stream_mode=stream_mode,
                     )
                     for _ in range(b)
                 ],

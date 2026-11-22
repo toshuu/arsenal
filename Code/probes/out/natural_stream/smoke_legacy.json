@@ -1,0 +1,71 @@
+{
+  "mode": "legacy",
+  "batch": 2,
+  "mix": "same",
+  "reps": 1,
+  "config": {
+    "max_first_tokens": 16,
+    "max_allowed_frames": 192,
+    "max_tokens": 50,
+    "max_frames": 192
+  },
+  "first_frame_ms": {
+    "count": 2,
+    "p50": 1275.31,
+    "p95": 1275.31,
+    "max": 1275.31,
+    "min": 1275.3
+  },
+  "batch_wall_ms": {
+    "count": 1,
+    "p50": 9688.85,
+    "p95": 9688.85,
+    "max": 9688.85,
+    "min": 9688.85
+  },
+  "last_frame_ms": {
+    "count": 2,
+    "p50": 9653.97,
+    "p95": 9653.97,
+    "max": 9653.97,
+    "min": 9620.21
+  },
+  "gaps": {
+    "count": 12,
+    "max_ms": 674.0,
+    "total_ms": 3916.8
+  },
+  "vram_peak_mb": 380.2,
+  "runs": [
+    {
+      "rep": 0,
+      "wall_ms": 9688.85,
+      "first_ms": {
+        "count": 2,
+        "p50": 1275.31,
+        "p95": 1275.31,
+        "max": 1275.31,
+        "min": 1275.3
+      },
+      "last_ms": {
+        "count": 2,
+        "p50": 9653.97,
+        "p95": 9653.97,
+        "max": 9653.97,
+        "min": 9620.21
+      },
+      "row_gaps": [
+        {
+          "count": 6,
+          "max_ms": 585.3,
+          "total_ms": 1829.6
+        },
+        {
+          "count": 6,
+          "max_ms": 674.0,
+          "total_ms": 2087.2
+        }
+      ]
+    }
+  ]
+}

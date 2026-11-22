@@ -106,11 +106,19 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261121-120300-CODING | CODING | 2026-11-21 12:03 +0530 | Fix call-mode measurement/server, run local burst/Poisson/mixed/WAV probes, record Modal attempt. | .stageset/sessions/coding-call-mode-maxb-local-fixes.md | IDEA-0007; Skeletons/Probes/probe_call_ceiling.md; Skeletons/Probes/probe_call_mode.md; 20261121-120307-RUN; 20261121-120353-RUN; 20261121-120353-RUN-02; 20261121-120353-RUN-03; 20261121-120354-RUN; 20261121-120354-RUN-02; 20261121-120354-RUN-03 | - |
 | 20261121-121500-CODING | CODING | 2026-11-21 12:15 +0530 | Finalize call quality (pause compression, single-chunk), diagnose A-vs-B pause, attempt B re-measure, stop Modal GPU. | .stageset/sessions/coding-call-quality-finalization.md | IDEA-0007; 20261121-121500-RUN; FACT-0146 | 94a2e57 f0e35ef 20372b1 800313b 6ce4aa7 a29b457 |
 | 20261121-123900-CODING | CODING | 2026-11-21 12:39 +0530 | Pause B-ceiling; fix call chunking naturalness (sentence-level), cap-hit/integrity logging, listening pack, start burst/Poisson re-measure. | .stageset/sessions/coding-call-quality-sentence-level.md | IDEA-0007; 20261121-123900-RUN | - |
+| 20261122-141020-IDEATION | IDEATION | 2026-11-22T14:10:20+05:30 | Define the natural live-call streaming strategy and Phase 0 measurement. | .stageset/sessions/plan-natural-streaming.md | IDEA-0007; IDEA-0008 | - |
+| 20261122-142810-CODING | CODING | 2026-11-22T14:28:10+05:30 | Review SSLD-022, fix the natural stream probe, and record Phase 0 evidence. | .stageset/sessions/coding-ssld-022-review-fix.md | IDEA-0008; SSLD-022; 20261122-142726-RUN; FACT-0147 | - |
+| 20261122-143443-CODING | CODING | 2026-11-22T14:34:43+05:30 | Record the SSLD-022 listening gate and make sentence the default quality mode. | .stageset/sessions/coding-ssld-022-listen-gate.md | IDEA-0008; SSLD-022; FACT-0147; FACT-0148; 20261122-142726-RUN | - |
+| 20261122-144023-IDEATION | IDEATION | 2026-11-22T14:40:23+05:30 | Plan short Phase 1 server modes with sentence as the default quality mode. | .stageset/sessions/plan-phase1-server-modes.md | IDEA-0008; FACT-0147; FACT-0148 | - |
+| 20261122-144710-CODING | CODING | 2026-11-22T14:47:10+05:30 | Implement WS quality modes with sentence as the default and raw frames. | .stageset/sessions/coding-ssld-022-server-quality-modes.md | IDEA-0008; SSLD-023; 20261122-144709-RUN; 20261122-144709-RUN-02; 20261122-144710-RUN | - |
+| 20261122-150820-CODING | CODING | 2026-11-22T15:08:20+05:30 | Verify real WS sentence and utterance modes and fix cap-hit/send bugs. | .stageset/sessions/coding-phase2-ws-quality-probe.md | IDEA-0008; SSLD-023; 20261122-150820-RUN; 20261122-151455-RUN; FACT-0149; FACT-0150 | - |
+| 20261122-152200-IDEATION | IDEATION | 2026-11-22T15:22:00+05:30 | Plan Phase 2 B-ramp for sentence and utterance on server path. | .stageset/sessions/plan-phase2-b-ramp.md | IDEA-0008; FACT-0147; FACT-0148; FACT-0149; FACT-0150 | - |
+| 20261122-152530-CODING | CODING | 2026-11-22T15:25:30+05:30 | Run Phase 2 B-ramp for sentence and utterance; max stable B224. | .stageset/sessions/coding-phase2-b-ramp.md | IDEA-0008; SSLD-024; 20261122-152530-RUN; FACT-0151 | - |
 
 ## Totals
 
-- CODING: 52.
-- IDEATION: 12.
+- CODING: 57.
+- IDEATION: 15.
 - MAINTENANCE: 11.
 - PROBE: 0.
 - PUSH: 25.

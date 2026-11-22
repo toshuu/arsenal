@@ -75,6 +75,7 @@ def main() -> int:
         result["pcm"] = len(audio) > 0
         done = ws.receive_json()
         result["chunk_done"] = done.get("event") == "chunk_done" and done.get("samples", 0) > 0
+        ws.receive_json()
 
         ws.send_json({"type": "cancel"})
         result["cancelled"] = ws.receive_json() == {"event": "cancelled"}
@@ -85,6 +86,7 @@ def main() -> int:
         ws.send_json({"type": "text", "text": "Hello there."})
         ws.receive_json()
         ws.receive_bytes()
+        ws.receive_json()
         ws.receive_json()
         ws.send_json({"type": "flush"})
         result["flushed"] = ws.receive_json() == {"event": "flushed"}

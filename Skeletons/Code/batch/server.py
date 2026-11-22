@@ -3,12 +3,12 @@
 @stageset kind: IMPLEMENTATION
 @stageset target: Code/batch/server.py
 @stageset source_idea: IDEA-0005
-@stageset status: READY
+@stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 10
-@stageset implemented_revision: 10
-@stageset planned_in: .stageset/sessions/coding-production-readiness-fixes.md
-@stageset last_updated_in: .stageset/sessions/plan-call-mode.md
+@stageset spec_revision: 11
+@stageset implemented_revision: 11
+@stageset planned_in: .stageset/sessions/plan-phase1-server-modes.md
+@stageset last_updated_in: .stageset/sessions/coding-phase2-ws-quality-probe.md
 @stageset implemented_in: .stageset/sessions/coding-batch-target.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
@@ -60,6 +60,12 @@ Report health and metrics.
 - Call chunks use `call_chunker.split_call_text`: short first chunk, then longer chunks, same voice.
 - `?mode=call` on `/tts/stream` routes the request to `call_first` and `call_cont`.
 - `/metrics` adds `first_chunk_ms` per class, `call_first_wait_behind_normal_ms`, `active_call_sessions`, and `underruns`.
+- A WS `start` may set `stream_mode` or `mode` to `sentence`, `utterance`, or `latency`. Default is `ARSENAL_CALL_STREAM_MODE` or `sentence`.
+- `sentence` uses no first-token cut, 224 frame budget, and 50-token text chunks.
+- `utterance` uses no first-token cut, 512 frame budget, and one job for the whole text.
+- `latency` keeps the legacy 16-token first cut and 192 frame budget.
+- Quality modes skip pause compression. `latency` keeps it.
+- `chunk_start` and `utterance_done` include `stream_mode`.
 - A normal HTTP request never changes class and never uses a call-mode chunker.
 - A cancel frees queued jobs and sets the stop event. Rows are released at the batch end.
 - The WebSocket closes after `flush` completes all chunks, or on `cancel`, or on client close.
@@ -124,6 +130,13 @@ Report health and metrics.
 - Predicted output: `PROFILE id OUT_DIR/id.pt`.
 - Pass condition: the run report shows the file exists and a server started with `ARSENAL_VOICE_PROFILES=id=OUT_DIR/id.pt` serves a profile request with 200.
 - Fail condition: the build fails or the server cannot load the id.
+
+### CHECK-SERVER-12 - WS mode helper
+
+- Command: `python Code/probes/check_server_modes.py`
+- Predicted output: `{"ok": true}`
+- Pass condition: exit code 0 and mode resolution, mode settings, and raw-frame flag are correct.
+- Fail condition: unknown mode accepted, wrong settings, or compression enabled for a quality mode.
 
 ### CHECK-CALL-WS-01 - WebSocket call stream
 

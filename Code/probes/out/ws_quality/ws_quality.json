@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "rows": [
+    {
+      "mode": "sentence",
+      "first_byte_ms": 247.42,
+      "audio_sec": 18.16,
+      "chunks": 3,
+      "cap_hits": 0,
+      "wav": "/kaggle/working/arsenal/Code/probes/out/ws_quality/sentence.wav",
+      "events": [
+        "started",
+        "chunk_start",
+        "chunk_done",
+        "chunk_start",
+        "chunk_done",
+        "chunk_start",
+        "chunk_done",
+        "utterance_done",
+        "flushed"
+      ]
+    },
+    {
+      "mode": "utterance",
+      "first_byte_ms": 180.57,
+      "audio_sec": 17.28,
+      "chunks": 1,
+      "cap_hits": 0,
+      "wav": "/kaggle/working/arsenal/Code/probes/out/ws_quality/utterance.wav",
+      "events": [
+        "started",
+        "chunk_start",
+        "chunk_done",
+        "utterance_done",
+        "flushed"
+      ]
+    }
+  ]
+}
