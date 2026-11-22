@@ -121,10 +121,13 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261122-164918-MAINTENANCE | MAINTENANCE | 2026-11-22T16:49:18+00:00 | Spec 4 for the WS gate. Add quiet formation and sentence/utterance comparison. | .stageset/sessions/maintenance-ssld-033-spec.md | IDEA-0008; SSLD-032; 20261122-230000-RUN | - |
 | 20261122-171000-MAINTENANCE | MAINTENANCE | 2026-11-22T17:10:00+00:00 | Spec 5 for the WS gate. Restore the confirmed formation settings and drop utterance. | .stageset/sessions/maintenance-ssld-033-spec5.md | IDEA-0008; SSLD-033; 20261122-235500-RUN; FACT-0139 | - |
 | 20261122-171156-CODING | CODING | 2026-11-22T17:11:56+00:00 | Add max_frames to the gate client and restore confirmed formation in the probe. | .stageset/sessions/coding-ssld-033-formation.md | IDEA-0008; SSLD-033; 20261123-000000-RUN | - |
+| 20261122-190533-CODING | CODING | 2026-11-22T19:05:33+00:00 | Lower the WS latency frame floor to 8 and fit word jobs to the cap. | .stageset/sessions/coding-latency-frame-floor.md | IDEA-0008; 20261122-235919-RUN | - |
 | 20261122-192150-IDEATION | IDEATION | 2026-11-22T19:21:50+05:30 | Plan Phase 4 admission. Test the cap before a BatchedStream change. | .stageset/sessions/plan-phase4-admission.md | IDEA-0008; FACT-0151 | - |
 | 20261122-192327-CODING | CODING | 2026-11-22T19:23:27+05:30 | Run the Phase 4 admission probe with the cap raised to 640. | .stageset/sessions/coding-phase4-admission.md | IDEA-0008; SSLD-025; 20261122-192327-RUN | - |
 | 20261122-193357-MAINTENANCE | MAINTENANCE | 2026-11-22T19:33:57+05:30 | Record the Phase 4 cap probe result. A cap raise does not stop the early tiny batch. | .stageset/sessions/maintenance-phase4-finding.md | IDEA-0008; FACT-0152; SSLD-025; 20261122-192327-RUN | - |
+| 20261122-193614-CODING | CODING | 2026-11-22T19:36:14+00:00 | Fix frame-cap unit mismatch in WS latency mode: 24 frames now give 1.92 s. | .stageset/sessions/coding-frame-unit-fix.md | IDEA-0008; 20261122-235919-RUN | - |
 | 20261122-193729-CODING | CODING | 2026-11-22T19:37:29+05:30 | Run the Phase 4 formation policy probe on the local T4. | .stageset/sessions/coding-phase4-formation.md | IDEA-0008; SSLD-026; FACT-0152; 20261122-193729-RUN | - |
+| 20261122-194500-CODING | CODING | 2026-11-22T19:45:00+00:00 | Split latency text by frame budget so cap-hit no longer cuts words. | .stageset/sessions/coding-latency-frame-budget-split.md | IDEA-0008; 20261122-235919-RUN | - |
 | 20261122-194929-MAINTENANCE | MAINTENANCE | 2026-11-22T19:49:29+05:30 | Review the formation probe. The default policy is stable but slow. Confirm on a real server. | .stageset/sessions/maintenance-phase4-formation-review.md | IDEA-0008; FACT-0153; SSLD-026; 20261122-193729-RUN | - |
 | 20261122-195007-CODING | CODING | 2026-11-22T19:50:07+05:30 | Confirm Phase 4 formation on a separate-process uvicorn server. | .stageset/sessions/coding-phase4-confirm.md | IDEA-0008; SSLD-027; FACT-0153; 20261122-195007-RUN | - |
 | 20261122-195737-MAINTENANCE | MAINTENANCE | 2026-11-22T19:57:37+05:30 | Review the real-server confirmation. B=320 is one batch but over 350 ms. | .stageset/sessions/maintenance-phase4-confirm-review.md | IDEA-0008; FACT-0154; SSLD-027; 20261122-195007-RUN | - |
@@ -136,7 +139,7 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 
 ## Totals
 
-- CODING: 65.
+- CODING: 68.
 - IDEATION: 16.
 - MAINTENANCE: 21.
 - PROBE: 0.

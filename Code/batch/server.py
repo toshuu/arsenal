@@ -24,7 +24,7 @@ import torch
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
-from batch.call_chunker import CALL_MODE, ChunkCache, estimate_first_max_frames, split_call_text
+from batch.call_chunker import CALL_MODE, ChunkCache, estimate_first_max_frames, split_by_frame_budget, split_call_text
 from batch.audio_join import join_chunks, smooth_chunk
 from batch.pause_compress import StreamPauseCompressor, compress_long_pauses
 from batch.job_classes import (
@@ -1663,7 +1663,8 @@ def create_app(
                         await ws.send_json({"event": "error", "detail": "empty text"})
                         continue
                     profile = state["profile"]
-                    max_frames = int(msg.get("max_frames") or settings.max_frames)
+                    audio_cap = int(msg.get("max_frames") or settings.max_frames)
+                    max_frames = audio_cap
                     first_only = bool(msg.get("first_only"))
                     t_recv_ns = time.perf_counter_ns()
                     sent_ns = msg.get("sent_ns")
@@ -1682,7 +1683,8 @@ def create_app(
                     requested = int(msg.get("first_max_frames") or 0)
                     est = estimate_first_max_frames(chunk_stream, text)
                     first_frames = requested if requested > 0 else int(os.getenv("ARSENAL_CALL_FIRST_MAX_FRAMES", str(est)))
-                    first_frames = max(16, min(first_frames, max_frames))
+                    min_frames = int(os.getenv("ARSENAL_LATENCY_MIN_FRAMES", "8")) if mode == "latency" else 24
+                    first_frames = max(min_frames, min(first_frames, max_frames))
                     cont_frames = min(
                         int(os.getenv("ARSENAL_CALL_CONT_MAX_FRAMES", "192")), max_frames
                     )
@@ -1690,6 +1692,13 @@ def create_app(
                         chunks = [text]
                     elif mode == "sentence":
                         chunks = await loop.run_in_executor(_CHUNK_POOL, chunk_stream._text_chunks, text)
+                    elif mode == "latency":
+                        chunks = await loop.run_in_executor(
+                            _CHUNK_POOL,
+                            cache.get_or_split,
+                            ("latency", text, audio_cap),
+                            lambda: split_by_frame_budget(text, audio_cap),
+                        )
                     else:
                         chunks = await loop.run_in_executor(
                             _CHUNK_POOL,
@@ -1704,7 +1713,7 @@ def create_app(
                             break
                         cls = JobClass.CALL_FIRST if index == 0 else JobClass.CALL_CONT
                         est_chunk = estimate_first_max_frames(chunk_stream, chunk)
-                        frames = max(24, min(int(est_chunk), max_frames))
+                        frames = max(min_frames, min(int(est_chunk), max_frames))
                         if mode == "utterance":
                             frames = min(max_frames, quality_cap)
                         elif mode == "sentence":

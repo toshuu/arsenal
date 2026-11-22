@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-22T17:59:02Z",
+  "generated_at": "2026-11-22T19:40:59Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 127,
+    "sessions": 130,
     "runs": 31,
     "runs_active": 1,
     "results": 5
@@ -2466,6 +2466,12 @@
       "summary": "Add max_frames to the gate client and restore confirmed formation in the probe."
     },
     {
+      "id": "20261122-190533-CODING",
+      "date": "2026-11-22T19:05:33+00:00",
+      "type": "coding",
+      "summary": "Lower the WS latency frame floor to 8 and fit word jobs to the cap."
+    },
+    {
       "id": "20261122-192150-IDEATION",
       "date": "2026-11-22T19:21:50+05:30",
       "type": "ideation",
@@ -2482,6 +2488,12 @@
       "date": "2026-11-22T19:33:57+05:30",
       "type": "maintenance",
       "summary": "Record the Phase 4 cap probe result. A cap raise does not stop the early tiny batch."
+    },
+    {
+      "id": "20261122-193614-CODING",
+      "date": "2026-11-22T19:36:14+00:00",
+      "type": "coding",
+      "summary": "Fix frame-cap unit mismatch in WS latency mode: 24 frames now give 1.92 s."
     },
     {
       "id": "20261122-193729-CODING",
@@ -2536,9 +2548,20 @@
       "date": "2026-11-22T23:24:57+05:30",
       "type": "maintenance",
       "summary": "Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS."
+    },
+    {
+      "id": "coding-latency-frame-budget-split",
+      "date": "2026-11-22T19:45:00+00:00",
+      "type": "coding",
+      "summary": "Split latency text by frame budget so cap-hit no longer cuts words."
     }
   ],
   "commits": [
+    {
+      "sha": "0d64c61",
+      "date": "2026-11-22T17:59:30+00:00",
+      "subject": "StageSet: record WS sentence standing and B thresholds"
+    },
     {
       "sha": "e45c9b6",
       "date": "2026-11-22T09:58:53+00:00",
@@ -2733,11 +2756,6 @@
       "sha": "f4ffa8a",
       "date": "2026-11-19T14:25:50+00:00",
       "subject": "StageSet: record mixed-length profile push"
-    },
-    {
-      "sha": "054d5b0",
-      "date": "2026-11-19T14:25:35+00:00",
-      "subject": "Serve mixed-length voice profile batches with normal-path fallback"
     }
   ]
 }

@@ -9,6 +9,7 @@ from typing import Any, Callable
 CALL_MODE = "call"
 _SENT_RE = re.compile(r"(.+?[.!?])(\s+|$)", re.S)
 _CLAUSE_RE = re.compile(r"(.+?[,;:])(\s+|$)", re.S)
+_FRAMES_PER_WORD = 7
 
 
 def _clean(text: str) -> str:
@@ -18,6 +19,15 @@ def _clean(text: str) -> str:
 def _words(text: str) -> list[str]:
     t = _clean(text)
     return t.split() if t else []
+
+
+def split_by_frame_budget(text: str, audio_frames: int) -> list[str]:
+    cleaned = _clean(text)
+    if not cleaned:
+        return [""]
+    per = max(1, audio_frames // _FRAMES_PER_WORD)
+    words = cleaned.split()
+    return [" ".join(words[i:i + per]) for i in range(0, len(words), per)]
 
 
 def _norm(s: str) -> str:

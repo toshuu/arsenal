@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arsenal latency chunk experiment</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:24px;max-width:1000px;color:#111}
+h1{font-size:22px}
+.note{color:#555;font-size:13px}
+.warn{color:#a00;font-size:13px;min-height:18px}
+textarea{width:100%;height:96px;box-sizing:border-box;font-size:14px}
+.panel{border:1px solid #ddd;padding:14px;border-radius:6px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px}
+.grid label{font-size:13px}
+input,select{padding:6px;width:100%;box-sizing:border-box}
+.row{margin-top:12px}
+button{padding:8px 16px;margin-right:8px}
+table{border-collapse:collapse;width:100%;font-size:12px;margin-top:8px}
+th,td{border:1px solid #ddd;padding:4px 6px;text-align:left}
+th{background:#f4f4f4}
+#log{font-family:monospace;font-size:12px;white-space:pre-wrap;border:1px solid #ddd;padding:8px;height:220px;overflow:auto;background:#fafafa}
+#summary{font-weight:bold}
+</style>
+</head>
+<body>
+<h1>Arsenal latency chunk experiment</h1>
+<p class="note">Voice: refHD.wav. No conditioned profile. Transport: /ws/tts. One frame is 80 ms of audio.</p>
+<div class="panel">
+  <label>Text<textarea id="text">Life doesn't always go the way we plan, but sometimes the unexpected moments turn out to be the most beautiful ones.</textarea></label>
+  <div class="grid">
+    <label>Mode<select id="mode"><option value="latency">latency (manual chunks)</option><option value="sentence">sentence (whole text)</option></select></label>
+    <label>Target frames per chunk<input id="frames" type="number" min="8" max="192" step="1" value="56"></label>
+  </div>
+  <p id="note" class="warn"></p>
+  <div class="row"><button id="start">Start</button><button id="stop" disabled>Stop</button><span id="status">idle</span></div>
+</div>
+<h2>Chunks</h2>
+<table>
+<thead><tr><th>Job</th><th>Text</th><th>Cap</th><th>Actual frames</th><th>Seconds</th><th>Cap hit</th><th>EOS</th></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+<p id="summary"></p>
+<h2>Log</h2>
+<div id="log"></div>
+<script>
+const textEl=document.getElementById('text');
+const modeEl=document.getElementById('mode');
+const framesEl=document.getElementById('frames');
+const noteEl=document.getElementById('note');
+const startBtn=document.getElementById('start');
+const stopBtn=document.getElementById('stop');
+const statusEl=document.getElementById('status');
+const tbody=document.getElementById('tbody');
+const logEl=document.getElementById('log');
+const summaryEl=document.getElementById('summary');
+let ws=null,ctx=null,sources=[],nextTime=0,firstByte=null;
+let running=false,stopping=false;
+let jobs=[],jobIndex=0,currentCap=56,chunkBytes=0,totalBytes=0,totalChunks=0;
+
+function setStatus(s){statusEl.textContent=s;}
+function say(s){logEl.textContent+=s+'\n';logEl.scrollTop=logEl.scrollHeight;}
+function appliedFrames(){return Math.max(8,Number(framesEl.value)||8);}
+function updateControls(){
+  const sentence=modeEl.value==='sentence';
+  framesEl.disabled=sentence;
+  if(sentence){
+    noteEl.textContent='sentence mode: server uses its 224-frame quality cap. The frame control is ignored.';
+    return;
+  }
+  const f=Number(framesEl.value)||24;const a=appliedFrames();
+  noteEl.textContent='Server applies '+a+' frames'+(f<a?' (requested '+f+' is below the 8-frame floor)':'')+'. No client-side word limit: the full text is sent and the server splits by frame cap. Cap is a ceiling; EOS can end audio earlier. Actual frames are measured from PCM.';
+}
+modeEl.onchange=updateControls;
+framesEl.oninput=updateControls;
+updateControls();
+
+function stopAudio(){
+  sources.forEach(s=>{try{s.stop();}catch(e){}});
+  sources=[];nextTime=0;
+}
+async function ensureAudio(){
+  if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();
+  if(ctx.state==='suspended')await ctx.resume();
+}
+function play(bytes){
+  const pcm=new Int16Array(bytes.buffer,bytes.byteOffset,bytes.byteLength/2);
+  const buf=ctx.createBuffer(1,pcm.length,24000);
+  const out=buf.getChannelData(0);
+  for(let i=0;i<pcm.length;i++)out[i]=pcm[i]/32768;
+  const src=ctx.createBufferSource();src.buffer=buf;src.connect(ctx.destination);
+  const when=Math.max(ctx.currentTime+0.05,nextTime);src.start(when);nextTime=when+buf.duration;
+  sources.push(src);
+  if(firstByte===null){firstByte=performance.now();say('first audio received');}
+}
+function addRow(job,text,m,actual){
+  const tr=document.createElement('tr');
+  const shortText=text.length>48?text.slice(0,48)+'…':text;
+  const values=[job,shortText,m.frames_cap,actual,m.audio_sec,String(m.cap_hit),String(m.eos_reached)];
+  values.forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td);});
+  tbody.appendChild(tr);
+}
+function jobPayload(text){
+  const p={type:'text',text:text,first_only:false,sent_ns:Date.now()*1e6};
+  if(modeEl.value==='latency'){p.first_max_frames=currentCap;p.max_frames=currentCap;}
+  else{p.max_frames=224;}
+  return JSON.stringify(p);
+}
+function finish(label,stopSound){
+  if(!running)return;
+  running=false;stopping=false;
+  setStatus(label);
+  startBtn.disabled=false;stopBtn.disabled=true;
+  if(stopSound)stopAudio();
+  if(ws&&ws.readyState<=1){try{ws.close();}catch(e){}}
+}
+function reset(){
+  logEl.textContent='';tbody.innerHTML='';summaryEl.textContent='';
+  stopAudio();firstByte=null;chunkBytes=0;totalBytes=0;totalChunks=0;jobIndex=0;
+}
+startBtn.onclick=async()=>{
+  if(running)return;
+  await ensureAudio();
+  reset();
+  const full=textEl.value.trim();
+  if(!full){say('Type text first.');return;}
+  if(modeEl.value==='sentence'){
+    jobs=[full];currentCap=224;
+  }else{
+    currentCap=appliedFrames();
+    jobs=[full];
+  }
+  say('mode '+modeEl.value+', cap '+currentCap+', jobs '+jobs.length);
+  say(' job 0: '+full);
+  running=true;stopping=false;
+  startBtn.disabled=true;stopBtn.disabled=false;setStatus('connecting');
+  ws=new WebSocket((location.protocol==='https:'?'wss://':'ws://')+location.host+'/ws/tts');
+  ws.binaryType='arraybuffer';
+  ws.onopen=()=>{say('connected');ws.send(JSON.stringify({type:'start',voice:null,stream_mode:modeEl.value}));};
+  ws.onmessage=(e)=>{
+    if(typeof e.data!=='string'){
+      const u8=new Uint8Array(e.data);
+      chunkBytes+=u8.byteLength;totalBytes+=u8.byteLength;
+      play(u8);return;
+    }
+    const m=JSON.parse(e.data);
+    if(m.event==='started'){
+      say('started');setStatus('streaming');
+      ws.send(jobPayload(jobs[0]));
+    }else if(m.event==='chunk_start'){
+      chunkBytes=0;
+      say('job '+jobIndex+' chunk '+m.index+' start frames='+m.frames+' mode='+m.stream_mode);
+    }else if(m.event==='chunk_done'){
+      totalChunks++;
+      const actual=Math.round(chunkBytes/2/1920);
+      addRow(jobIndex,jobs[jobIndex]||'',m,actual);
+      say('job '+jobIndex+' chunk '+m.index+' cap='+m.frames_cap+' actual='+actual+' hit='+m.cap_hit+' eos='+m.eos_reached+' sec='+m.audio_sec);
+    }else if(m.event==='utterance_done'){
+      say('job '+jobIndex+' done sec='+m.total_audio_sec+' chunks='+m.chunks.length);
+      jobIndex++;
+      if(stopping){finish('stopped',true);return;}
+      if(jobIndex<jobs.length){ws.send(jobPayload(jobs[jobIndex]));}
+      else{
+        summaryEl.textContent='Jobs '+jobs.length+', chunks '+totalChunks+', audio '+(totalBytes/2/24000).toFixed(2)+'s';
+        finish('done',false);
+      }
+    }else if(m.event==='cancelled'){
+      say('cancelled');
+    }else if(m.event==='error'){
+      say('ERROR '+m.detail);finish('error',true);
+    }
+  };
+  ws.onerror=()=>{say('socket error');finish('error',true);};
+  ws.onclose=()=>{say('closed');if(running)finish('stopped',true);};
+};
+stopBtn.onclick=()=>{
+  if(!running)return;
+  stopping=true;say('cancel sent');
+  if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:'cancel'}));
+  finish('stopped',true);
+};
+</script>
+</body>
+</html>
