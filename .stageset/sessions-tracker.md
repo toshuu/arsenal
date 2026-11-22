@@ -139,6 +139,7 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261122-201200-CODING | CODING | 2026-11-22T20:12:00+05:30 | Guard quiet early break and test B=320 formation. | .stageset/sessions/coding-phase4-quiet-fix.md | IDEA-0008; SSLD-029; FACT-0156; 20261122-200804-RUN | - |
 | 20261122-202000-MAINTENANCE | MAINTENANCE | 2026-11-22T20:20:00+05:30 | Quiet fix probe failed. Lock B=224 sentence as 350 ms operating point. | .stageset/sessions/maintenance-phase4-quiet-fix-review.md | IDEA-0008; FACT-0156; SSLD-029; 20261122-200804-RUN | - |
 | 20261122-202152-PROBE | PROBE | 2026-11-22T20:21:52+00:00 | Sweep B for the 24-frame latency tier and find the 100/200/350 ms gates. | .stageset/sessions/probe-lat24-b-sweep.md | FACT-0162; IDEA-0008; 20261122-235919-RUN | - |
+| 20261122-202305-PUSH | PUSH | 2026-11-22T20:23:05+00:00 | Push 24-frame latency design, B sweep, and StageSet updates to origin/main as 6ced66d. | .stageset/sessions/push-lat24-b-sweep.md | FACT-0161; FACT-0162; 20261122-202152-RUN | 6ced66d |
 | 20261122-232457-MAINTENANCE | MAINTENANCE | 2026-11-22T23:24:57+05:30 | Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS. | .stageset/sessions/maintenance-sentence-decision.md | IDEA-0008; FACT-0139; FACT-0158; FACT-0159; FACT-0160; 20261122-232457-RUN | - |
 
 ## Totals
@@ -147,4 +148,4 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 - IDEATION: 16.
 - MAINTENANCE: 22.
 - PROBE: 1.
-- PUSH: 26.
+- PUSH: 27.

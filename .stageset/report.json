@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-22T20:22:43Z",
+  "generated_at": "2026-11-22T20:23:16Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 134,
+    "sessions": 135,
     "runs": 31,
     "runs_active": 1,
     "results": 5
@@ -2578,9 +2578,20 @@
       "date": "2026-11-22T23:24:57+05:30",
       "type": "maintenance",
       "summary": "Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS."
+    },
+    {
+      "id": "push-lat24-b-sweep",
+      "date": "2026-11-22T20:23:05+00:00",
+      "type": "push",
+      "summary": "Push 24-frame latency design, B sweep, and StageSet updates to origin/main as 6ced66d."
     }
   ],
   "commits": [
+    {
+      "sha": "6ced66d",
+      "date": "2026-11-22T20:22:54+00:00",
+      "subject": "Latency WS: 24-first-frames then sentence, B sweep and StageSet"
+    },
     {
       "sha": "992e793",
       "date": "2026-11-22T19:46:39+00:00",
@@ -2775,11 +2786,6 @@
       "sha": "2748839",
       "date": "2026-11-19T14:44:55+00:00",
       "subject": "Add first-chunk PCM streaming and latency metrics"
-    },
-    {
-      "sha": "ee87665",
-      "date": "2026-11-19T14:40:38+00:00",
-      "subject": "StageSet: record server throughput defaults push"
     }
   ]
 }

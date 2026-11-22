@@ -22,10 +22,10 @@ This file is generated. Do not edit it by hand.
 ## Last 5 sessions
 
 - 20261122-232457-MAINTENANCE · MAINTENANCE · Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS.
+- 20261122-202305-PUSH · PUSH · Push 24-frame latency design, B sweep, and StageSet updates to origin/main as 6ced66d.
 - 20261122-202152-PROBE · PROBE · Sweep B for the 24-frame latency tier and find the 100/200/350 ms gates.
 - 20261122-202000-MAINTENANCE · MAINTENANCE · Quiet fix probe failed. Lock B=224 sentence as 350 ms operating point.
 - 20261122-201200-CODING · CODING · Guard quiet early break and test B=320 formation.
-- 20261122-200500-MAINTENANCE · MAINTENANCE · Review quiet probe. No policy passes. Early break causes [1,319].
 
 ## Verified environment facts
 
