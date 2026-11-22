@@ -114,11 +114,30 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261122-150820-CODING | CODING | 2026-11-22T15:08:20+05:30 | Verify real WS sentence and utterance modes and fix cap-hit/send bugs. | .stageset/sessions/coding-phase2-ws-quality-probe.md | IDEA-0008; SSLD-023; 20261122-150820-RUN; 20261122-151455-RUN; FACT-0149; FACT-0150 | - |
 | 20261122-152200-IDEATION | IDEATION | 2026-11-22T15:22:00+05:30 | Plan Phase 2 B-ramp for sentence and utterance on server path. | .stageset/sessions/plan-phase2-b-ramp.md | IDEA-0008; FACT-0147; FACT-0148; FACT-0149; FACT-0150 | - |
 | 20261122-152530-CODING | CODING | 2026-11-22T15:25:30+05:30 | Run Phase 2 B-ramp for sentence and utterance; max stable B224. | .stageset/sessions/coding-phase2-b-ramp.md | IDEA-0008; SSLD-024; 20261122-152530-RUN; FACT-0151 | - |
+| 20261122-154852-CODING | CODING | 2026-11-22T15:48:52+00:00 | Run the real WebSocket burst gate at the default call config. | .stageset/sessions/coding-ssld-030-ws-burst-gate.md | IDEA-0008; SSLD-030; FACT-0154; 20261122-210000-RUN | - |
+| 20261122-155442-MAINTENANCE | MAINTENANCE | 2026-11-22T15:54:42+00:00 | Diagnose the SSLD-030 measurement drift and plan a clean re-run. | .stageset/sessions/plan-ssld-031-reliability.md | IDEA-0008; SSLD-030; SSLD-031; 20261122-210000-RUN | - |
+| 20261122-161946-MAINTENANCE | MAINTENANCE | 2026-11-22T16:19:46+00:00 | Review the SSLD-031 block. Replace the shared client with a dedicated gate client. | .stageset/sessions/maintenance-ssld-031-block-review.md | IDEA-0008; SSLD-031; SSLD-032; 20261122-210000-RUN | - |
+| 20261122-163759-CODING | CODING | 2026-11-22T16:37:59+00:00 | Add the dedicated gate client and run the corrected WS gate. | .stageset/sessions/coding-ssld-032-gate-client.md | IDEA-0008; SSLD-031; SSLD-032; 20261122-230000-RUN | - |
+| 20261122-164918-MAINTENANCE | MAINTENANCE | 2026-11-22T16:49:18+00:00 | Spec 4 for the WS gate. Add quiet formation and sentence/utterance comparison. | .stageset/sessions/maintenance-ssld-033-spec.md | IDEA-0008; SSLD-032; 20261122-230000-RUN | - |
+| 20261122-171000-MAINTENANCE | MAINTENANCE | 2026-11-22T17:10:00+00:00 | Spec 5 for the WS gate. Restore the confirmed formation settings and drop utterance. | .stageset/sessions/maintenance-ssld-033-spec5.md | IDEA-0008; SSLD-033; 20261122-235500-RUN; FACT-0139 | - |
+| 20261122-171156-CODING | CODING | 2026-11-22T17:11:56+00:00 | Add max_frames to the gate client and restore confirmed formation in the probe. | .stageset/sessions/coding-ssld-033-formation.md | IDEA-0008; SSLD-033; 20261123-000000-RUN | - |
+| 20261122-192150-IDEATION | IDEATION | 2026-11-22T19:21:50+05:30 | Plan Phase 4 admission. Test the cap before a BatchedStream change. | .stageset/sessions/plan-phase4-admission.md | IDEA-0008; FACT-0151 | - |
+| 20261122-192327-CODING | CODING | 2026-11-22T19:23:27+05:30 | Run the Phase 4 admission probe with the cap raised to 640. | .stageset/sessions/coding-phase4-admission.md | IDEA-0008; SSLD-025; 20261122-192327-RUN | - |
+| 20261122-193357-MAINTENANCE | MAINTENANCE | 2026-11-22T19:33:57+05:30 | Record the Phase 4 cap probe result. A cap raise does not stop the early tiny batch. | .stageset/sessions/maintenance-phase4-finding.md | IDEA-0008; FACT-0152; SSLD-025; 20261122-192327-RUN | - |
+| 20261122-193729-CODING | CODING | 2026-11-22T19:37:29+05:30 | Run the Phase 4 formation policy probe on the local T4. | .stageset/sessions/coding-phase4-formation.md | IDEA-0008; SSLD-026; FACT-0152; 20261122-193729-RUN | - |
+| 20261122-194929-MAINTENANCE | MAINTENANCE | 2026-11-22T19:49:29+05:30 | Review the formation probe. The default policy is stable but slow. Confirm on a real server. | .stageset/sessions/maintenance-phase4-formation-review.md | IDEA-0008; FACT-0153; SSLD-026; 20261122-193729-RUN | - |
+| 20261122-195007-CODING | CODING | 2026-11-22T19:50:07+05:30 | Confirm Phase 4 formation on a separate-process uvicorn server. | .stageset/sessions/coding-phase4-confirm.md | IDEA-0008; SSLD-027; FACT-0153; 20261122-195007-RUN | - |
+| 20261122-195737-MAINTENANCE | MAINTENANCE | 2026-11-22T19:57:37+05:30 | Review the real-server confirmation. B=320 is one batch but over 350 ms. | .stageset/sessions/maintenance-phase4-confirm-review.md | IDEA-0008; FACT-0154; SSLD-027; 20261122-195007-RUN | - |
+| 20261122-200000-CODING | CODING | 2026-11-22T20:00:00+05:30 | Run the Phase 4 quiet formation probe at B=320. | .stageset/sessions/coding-phase4-quiet.md | IDEA-0008; SSLD-028; FACT-0155; 20261122-195737-RUN | - |
+| 20261122-200500-MAINTENANCE | MAINTENANCE | 2026-11-22T20:05:00+05:30 | Review quiet probe. No policy passes. Early break causes [1,319]. | .stageset/sessions/maintenance-phase4-quiet-review.md | IDEA-0008; FACT-0155; SSLD-028; 20261122-195737-RUN | - |
+| 20261122-201200-CODING | CODING | 2026-11-22T20:12:00+05:30 | Guard quiet early break and test B=320 formation. | .stageset/sessions/coding-phase4-quiet-fix.md | IDEA-0008; SSLD-029; FACT-0156; 20261122-200804-RUN | - |
+| 20261122-202000-MAINTENANCE | MAINTENANCE | 2026-11-22T20:20:00+05:30 | Quiet fix probe failed. Lock B=224 sentence as 350 ms operating point. | .stageset/sessions/maintenance-phase4-quiet-fix-review.md | IDEA-0008; FACT-0156; SSLD-029; 20261122-200804-RUN | - |
+| 20261122-232457-MAINTENANCE | MAINTENANCE | 2026-11-22T23:24:57+05:30 | Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS. | .stageset/sessions/maintenance-sentence-decision.md | IDEA-0008; FACT-0139; FACT-0158; FACT-0159; FACT-0160; 20261122-232457-RUN | - |
 
 ## Totals
 
-- CODING: 57.
-- IDEATION: 15.
-- MAINTENANCE: 11.
+- CODING: 65.
+- IDEATION: 16.
+- MAINTENANCE: 21.
 - PROBE: 0.
 - PUSH: 25.

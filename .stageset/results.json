@@ -128,6 +128,64 @@
         }
       ],
       "source": ".stageset/reports/20261120-call-mode-complete/summary.json"
+    },
+    {
+      "id": "RES-005",
+      "date": "2026-11-22",
+      "title": "WS first-sound B thresholds and final mode decision",
+      "status": "PASS",
+      "summary": "Sentence mode with about 40 frames is the WS standing. Three modes remain in the app. The old B320 pass used an 8-frame first chunk in an older revision.",
+      "metrics": [
+        {
+          "label": "Default B at 100 ms",
+          "value": "44"
+        },
+        {
+          "label": "Default B at 200 ms",
+          "value": "96"
+        },
+        {
+          "label": "Default B at 300 ms",
+          "value": "160"
+        },
+        {
+          "label": "Conditioned B at 100 ms",
+          "value": "48"
+        },
+        {
+          "label": "Conditioned B at 200 ms",
+          "value": "128"
+        },
+        {
+          "label": "Conditioned B at 300 ms",
+          "value": "192"
+        },
+        {
+          "label": "Conditioned B at 350 ms",
+          "value": "256"
+        },
+        {
+          "label": "B320 p95 default voice",
+          "value": "578.84 ms"
+        },
+        {
+          "label": "B320 p95 conditioned v1",
+          "value": "437.09 ms"
+        },
+        {
+          "label": "Frame duration",
+          "value": "80 ms"
+        },
+        {
+          "label": "Old first chunk",
+          "value": "8 frames, 0.64 s"
+        },
+        {
+          "label": "Current sentence first chunk",
+          "value": "about 40 frames, about 3.2 s"
+        }
+      ],
+      "source": ".stageset/runs/20261122-232457-RUN.md"
     }
   ]
 }

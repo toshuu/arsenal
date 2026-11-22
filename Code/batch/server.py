@@ -673,13 +673,14 @@ class BatchWorker:
                 with self.cond:
                     self.cond.wait(timeout=0.25)
                 continue
-            if self.active_call_sessions > 0 and len(batch) >= self.active_call_sessions:
+            min_early = int(os.getenv("ARSENAL_CALL_FIRST_MIN_EARLY", "32"))
+            if self.active_call_sessions > 0 and len(batch) >= max(self.active_call_sessions, min_early):
                 break
             now = time.monotonic()
             last = self.last_enqueue.get(cls, start)
             quiet = q_ms <= 0 or (now - last) * 1000.0 >= q_ms
             hard = h_ms > 0 and (now - start) * 1000.0 >= h_ms
-            if hard or (quiet and not drained):
+            if hard or (quiet and not drained and len(batch) >= min_early):
                 if not hard and grace_ms > 0:
                     with self.cond:
                         self.cond.wait(timeout=grace_ms / 1000.0)
@@ -1337,7 +1338,7 @@ def create_app(
             parts.append(arr)
             chunk_logs.append({"index":i,"text":chunk,"frames_cap":mf,"cap_hit":bool(getattr(job,'cap_hit',False)),"audio_sec":len(arr)/settings.sample_rate})
             if getattr(job,'cap_hit',False):
-                log.warning("CAP_HIT /tts chunk=%s frames=%s text=%r", i, mf, chunk)
+                logging.getLogger(__name__).warning("CAP_HIT /tts chunk=%s frames=%s text=%r", i, mf, chunk)
         if call_mode:
             _assert_text_integrity(body.text, [c["text"] for c in chunk_logs])
             if len(parts) == 1:
@@ -1553,7 +1554,7 @@ def create_app(
                     arr = np.concatenate(bufs) if bufs else (audio[0].detach().float().cpu().numpy() if hasattr(audio[0], 'detach') else np.asarray(audio[0], dtype=np.float32))
                     cap_hit = bool(getattr(job, 'cap_hit', False))
                     chunk_meta.append({"index": idx, "text": chunks[idx], "frames_cap": mf, "cap_hit": cap_hit, "eos_reached": not cap_hit, "audio_sec": round(len(arr)/sr,4)})
-                    if cap_hit: log.warning("CAP_HIT /tts/stream chunk=%s frames=%s text=%r", idx, mf, chunks[idx])
+                    if cap_hit: logging.getLogger(__name__).warning("CAP_HIT /tts/stream chunk=%s frames=%s text=%r", idx, mf, chunks[idx])
                     a, prev_rms = smooth_chunk(arr, sr=sr, is_first=(idx==0), is_last=(idx==len(chunks)-1), prev_rms=prev_rms)
                     # determine pause by punctuation
                     txt = chunks[idx].rstrip()
@@ -1783,7 +1784,7 @@ def create_app(
                         _assert_text_integrity(text, [m["text"] for m in chunk_meta])
                     except Exception as e:
                         await ws.send_json({"event": "error", "detail": str(e)})
-                        log.error("text integrity: %s", e)
+                        logging.getLogger(__name__).error("text integrity: %s", e)
                     await ws.send_json({"event": "utterance_done", "chunks": chunk_meta, "total_audio_sec": round(total_samples/float(settings.sample_rate),4), "stream_mode": mode})
                 elif action == "flush":
                     await ws.send_json({"event": "flushed"})
@@ -1804,9 +1805,12 @@ def create_app(
             except Exception:
                 pass
         finally:
-            if state["started"]:
+            if state.get("started"):
                 state["started"] = False
-                worker.exit_call()
+                try:
+                    worker.exit_call()
+                except Exception:
+                    logging.getLogger(__name__).exception("ws_tts exit_call failed")
 
     def _debug_guard() -> None:
         if os.getenv("ARSENAL_DEBUG") != "1":

@@ -1,20 +1,20 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-22T09:58:34Z",
+  "generated_at": "2026-11-22T17:59:02Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
     "branch": "main"
   },
   "totals": {
-    "skeletons": 22,
-    "done": 18,
+    "skeletons": 28,
+    "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 108,
-    "runs": 22,
-    "runs_active": 0,
-    "results": 4
+    "sessions": 127,
+    "runs": 31,
+    "runs_active": 1,
+    "results": 5
   },
   "skeletons": [
     {
@@ -180,6 +180,51 @@
       "phase": "done"
     },
     {
+      "id": "probe_phase4_admission",
+      "path": "Skeletons/Probes/probe_phase4_admission.md",
+      "title": "Probe: Phase 4 admission and cap",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "probe_phase4_confirm",
+      "path": "Skeletons/Probes/probe_phase4_confirm.md",
+      "title": "Probe: Phase 4 real-server confirmation",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "probe_phase4_formation",
+      "path": "Skeletons/Probes/probe_phase4_formation.md",
+      "title": "Probe: Phase 4 formation policy",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "probe_phase4_quiet",
+      "path": "Skeletons/Probes/probe_phase4_quiet.md",
+      "title": "Probe: Phase 4 quiet formation at B=320",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "probe_phase4_quiet_fix",
+      "path": "Skeletons/Probes/probe_phase4_quiet_fix.md",
+      "title": "Probe: Phase 4 quiet early-break fix",
+      "status": "DONE",
+      "spec_revision": 1,
+      "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
       "id": "probe_prefill_levers",
       "path": "Skeletons/Probes/probe_prefill_levers.md",
       "title": "Probe: Phase C prefill levers",
@@ -204,6 +249,15 @@
       "status": "DONE",
       "spec_revision": 1,
       "implemented_revision": 1,
+      "phase": "done"
+    },
+    {
+      "id": "probe_ws_burst_gate",
+      "path": "Skeletons/Probes/probe_ws_burst_gate.md",
+      "title": "Probe: real WS low-latency gate with confirmed formation",
+      "status": "DONE",
+      "spec_revision": 5,
+      "implemented_revision": 5,
       "phase": "done"
     },
     {
@@ -344,6 +398,64 @@
         }
       ],
       "source": ".stageset/reports/20261120-call-mode-complete/summary.json"
+    },
+    {
+      "id": "RES-005",
+      "date": "2026-11-22",
+      "title": "WS first-sound B thresholds and final mode decision",
+      "status": "PASS",
+      "summary": "Sentence mode with about 40 frames is the WS standing. Three modes remain in the app. The old B320 pass used an 8-frame first chunk in an older revision.",
+      "metrics": [
+        {
+          "label": "Default B at 100 ms",
+          "value": "44"
+        },
+        {
+          "label": "Default B at 200 ms",
+          "value": "96"
+        },
+        {
+          "label": "Default B at 300 ms",
+          "value": "160"
+        },
+        {
+          "label": "Conditioned B at 100 ms",
+          "value": "48"
+        },
+        {
+          "label": "Conditioned B at 200 ms",
+          "value": "128"
+        },
+        {
+          "label": "Conditioned B at 300 ms",
+          "value": "192"
+        },
+        {
+          "label": "Conditioned B at 350 ms",
+          "value": "256"
+        },
+        {
+          "label": "B320 p95 default voice",
+          "value": "578.84 ms"
+        },
+        {
+          "label": "B320 p95 conditioned v1",
+          "value": "437.09 ms"
+        },
+        {
+          "label": "Frame duration",
+          "value": "80 ms"
+        },
+        {
+          "label": "Old first chunk",
+          "value": "8 frames, 0.64 s"
+        },
+        {
+          "label": "Current sentence first chunk",
+          "value": "about 40 frames, about 3.2 s"
+        }
+      ],
+      "source": ".stageset/runs/20261122-232457-RUN.md"
     }
   ],
   "runs": [
@@ -1180,6 +1292,439 @@
           "status": "DONE"
         }
       ]
+    },
+    {
+      "id": "SSLD-025",
+      "path": "LivingDocs/SSLD-025-phase4-admission.md",
+      "title": "Phase 4 admission and cap probe",
+      "status": "DONE",
+      "current_task": "T006",
+      "skeleton": "Skeletons/Probes/probe_phase4_admission.md",
+      "tasks_total": 6,
+      "tasks_done": 6,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create the admission probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Run the admission probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Create the run report",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the coding event",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Update the probe metadata",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Sync and validate",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-026",
+      "path": "LivingDocs/SSLD-026-phase4-formation.md",
+      "title": "Phase 4 formation policy probe",
+      "status": "DONE",
+      "current_task": "T006",
+      "skeleton": "Skeletons/Probes/probe_phase4_formation.md",
+      "tasks_total": 6,
+      "tasks_done": 6,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create the formation probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Run the formation probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Create the run report",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the coding event",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Update the probe metadata",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Sync and validate",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-027",
+      "path": "LivingDocs/SSLD-027-phase4-confirm.md",
+      "title": "Phase 4 real-server confirmation",
+      "status": "DONE",
+      "current_task": "T006",
+      "skeleton": "Skeletons/Probes/probe_phase4_confirm.md",
+      "tasks_total": 6,
+      "tasks_done": 6,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create the confirmation probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Run the confirmation probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Create the run report",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the coding event",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Update the probe metadata",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Sync and validate",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-028",
+      "path": "LivingDocs/SSLD-028-phase4-quiet.md",
+      "title": "Phase 4 quiet formation at B=320",
+      "status": "DONE",
+      "current_task": "T006",
+      "skeleton": "Skeletons/Probes/probe_phase4_quiet.md",
+      "tasks_total": 6,
+      "tasks_done": 6,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create the quiet probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Run the quiet probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Create the run report",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the coding event",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Update the probe metadata",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Sync and validate",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-029",
+      "path": "LivingDocs/SSLD-029-phase4-quiet-fix.md",
+      "title": "Phase 4 quiet early-break fix",
+      "status": "DONE",
+      "current_task": "T007",
+      "skeleton": "Skeletons/Probes/probe_phase4_quiet_fix.md",
+      "tasks_total": 7,
+      "tasks_done": 7,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Guard the quiet early break",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Create the fix probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Run the fix probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the run report",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Create the coding event",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Update probe metadata",
+          "status": "DONE"
+        },
+        {
+          "id": "T007",
+          "title": "Sync and validate",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-030",
+      "path": "LivingDocs/SSLD-030-ws-burst-gate.md",
+      "title": "Real WebSocket burst gate",
+      "status": "DONE",
+      "current_task": "T007",
+      "skeleton": "Skeletons/Probes/probe_ws_burst_gate.md",
+      "tasks_total": 7,
+      "tasks_done": 7,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create the WS burst gate probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Run the WS burst gate",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Create the run report",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the coding event",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Update the probe skeleton metadata",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Add the gate decision to IDEA-0008",
+          "status": "DONE"
+        },
+        {
+          "id": "T007",
+          "title": "Sync and validate",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-031",
+      "path": "LivingDocs/SSLD-031-reliability.md",
+      "title": "Restore measurement integrity and re-run the WS gate",
+      "status": "BLOCKED",
+      "current_task": "T004",
+      "skeleton": "Skeletons/Probes/probe_ws_burst_gate.md",
+      "tasks_total": 10,
+      "tasks_done": 3,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Preserve the deviated evidence",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Restore the burst client",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Add SHA-256 provenance to the probe",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Re-run the WS burst gate",
+          "status": "BLOCKED"
+        },
+        {
+          "id": "T005",
+          "title": "Create the corrected run report",
+          "status": "TODO"
+        },
+        {
+          "id": "T006",
+          "title": "Create the coding event",
+          "status": "TODO"
+        },
+        {
+          "id": "T007",
+          "title": "Update the probe skeleton metadata",
+          "status": "TODO"
+        },
+        {
+          "id": "T008",
+          "title": "Correct the idea record",
+          "status": "TODO"
+        },
+        {
+          "id": "T009",
+          "title": "Record the corrected fact",
+          "status": "TODO"
+        },
+        {
+          "id": "T010",
+          "title": "Sync and validate",
+          "status": "TODO"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-032",
+      "path": "LivingDocs/SSLD-032-gate-client.md",
+      "title": "Dedicated gate client and corrected WS gate",
+      "status": "DONE",
+      "current_task": "T009",
+      "skeleton": "Skeletons/Probes/probe_ws_burst_gate.md",
+      "tasks_total": 9,
+      "tasks_done": 9,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Create the dedicated gate client",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Point the probe at the dedicated client",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Fix the client barrier and run the gate",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the corrected run report",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Create the coding event",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Update the probe skeleton metadata",
+          "status": "DONE"
+        },
+        {
+          "id": "T007",
+          "title": "Correct the idea record",
+          "status": "DONE"
+        },
+        {
+          "id": "T008",
+          "title": "Record the corrected fact",
+          "status": "DONE"
+        },
+        {
+          "id": "T009",
+          "title": "Sync and validate",
+          "status": "DONE"
+        }
+      ]
+    },
+    {
+      "id": "SSLD-033",
+      "path": "LivingDocs/SSLD-033-formation-modes.md",
+      "title": "WS low-latency gate with confirmed formation",
+      "status": "DONE",
+      "current_task": "T008",
+      "skeleton": "Skeletons/Probes/probe_ws_burst_gate.md",
+      "tasks_total": 8,
+      "tasks_done": 8,
+      "tasks": [
+        {
+          "id": "T001",
+          "title": "Pass max_frames from the gate client",
+          "status": "DONE"
+        },
+        {
+          "id": "T002",
+          "title": "Rewrite the probe with the confirmed formation",
+          "status": "DONE"
+        },
+        {
+          "id": "T003",
+          "title": "Run the low-latency gate",
+          "status": "DONE"
+        },
+        {
+          "id": "T004",
+          "title": "Create the low-latency run report",
+          "status": "DONE"
+        },
+        {
+          "id": "T005",
+          "title": "Update the idea with the low-latency result",
+          "status": "DONE"
+        },
+        {
+          "id": "T006",
+          "title": "Record the low-latency fact",
+          "status": "DONE"
+        },
+        {
+          "id": "T007",
+          "title": "Create the coding event and close the skeleton",
+          "status": "DONE"
+        },
+        {
+          "id": "T008",
+          "title": "Sync and validate",
+          "status": "DONE"
+        }
+      ]
     }
   ],
   "ideas": [
@@ -1877,9 +2422,128 @@
       "date": "2026-11-22T15:25:30+05:30",
       "type": "coding",
       "summary": "Run Phase 2 B-ramp for sentence and utterance; max stable B224."
+    },
+    {
+      "id": "20261122-154852-CODING",
+      "date": "2026-11-22T15:48:52+00:00",
+      "type": "coding",
+      "summary": "Run the real WebSocket burst gate at the default call config."
+    },
+    {
+      "id": "20261122-155442-MAINTENANCE",
+      "date": "2026-11-22T15:54:42+00:00",
+      "type": "maintenance",
+      "summary": "Diagnose the SSLD-030 measurement drift and plan a clean re-run."
+    },
+    {
+      "id": "20261122-161946-MAINTENANCE",
+      "date": "2026-11-22T16:19:46+00:00",
+      "type": "maintenance",
+      "summary": "Review the SSLD-031 block. Replace the shared client with a dedicated gate client."
+    },
+    {
+      "id": "20261122-163759-CODING",
+      "date": "2026-11-22T16:37:59+00:00",
+      "type": "coding",
+      "summary": "Add the dedicated gate client and run the corrected WS gate."
+    },
+    {
+      "id": "20261122-164918-MAINTENANCE",
+      "date": "2026-11-22T16:49:18+00:00",
+      "type": "maintenance",
+      "summary": "Spec 4 for the WS gate. Add quiet formation and sentence/utterance comparison."
+    },
+    {
+      "id": "20261122-171000-MAINTENANCE",
+      "date": "2026-11-22T17:10:00+00:00",
+      "type": "maintenance",
+      "summary": "Spec 5 for the WS gate. Restore the confirmed formation settings and drop utterance."
+    },
+    {
+      "id": "20261122-171156-CODING",
+      "date": "2026-11-22T17:11:56+00:00",
+      "type": "coding",
+      "summary": "Add max_frames to the gate client and restore confirmed formation in the probe."
+    },
+    {
+      "id": "20261122-192150-IDEATION",
+      "date": "2026-11-22T19:21:50+05:30",
+      "type": "ideation",
+      "summary": "Plan Phase 4 admission. Test the cap before a BatchedStream change."
+    },
+    {
+      "id": "20261122-192327-CODING",
+      "date": "2026-11-22T19:23:27+05:30",
+      "type": "coding",
+      "summary": "Run the Phase 4 admission probe with the cap raised to 640."
+    },
+    {
+      "id": "20261122-193357-MAINTENANCE",
+      "date": "2026-11-22T19:33:57+05:30",
+      "type": "maintenance",
+      "summary": "Record the Phase 4 cap probe result. A cap raise does not stop the early tiny batch."
+    },
+    {
+      "id": "20261122-193729-CODING",
+      "date": "2026-11-22T19:37:29+05:30",
+      "type": "coding",
+      "summary": "Run the Phase 4 formation policy probe on the local T4."
+    },
+    {
+      "id": "20261122-194929-MAINTENANCE",
+      "date": "2026-11-22T19:49:29+05:30",
+      "type": "maintenance",
+      "summary": "Review the formation probe. The default policy is stable but slow. Confirm on a real server."
+    },
+    {
+      "id": "20261122-195007-CODING",
+      "date": "2026-11-22T19:50:07+05:30",
+      "type": "coding",
+      "summary": "Confirm Phase 4 formation on a separate-process uvicorn server."
+    },
+    {
+      "id": "20261122-195737-MAINTENANCE",
+      "date": "2026-11-22T19:57:37+05:30",
+      "type": "maintenance",
+      "summary": "Review the real-server confirmation. B=320 is one batch but over 350 ms."
+    },
+    {
+      "id": "20261122-200000-CODING",
+      "date": "2026-11-22T20:00:00+05:30",
+      "type": "coding",
+      "summary": "Run the Phase 4 quiet formation probe at B=320."
+    },
+    {
+      "id": "20261122-200500-MAINTENANCE",
+      "date": "2026-11-22T20:05:00+05:30",
+      "type": "maintenance",
+      "summary": "Review quiet probe. No policy passes. Early break causes [1,319]."
+    },
+    {
+      "id": "20261122-201200-CODING",
+      "date": "2026-11-22T20:12:00+05:30",
+      "type": "coding",
+      "summary": "Guard quiet early break and test B=320 formation."
+    },
+    {
+      "id": "20261122-202000-MAINTENANCE",
+      "date": "2026-11-22T20:20:00+05:30",
+      "type": "maintenance",
+      "summary": "Quiet fix probe failed. Lock B=224 sentence as 350 ms operating point."
+    },
+    {
+      "id": "20261122-232457-MAINTENANCE",
+      "date": "2026-11-22T23:24:57+05:30",
+      "type": "maintenance",
+      "summary": "Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS."
     }
   ],
   "commits": [
+    {
+      "sha": "e45c9b6",
+      "date": "2026-11-22T09:58:53+00:00",
+      "subject": "IDEA-0008 Phase 0-2: quality modes, WS probe, B-ramp evidence"
+    },
     {
       "sha": "ec578ff",
       "date": "2026-11-21T10:23:28+00:00",
@@ -2074,11 +2738,6 @@
       "sha": "054d5b0",
       "date": "2026-11-19T14:25:35+00:00",
       "subject": "Serve mixed-length voice profile batches with normal-path fallback"
-    },
-    {
-      "sha": "2a4cb31",
-      "date": "2026-11-19T14:14:35+00:00",
-      "subject": "StageSet: record voice profile guide push"
     }
   ]
 }
