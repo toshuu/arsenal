@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-22T19:40:59Z",
+  "generated_at": "2026-11-22T19:46:38Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 130,
+    "sessions": 131,
     "runs": 31,
     "runs_active": 1,
     "results": 5
@@ -2502,6 +2502,12 @@
       "summary": "Run the Phase 4 formation policy probe on the local T4."
     },
     {
+      "id": "20261122-194500-CODING",
+      "date": "2026-11-22T19:45:00+00:00",
+      "type": "coding",
+      "summary": "Split latency text by frame budget so cap-hit no longer cuts words."
+    },
+    {
       "id": "20261122-194929-MAINTENANCE",
       "date": "2026-11-22T19:49:29+05:30",
       "type": "maintenance",
@@ -2550,13 +2556,18 @@
       "summary": "Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS."
     },
     {
-      "id": "coding-latency-frame-budget-split",
-      "date": "2026-11-22T19:45:00+00:00",
-      "type": "coding",
-      "summary": "Split latency text by frame budget so cap-hit no longer cuts words."
+      "id": "push-latency-frame-budget",
+      "date": "2026-11-22T19:46:29+00:00",
+      "type": "push",
+      "summary": "Push latency WS frame-budget fix and web probe to origin/main as d455f06."
     }
   ],
   "commits": [
+    {
+      "sha": "d455f06",
+      "date": "2026-11-22T19:46:18+00:00",
+      "subject": "Latency WS: split text by frame budget and add web probe"
+    },
     {
       "sha": "0d64c61",
       "date": "2026-11-22T17:59:30+00:00",
@@ -2751,11 +2762,6 @@
       "sha": "fcffdb4",
       "date": "2026-11-19T14:40:25+00:00",
       "subject": "Match server defaults to T4 cap, add prewarm and frame admission"
-    },
-    {
-      "sha": "f4ffa8a",
-      "date": "2026-11-19T14:25:50+00:00",
-      "subject": "StageSet: record mixed-length profile push"
     }
   ]
 }

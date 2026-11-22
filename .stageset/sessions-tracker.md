@@ -128,6 +128,7 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261122-193614-CODING | CODING | 2026-11-22T19:36:14+00:00 | Fix frame-cap unit mismatch in WS latency mode: 24 frames now give 1.92 s. | .stageset/sessions/coding-frame-unit-fix.md | IDEA-0008; 20261122-235919-RUN | - |
 | 20261122-193729-CODING | CODING | 2026-11-22T19:37:29+05:30 | Run the Phase 4 formation policy probe on the local T4. | .stageset/sessions/coding-phase4-formation.md | IDEA-0008; SSLD-026; FACT-0152; 20261122-193729-RUN | - |
 | 20261122-194500-CODING | CODING | 2026-11-22T19:45:00+00:00 | Split latency text by frame budget so cap-hit no longer cuts words. | .stageset/sessions/coding-latency-frame-budget-split.md | IDEA-0008; 20261122-235919-RUN | - |
+| 20261122-194629-PUSH | PUSH | 2026-11-22T19:46:29+00:00 | Push latency WS frame-budget fix and web probe to origin/main as d455f06. | .stageset/sessions/push-latency-frame-budget.md | IDEA-0008; 20261122-235919-RUN | d455f06 |
 | 20261122-194929-MAINTENANCE | MAINTENANCE | 2026-11-22T19:49:29+05:30 | Review the formation probe. The default policy is stable but slow. Confirm on a real server. | .stageset/sessions/maintenance-phase4-formation-review.md | IDEA-0008; FACT-0153; SSLD-026; 20261122-193729-RUN | - |
 | 20261122-195007-CODING | CODING | 2026-11-22T19:50:07+05:30 | Confirm Phase 4 formation on a separate-process uvicorn server. | .stageset/sessions/coding-phase4-confirm.md | IDEA-0008; SSLD-027; FACT-0153; 20261122-195007-RUN | - |
 | 20261122-195737-MAINTENANCE | MAINTENANCE | 2026-11-22T19:57:37+05:30 | Review the real-server confirmation. B=320 is one batch but over 350 ms. | .stageset/sessions/maintenance-phase4-confirm-review.md | IDEA-0008; FACT-0154; SSLD-027; 20261122-195007-RUN | - |
@@ -143,4 +144,4 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 - IDEATION: 16.
 - MAINTENANCE: 21.
 - PROBE: 0.
-- PUSH: 25.
+- PUSH: 26.
