@@ -148,11 +148,12 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261123-162117-MAINTENANCE | MAINTENANCE | 2026-11-23T16:21:17+05:30 | Record the final conditioned-voice gate table for both tiers on one B grid. | .stageset/sessions/maintenance-final-cond-gates.md | IDEA-0008; FACT-0168; FACT-0169; FACT-0170; 20261123-162117-RUN | - |
 | 20261123-162500-PUSH | PUSH | 2026-11-23T16:25:00+05:30 | Push latency onset fix, dual-GPU sweeps, and final conditioned gate table to origin/main as e499dc2. | .stageset/sessions/push-latency-onset-and-final-gates.md | FACT-0168; FACT-0169; FACT-0170; 20261123-160927-RUN; 20261123-160927-RUN-02; 20261123-162117-RUN | e499dc233c86a63064b9098385b8b5842cde7afa |
 | 20261123-170329-CODING | CODING | 2026-11-23T17:03:29+05:30 | Sideline TRT attempt: static cache patch is bit-exact, but exported graph fails numeric parity. | .stageset/sessions/coding-sideline-trt.md | FACT-0171; 20261123-170329-RUN | - |
+| 20261123-171000-MAINTENANCE | MAINTENANCE | 2026-11-23T17:10:00+05:30 | Continue the TRT sideline after a numeric parity blocker; push sideline branch before the fix. | .stageset/sessions/maintenance-trt-continue.md | FACT-0171; 20261123-170329-RUN | - |
 
 ## Totals
 
 - CODING: 71.
 - IDEATION: 16.
-- MAINTENANCE: 24.
+- MAINTENANCE: 25.
 - PROBE: 2.
 - PUSH: 29.

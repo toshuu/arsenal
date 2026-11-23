@@ -21,11 +21,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261123-171000-MAINTENANCE · MAINTENANCE · Continue the TRT sideline after a numeric parity blocker; push sideline branch before the fix.
 - 20261123-170329-CODING · CODING · Sideline TRT attempt: static cache patch is bit-exact, but exported graph fails numeric parity.
 - 20261123-162500-PUSH · PUSH · Push latency onset fix, dual-GPU sweeps, and final conditioned gate table to origin/main as e499dc2.
 - 20261123-162117-MAINTENANCE · MAINTENANCE · Record the final conditioned-voice gate table for both tiers on one B grid.
 - 20261123-160927-CODING · CODING · Send the first latency PCM frame raw; leave sentence and utterance paths unchanged.
-- 20261123-153127-PROBE · PROBE · Re-measure sentence mode and the 24-frame latency tier on two GPUs with both voices.
 
 ## Verified environment facts
 
