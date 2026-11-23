@@ -1,0 +1,86 @@
+--- /kaggle/working/pocket-tts/pocket_tts/modules/attention.py	2026-11-23 09:34:48.190882167 +0000
++++ vendor/pocket-tts/pocket_tts/modules/attention.py	2026-11-23 11:31:53.671721230 +0000
+@@ -9,14 +9,19 @@
+ def complete_kv(
+     cache: torch.Tensor, offset: torch.Tensor, k: torch.Tensor, v: torch.Tensor
+ ) -> tuple[torch.Tensor, torch.Tensor]:
+-    if offset.numel() > 1 and not torch.all(offset == offset.view(-1)[0]):
+-        raise ValueError("Linear cache offset must be identical across batch.")
+-    offset_value = int(offset.view(-1)[0].item())
+-
+-    cache[0, :, offset_value : offset_value + k.shape[1]] = k
+-    cache[1, :, offset_value : offset_value + v.shape[1]] = v
+-    valid = cache[:, :, : offset_value + k.shape[1]]
+-    return valid[0], valid[1]
++    # Sideline TRT patch: no tensor-to-Python conversion and no data-dependent
++    # branch. The index is a tensor built from the offset. The full cache is
++    # returned; the attention mask drops positions that are not written yet.
++    start = offset.view(-1)[0]
++    batch = cache.shape[1]
++    length = k.shape[1]
++    rows = torch.arange(batch, device=k.device, dtype=torch.long).view(batch, 1)
++    cols = (start + torch.arange(length, device=k.device, dtype=torch.long)).view(1, length)
++    rows = rows.expand(batch, length)
++    cols = cols.expand(batch, length)
++    cache[0].index_put_((rows, cols), k)
++    cache[1].index_put_((rows, cols), v)
++    return cache[0], cache[1]
+ 
+ 
+ def _build_attention_mask(
+@@ -26,7 +31,11 @@
+     mask = (pos_k[:, None, :] >= 0) & (delta >= 0)
+     if context is not None:
+         mask = mask & (delta < context)
+-    return mask[:, None]
++    mask = mask[:, None]
++    # Sideline TRT patch: additive float mask instead of bool mask. TRT lowers
++    # this path more reliably than the bool-to-bias conversion.
++    return torch.where(mask, torch.zeros((), dtype=torch.float32, device=mask.device),
++                       torch.full((), float("-inf"), dtype=torch.float32, device=mask.device))
+ 
+ 
+ # Stateless (training) path: positions are just arange(t) for every row, so the
+@@ -72,9 +81,8 @@
+             # sets this, which pushes those key positions negative so the
+             # attention mask drops them (see _build_attention_mask).
+             pad=torch.zeros(batch_size, dtype=torch.long, device=device),
+-            cache=torch.full(
++            cache=torch.zeros(
+                 (2, batch_size, sequence_length, self.num_heads, self.dim_per_head),
+-                float("NaN"),
+                 device=device,
+                 dtype=dtype,
+             ),
+@@ -106,16 +114,13 @@
+         pos_k = torch.arange(k_attn.shape[2], device=k_attn.device, dtype=torch.long)
+         pos_k = pos_k.view(1, -1).expand(k_attn.shape[0], -1)
+         pad = state.get("pad")
++        if pad is None:
++            pad = torch.zeros_like(state["offset"])
+         offset = state["offset"]
+-        if pad is not None and bool((pad > 0).any()):
+-            # Padded slots get negative positions and are masked out. The query
+-            # offset is shifted by the same amount so query-key deltas are
+-            # unchanged -- otherwise a row's padding would inflate delta and
+-            # push real keys out of a finite `context` window. RoPE keeps using
+-            # the unshifted offset: it is relative, and shifting query and key
+-            # together leaves within-row distances identical.
+-            pos_k = pos_k - pad[:, None]
+-            offset = offset - pad
++        # Sideline TRT patch: always apply the pad shift. When pad is zero this
++        # is the same value as before, and no data-dependent branch remains.
++        pos_k = pos_k - pad[:, None]
++        offset = offset - pad
+         return k_attn, v_attn, pos_k, offset
+ 
+ 
+@@ -212,6 +217,8 @@
+                 1, -1
+             )
+             attn_mask = _build_attention_mask(pos_q, pos_k, self.context)
++        if attn_mask is not None and attn_mask.is_floating_point():
++            attn_mask = attn_mask.to(q.dtype)
+         x = F.scaled_dot_product_attention(
+             q, k_attn, v_attn, attn_mask, dropout_p=0.0, is_causal=is_causal
+         )

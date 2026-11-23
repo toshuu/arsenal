@@ -4,3 +4,8 @@ __pycache__/
 # Large model files and probe output. Do not commit them.
 Code/model/
 Code/probes/out/
+out/
+vendor/
+*.engine
+*.onnx
+*.pt2
