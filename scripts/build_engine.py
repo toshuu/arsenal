@@ -11,9 +11,9 @@ import tensorrt as trt
 
 ROOT = Path("/kaggle/working/arsenal-trt-sideline")
 OUT = ROOT / "out" / "export"
-ONNX = OUT / "flow_step.onnx"
 FP32 = os.getenv("TRT_FP32") == "1"
-ENGINE = OUT / ("flow_step_fp32.engine" if FP32 else "flow_step.engine")
+ONNX = OUT / (os.getenv("TRT_ONNX") or "flow_step.onnx")
+ENGINE = OUT / (os.getenv("TRT_ENGINE") or ("flow_step_fp32.engine" if FP32 else "flow_step.engine"))
 result: dict = {}
 
 logger = trt.Logger(trt.Logger.WARNING)

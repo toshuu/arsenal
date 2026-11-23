@@ -40,7 +40,7 @@ sp = BatchedStream(
     model, voice="/kaggle/working/refHD.wav", voice_seconds=4.0, max_first_tokens=16
 )
 prefix, pad, _ = sp._build_prefixes(make_texts(BATCH)[:BATCH])
-state = init_states(model.flow_lm, BATCH, prefix.shape[1] + FRAMES + 2)
+state = init_states(model.flow_lm, BATCH, 512)
 set_state_padding(state, pad)
 names = list(state.keys())
 
@@ -73,7 +73,7 @@ empty_tokens = torch.empty(BATCH, 0, dtype=torch.int64, device="cuda")
 latent = model.flow_lm.bos_emb.view(1, 1, -1).expand(BATCH, 1, -1)
 args = (empty_tokens, latent, prefix) + tuple(flat)
 try:
-    ep = torch.export.export(wrap, args, strict=False)
+    ep = torch.export.export(wrap, args, strict=True)
     torch.export.save(ep, OUT / "flow_step.pt2")
     torch.save(tuple(args), OUT / "flow_inputs.pt")
     result["export"] = "ok"

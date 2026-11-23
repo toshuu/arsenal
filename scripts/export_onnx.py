@@ -32,10 +32,16 @@ result: dict = {"batch": BATCH, "frames": FRAMES}
 model = TTSModel.load_model(config="config.yaml").to("cuda").eval()
 enable_fp16_backbone(model, mimi_fp16=True)
 load_fp16_weights(model, Path("fp16_weights.pt"))
+for module in model.modules():
+    if isinstance(module, torch.nn.LayerNorm) and module.weight is not None:
+        if module.weight.dtype == torch.float32:
+            module.weight.data = module.weight.data.half()
+            if module.bias is not None:
+                module.bias.data = module.bias.data.half()
 model.temp = 0.0
 sp = BatchedStream(model, voice="/kaggle/working/refHD.wav", voice_seconds=4.0, max_first_tokens=16)
 prefix, pad, _ = sp._build_prefixes(make_texts(BATCH)[:BATCH])
-state = init_states(model.flow_lm, BATCH, prefix.shape[1] + FRAMES + 2)
+state = init_states(model.flow_lm, BATCH, 512)
 set_state_padding(state, pad)
 names = list(state.keys())
 
