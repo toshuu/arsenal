@@ -1772,12 +1772,19 @@ def create_app(
                                 if index == 0:
                                     metrics.record_ws_phase((first_sent_ns - t_job_ns) / 1e6, 0.0, 0.0, after_emit)
                             samples += len(pcm) // 2
+                        first_raw_sent = False
+
                         async def _drain_frames():
+                            nonlocal first_raw_sent
                             while True:
                                 data = await frame_q.get()
                                 if data is None:
                                     break
                                 arr = np.frombuffer(data, dtype='<i2').astype(np.float32) / 32768.0
+                                if comp is not None and not first_raw_sent:
+                                    first_raw_sent = True
+                                    await _send_pcm(arr)
+                                    continue
                                 out = comp.push(arr, final=False) if comp is not None else arr
                                 await _send_pcm(out)
                             if comp is not None:

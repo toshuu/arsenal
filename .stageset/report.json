@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-22T20:39:00Z",
+  "generated_at": "2026-11-23T10:51:51Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 137,
+    "sessions": 140,
     "runs": 31,
     "runs_active": 1,
     "results": 5
@@ -76,8 +76,8 @@
       "path": "Skeletons/Code/batch/server.py",
       "title": "Implementation: HTTP serving layer",
       "status": "DONE",
-      "spec_revision": 11,
-      "implemented_revision": 11,
+      "spec_revision": 12,
+      "implemented_revision": 12,
       "phase": "done"
     },
     {
@@ -2580,6 +2580,12 @@
       "summary": "Push 24-frame latency design, B sweep, and StageSet updates to origin/main as 6ced66d."
     },
     {
+      "id": "20261122-203849-PUSH",
+      "date": "2026-11-22T20:38:49+00:00",
+      "type": "push",
+      "summary": "Push holdback correction, FACT-0163, and holdback env knob to origin/main as 6c5c75c."
+    },
+    {
       "id": "20261122-204000-MAINTENANCE",
       "date": "2026-11-22T20:40:00+00:00",
       "type": "maintenance",
@@ -2592,13 +2598,30 @@
       "summary": "Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS."
     },
     {
-      "id": "push-holdback-correction",
-      "date": "2026-11-22T20:38:49+00:00",
-      "type": "push",
-      "summary": "Push holdback correction, FACT-0163, and holdback env knob to origin/main as 6c5c75c."
+      "id": "20261123-153127-PROBE",
+      "date": "2026-11-23T15:31:27+05:30",
+      "type": "probe",
+      "summary": "Re-measure sentence mode and the 24-frame latency tier on two GPUs with both voices."
+    },
+    {
+      "id": "20261123-160927-CODING",
+      "date": "2026-11-23T16:09:27+05:30",
+      "type": "coding",
+      "summary": "Send the first latency PCM frame raw; leave sentence and utterance paths unchanged."
+    },
+    {
+      "id": "20261123-162117-MAINTENANCE",
+      "date": "2026-11-23T16:21:17+05:30",
+      "type": "maintenance",
+      "summary": "Record the final conditioned-voice gate table for both tiers on one B grid."
     }
   ],
   "commits": [
+    {
+      "sha": "83b277f",
+      "date": "2026-11-22T20:39:00+00:00",
+      "subject": "StageSet: record push of holdback correction"
+    },
     {
       "sha": "6c5c75c",
       "date": "2026-11-22T20:38:26+00:00",
@@ -2793,11 +2816,6 @@
       "sha": "687cc6e",
       "date": "2026-11-19T14:51:36+00:00",
       "subject": "StageSet: record production validation plan push"
-    },
-    {
-      "sha": "304bb50",
-      "date": "2026-11-19T14:51:30+00:00",
-      "subject": "Document production validation plan and refresh StageSet report"
     }
   ]
 }

@@ -143,11 +143,14 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261122-203849-PUSH | PUSH | 2026-11-22T20:38:49+00:00 | Push holdback correction, FACT-0163, and holdback env knob to origin/main as 6c5c75c. | .stageset/sessions/push-holdback-correction.md | FACT-0163; 20261122-204000-RUN | 6c5c75c |
 | 20261122-204000-MAINTENANCE | MAINTENANCE | 2026-11-22T20:40:00+00:00 | Correct the holdback claim and add a holdback env knob for the latency compressor. | .stageset/sessions/maintenance-holdback-correction.md | FACT-0162; FACT-0163; 20261122-202152-RUN | - |
 | 20261122-232457-MAINTENANCE | MAINTENANCE | 2026-11-22T23:24:57+05:30 | Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS. | .stageset/sessions/maintenance-sentence-decision.md | IDEA-0008; FACT-0139; FACT-0158; FACT-0159; FACT-0160; 20261122-232457-RUN | - |
+| 20261123-153127-PROBE | PROBE | 2026-11-23T15:31:27+05:30 | Re-measure sentence mode and the 24-frame latency tier on two GPUs with both voices. | .stageset/sessions/probe-dual-gpu-sentence-latency.md | IDEA-0008; FACT-0164; FACT-0165; 20261123-153127-RUN; 20261123-153127-RUN-02 | - |
+| 20261123-160927-CODING | CODING | 2026-11-23T16:09:27+05:30 | Send the first latency PCM frame raw; leave sentence and utterance paths unchanged. | .stageset/sessions/coding-latency-onset-fix.md | IDEA-0008; FACT-0167; FACT-0168; FACT-0169; 20261123-160927-RUN; 20261123-160927-RUN-02 | - |
+| 20261123-162117-MAINTENANCE | MAINTENANCE | 2026-11-23T16:21:17+05:30 | Record the final conditioned-voice gate table for both tiers on one B grid. | .stageset/sessions/maintenance-final-cond-gates.md | IDEA-0008; FACT-0168; FACT-0169; FACT-0170; 20261123-162117-RUN | - |
 
 ## Totals
 
-- CODING: 69.
+- CODING: 70.
 - IDEATION: 16.
-- MAINTENANCE: 23.
-- PROBE: 1.
+- MAINTENANCE: 24.
+- PROBE: 2.
 - PUSH: 28.

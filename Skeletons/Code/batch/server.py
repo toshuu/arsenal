@@ -5,11 +5,11 @@
 @stageset source_idea: IDEA-0005
 @stageset status: DONE
 @stageset priority: P0
-@stageset spec_revision: 11
-@stageset implemented_revision: 11
-@stageset planned_in: .stageset/sessions/plan-phase1-server-modes.md
-@stageset last_updated_in: .stageset/sessions/coding-phase2-ws-quality-probe.md
-@stageset implemented_in: .stageset/sessions/coding-batch-target.md
+@stageset spec_revision: 12
+@stageset implemented_revision: 12
+@stageset planned_in: .stageset/sessions/coding-latency-onset-fix.md
+@stageset last_updated_in: .stageset/sessions/coding-latency-onset-fix.md
+@stageset implemented_in: .stageset/sessions/coding-latency-onset-fix.md
 @stageset blocker_ref: -
 @stageset resolution_of: -
 -->
@@ -65,6 +65,8 @@ Report health and metrics.
 - `utterance` uses no first-token cut, 512 frame budget, and one job for the whole text.
 - `latency` keeps the legacy 16-token first cut and 192 frame budget.
 - Quality modes skip pause compression. `latency` keeps it.
+- In `latency` mode the first PCM frame is sent raw before the pause compressor starts. Later frames on that chunk still use the compressor.
+- `sentence` and `utterance` send raw frames on every chunk. This is unchanged.
 - `chunk_start` and `utterance_done` include `stream_mode`.
 - A normal HTTP request never changes class and never uses a call-mode chunker.
 - A cancel frees queued jobs and sets the stop event. Rows are released at the batch end.
@@ -137,6 +139,13 @@ Report health and metrics.
 - Predicted output: `{"ok": true}`
 - Pass condition: exit code 0 and mode resolution, mode settings, and raw-frame flag are correct.
 - Fail condition: unknown mode accepted, wrong settings, or compression enabled for a quality mode.
+
+### CHECK-SERVER-13 - latency first frame not held by compressor
+
+- Command: `python /tmp/opencode/mode_stage_ab.py`
+- Predicted output: latency `ws_after_emit_ms` max below 50 ms and latency client p95 within 25 ms of sentence p95 on one server at B=48.
+- Pass condition: both values hold and both modes have 0 errors.
+- Fail condition: latency first-emit-to-byte max at or above 50 ms, or latency p95 more than 25 ms above sentence p95.
 
 ### CHECK-CALL-WS-01 - WebSocket call stream
 
