@@ -21,11 +21,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261123-162500-PUSH · PUSH · Push latency onset fix, dual-GPU sweeps, and final conditioned gate table to origin/main as e499dc2.
 - 20261123-162117-MAINTENANCE · MAINTENANCE · Record the final conditioned-voice gate table for both tiers on one B grid.
 - 20261123-160927-CODING · CODING · Send the first latency PCM frame raw; leave sentence and utterance paths unchanged.
 - 20261123-153127-PROBE · PROBE · Re-measure sentence mode and the 24-frame latency tier on two GPUs with both voices.
 - 20261122-232457-MAINTENANCE · MAINTENANCE · Document B thresholds, first-chunk cause, mode check, and the owner choice of sentence mode for WS.
-- 20261122-204000-MAINTENANCE · MAINTENANCE · Correct the holdback claim and add a holdback env knob for the latency compressor.
 
 ## Verified environment facts
 

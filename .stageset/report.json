@@ -1,6 +1,6 @@
 {
   "schema": "stageset-report/1",
-  "generated_at": "2026-11-23T10:51:51Z",
+  "generated_at": "2026-11-23T10:52:17Z",
   "project": {
     "name": "Arsenal",
     "repo": "toshuu/arsenal",
@@ -11,7 +11,7 @@
     "done": 24,
     "waiting": 3,
     "draft": 1,
-    "sessions": 140,
+    "sessions": 141,
     "runs": 31,
     "runs_active": 1,
     "results": 5
@@ -2614,9 +2614,20 @@
       "date": "2026-11-23T16:21:17+05:30",
       "type": "maintenance",
       "summary": "Record the final conditioned-voice gate table for both tiers on one B grid."
+    },
+    {
+      "id": "20261123-162500-PUSH",
+      "date": "2026-11-23T16:25:00+05:30",
+      "type": "push",
+      "summary": "Push latency onset fix, dual-GPU sweeps, and final conditioned gate table to origin/main as e499dc2."
     }
   ],
   "commits": [
+    {
+      "sha": "e499dc2",
+      "date": "2026-11-23T10:52:03+00:00",
+      "subject": "Latency WS: send first frame raw; record dual-GPU gates and final conditioned table"
+    },
     {
       "sha": "83b277f",
       "date": "2026-11-22T20:39:00+00:00",
@@ -2811,11 +2822,6 @@
       "sha": "3ab3fee",
       "date": "2026-11-19T15:03:47+00:00",
       "subject": "Probe long-text edges, HTTP profile path, and chunk joins"
-    },
-    {
-      "sha": "687cc6e",
-      "date": "2026-11-19T14:51:36+00:00",
-      "subject": "StageSet: record production validation plan push"
     }
   ]
 }
