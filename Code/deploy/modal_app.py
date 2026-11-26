@@ -30,6 +30,8 @@ image = (
     .apt_install("libsndfile1")
     .pip_install(
         "pocket-tts==4.0.1",
+        "indic-numtowords==1.1.0",
+        "num2words>=0.5.13",
         "fastapi>=0.100",
         "uvicorn[standard]>=0.13",
         "httpx",

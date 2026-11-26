@@ -147,11 +147,29 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261123-160927-CODING | CODING | 2026-11-23T16:09:27+05:30 | Send the first latency PCM frame raw; leave sentence and utterance paths unchanged. | .stageset/sessions/coding-latency-onset-fix.md | IDEA-0008; FACT-0167; FACT-0168; FACT-0169; 20261123-160927-RUN; 20261123-160927-RUN-02 | - |
 | 20261123-162117-MAINTENANCE | MAINTENANCE | 2026-11-23T16:21:17+05:30 | Record the final conditioned-voice gate table for both tiers on one B grid. | .stageset/sessions/maintenance-final-cond-gates.md | IDEA-0008; FACT-0168; FACT-0169; FACT-0170; 20261123-162117-RUN | - |
 | 20261123-162500-PUSH | PUSH | 2026-11-23T16:25:00+05:30 | Push latency onset fix, dual-GPU sweeps, and final conditioned gate table to origin/main as e499dc2. | .stageset/sessions/push-latency-onset-and-final-gates.md | FACT-0168; FACT-0169; FACT-0170; 20261123-160927-RUN; 20261123-160927-RUN-02; 20261123-162117-RUN | e499dc233c86a63064b9098385b8b5842cde7afa |
+| 20261126-071925-CODING | CODING | 2026-11-26T07:19:25+00:00 | Add CPU text normalization before the TTS chunker and wire it to HTTP and WebSocket. | .stageset/sessions/coding-text-normalization.md | IDEA-0009; 20261126-124922-RUN | - |
+| 20261126-072836-CODING | CODING | 2026-11-26T07:28:36+00:00 | Fix 5 supervisor-reported normalizer bugs and add regression tests. | .stageset/sessions/coding-text-normalize-supervisor-fixes.md | IDEA-0009; FACT-0172; 20261126-125836-RUN | - |
+| 20261126-074612-CODING | CODING | 2026-11-26T07:46:12+00:00 | Apply all owner policy decisions and re-run the corrected pair file. | .stageset/sessions/coding-text-normalize-policy-decisions.md | IDEA-0009; FACT-0175; 20261126-131612-RUN | - |
+| 20261126-083218-CODING | CODING | 2026-11-26T08:32:18+00:00 | Check CPU voice output, fix Hindi am/pm speech form, and regenerate two WAVs. | .stageset/sessions/coding-cpu-hindi-audio-check.md | IDEA-0009; FACT-0176; 20261126-140218-RUN | - |
+| 20261126-083818-CODING | CODING | 2026-11-26T08:38:18+00:00 | Fix Hindi OTP pronunciation with Devanagari acronym letters and regenerate the mixed WAV. | .stageset/sessions/coding-hindi-acronym-audio-fix.md | IDEA-0009; FACT-0177; 20261126-140818-RUN | - |
+| 20261126-084145-PROBE | PROBE | 2026-11-26T08:41:45+00:00 | Generate CPU WAVs with 3 s and 4 s slices of the new reference clip. | .stageset/sessions/coding-cpu-ref4-duration-compare.md | IDEA-0009; 20261126-141145-RUN | - |
+| 20261126-084420-CODING | CODING | 2026-11-26T08:44:20+00:00 | Fix the 3 s reference CPU WAV that cut off in the middle of OTP. | .stageset/sessions/coding-cpu-ref4-3s-cut-fix.md | 20261126-141420-RUN; FACT-0179 | - |
+| 20261126-084820-PROBE | PROBE | 2026-11-26T08:48:20+00:00 | Generate Saurabh text WAVs with 3 s, 4 s, and full reference duration. | .stageset/sessions/coding-cpu-saurabh-refs.md | 20261126-141820-RUN; FACT-0180 | - |
+| 20261126-085147-CODING | CODING | 2026-11-26T08:51:47+00:00 | Regenerate Saurabh WAVs with revised comma punctuation. | .stageset/sessions/coding-cpu-saurabh-refs-v2.md | 20261126-142147-RUN; FACT-0181 | - |
+| 20261126-085636-CODING | CODING | 2026-11-26T08:56:36+00:00 | Generate Saurabh WAVs with English words transliterated into Devanagari. | .stageset/sessions/coding-cpu-saurabh-dev.md | 20261126-142636-RUN; FACT-0182 | - |
+| 20261126-090309-CODING | CODING | 2026-11-26T09:03:09+00:00 | Revert Devanagari transliteration and regenerate with the new reference URL. | .stageset/sessions/coding-cpu-saurabh-newref.md | 20261126-143309-RUN; FACT-0183 | - |
+| 20261126-091119-CODING | CODING | 2026-11-26T09:11:19+00:00 | Generate Saurabh WAVs with 3 s, 4 s, and 8 s slices of multi-speaker (7).wav. | .stageset/sessions/coding-cpu-saurabh-ms7.md | 20261126-144119-RUN; FACT-0185 | - |
+| 20261126-091455-CODING | CODING | 2026-11-26T09:14:55+00:00 | Generate 1 s, 2 s, and 3 s reference versions from multi-speaker (7).wav with revised text. | .stageset/sessions/coding-cpu-saurabh-ms7-short.md | 20261126-144455-RUN; FACT-0186 | - |
+| 20261126-092052-PROBE | PROBE | 2026-11-26T09:20:52+00:00 | Identify the high-quality first second in the 1 s reference variant. | .stageset/sessions/probe-cpu-1s-voice-leak.md | 20261126-145052-RUN; FACT-0187 | - |
+| 20261126-092826-CODING | CODING | 2026-11-26T09:28:26+00:00 | Generate Saurabh Hinglish WAVs with 1 s, 2 s, and 3 s reference from multi-speaker (7).wav. | .stageset/sessions/coding-cpu-saurabh-hinglish.md | 20261126-145826-RUN; FACT-0188 | - |
+| 20261126-142251-CODING | CODING | 2026-11-26T14:22:51+00:00 | Add square-footage normalization to the base normalizer. | .stageset/sessions/coding-text-normalize-sqft.md | IDEA-0009; 20261126-195251-RUN | - |
+| 20261126-142546-IDEATION | IDEATION | 2026-11-26T14:25:46+00:00 | Document held chunk-context and max-token fixes without implementing them. | .stageset/sessions/plan-held-generation-path-fixes.md | IDEA-0009; IDEA-0010; 20261126-195546-RUN | - |
+| 20261126-151618-IDEATION | IDEATION | 2026-11-26T15:16:18+00:00 | Build and verify opt-in transliteration modes in a separate sandbox. | .stageset/sessions/plan-transliteration-sandbox.md | IDEA-0009; IDEA-0010; IDEA-0011; 20261126-204618-RUN | - |
 
 ## Totals
 
-- CODING: 70.
-- IDEATION: 16.
+- CODING: 83.
+- IDEATION: 18.
 - MAINTENANCE: 24.
-- PROBE: 2.
+- PROBE: 5.
 - PUSH: 29.

@@ -25,6 +25,7 @@ from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconn
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from batch.call_chunker import CALL_MODE, ChunkCache, estimate_first_max_frames, first_chunk_words, split_by_frame_budget, split_call_text
+from batch.text_normalize import normalize as normalize_text
 from batch.audio_join import join_chunks, smooth_chunk
 from batch.pause_compress import StreamPauseCompressor, compress_long_pauses
 from batch.job_classes import (
@@ -1166,12 +1167,18 @@ class TTSRequest(BaseModel):
     text: str = Field(min_length=1)
     max_frames: int | None = Field(default=None, ge=1)
     voice_profile: str | None = None
+    lang: str | None = None
 
 
 class BatchRequest(BaseModel):
     texts: list[str] = Field(min_length=1)
     max_frames: int | None = Field(default=None, ge=1)
     voice_profile: str | None = None
+    lang: str | None = None
+
+
+def _normalized(text: str, lang: str | None = None) -> str:
+    return normalize_text(text, lang or os.getenv("ARSENAL_TEXT_LANG", "en"))
 
 
 def create_app(
@@ -1296,6 +1303,7 @@ def create_app(
     async def tts(body: TTSRequest, request: Request) -> Response:
         t0 = time.perf_counter_ns()
         _note_arrival(request)
+        body.text = _normalized(body.text, body.lang)
         validate([body.text], body.voice_profile, body.max_frames)
         t_validate = time.perf_counter_ns()
         call_mode = request.query_params.get("mode") == "call"
@@ -1356,6 +1364,7 @@ def create_app(
         request_start = time.monotonic()
         t_handler = time.perf_counter_ns()
         _note_arrival(request)
+        body.text = _normalized(body.text, body.lang)
         validate([body.text], body.voice_profile, body.max_frames)
         t_validate = time.perf_counter_ns()
         call_mode = request.query_params.get("mode") == "call"
@@ -1628,6 +1637,7 @@ def create_app(
             "profile": None,
             "started": False,
             "cancelled": False,
+            "lang": os.getenv("ARSENAL_TEXT_LANG", "en"),
             "stream_mode": resolve_call_stream_mode(),
         }
         try:
@@ -1649,6 +1659,7 @@ def create_app(
                         )
                         continue
                     state["profile"] = profile
+                    state["lang"] = msg.get("lang") or state["lang"]
                     state["stream_mode"] = mode
                     state["started"] = True
                     state["cancelled"] = False
@@ -1658,7 +1669,7 @@ def create_app(
                     if not state["started"]:
                         await ws.send_json({"event": "error", "detail": "send start first"})
                         continue
-                    text = str(msg.get("text") or "").strip()
+                    text = _normalized(str(msg.get("text") or ""), state.get("lang"))
                     if not text:
                         await ws.send_json({"event": "error", "detail": "empty text"})
                         continue
@@ -2201,6 +2212,7 @@ def create_app(
 
     @app.post("/tts/batch")
     async def tts_batch(body: BatchRequest, request: Request) -> JSONResponse:
+        body.texts = [_normalized(text, body.lang) for text in body.texts]
         validate(body.texts, body.voice_profile, body.max_frames)
         try:
             job = worker.submit(body.texts, body.max_frames, body.voice_profile)
