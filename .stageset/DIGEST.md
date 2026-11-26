@@ -21,11 +21,11 @@ This file is generated. Do not edit it by hand.
 
 ## Last 5 sessions
 
+- 20261126-151811-PUSH · PUSH · Push text normalization, run reports, and transliteration sandbox plan to origin/main.
 - 20261126-151618-IDEATION · IDEATION · Build and verify opt-in transliteration modes in a separate sandbox.
 - 20261126-142546-IDEATION · IDEATION · Document held chunk-context and max-token fixes without implementing them.
 - 20261126-142251-CODING · CODING · Add square-footage normalization to the base normalizer.
 - 20261126-092826-CODING · CODING · Generate Saurabh Hinglish WAVs with 1 s, 2 s, and 3 s reference from multi-speaker (7).wav.
-- 20261126-092052-PROBE · PROBE · Identify the high-quality first second in the 1 s reference variant.
 
 ## Verified environment facts
 

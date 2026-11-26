@@ -165,6 +165,7 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 | 20261126-142251-CODING | CODING | 2026-11-26T14:22:51+00:00 | Add square-footage normalization to the base normalizer. | .stageset/sessions/coding-text-normalize-sqft.md | IDEA-0009; 20261126-195251-RUN | - |
 | 20261126-142546-IDEATION | IDEATION | 2026-11-26T14:25:46+00:00 | Document held chunk-context and max-token fixes without implementing them. | .stageset/sessions/plan-held-generation-path-fixes.md | IDEA-0009; IDEA-0010; 20261126-195546-RUN | - |
 | 20261126-151618-IDEATION | IDEATION | 2026-11-26T15:16:18+00:00 | Build and verify opt-in transliteration modes in a separate sandbox. | .stageset/sessions/plan-transliteration-sandbox.md | IDEA-0009; IDEA-0010; IDEA-0011; 20261126-204618-RUN | - |
+| 20261126-151811-PUSH | PUSH | 2026-11-26T15:18:11+00:00 | Push text normalization, run reports, and transliteration sandbox plan to origin/main. | .stageset/sessions/push-normalization-and-sandbox-plan.md | IDEA-0009; IDEA-0010; IDEA-0011; 20261126-204618-RUN | 5ea66cbeb4a2358bc68d50a2d04ec19458a60ba3 |
 
 ## Totals
 
@@ -172,4 +173,4 @@ This file is generated from `.stageset/sessions/`. Do not edit it by hand.
 - IDEATION: 18.
 - MAINTENANCE: 24.
 - PROBE: 5.
-- PUSH: 29.
+- PUSH: 30.
